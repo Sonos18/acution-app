@@ -1,0 +1,55 @@
+Resources:
+  UsersTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: UsersTable
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      AttributeDefinitions:
+        - AttributeName: userId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: userId
+          KeyType: HASH
+
+  BlogsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: BlogsTable
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      AttributeDefinitions:
+        - AttributeName: blogId
+          AttributeType: S
+        - AttributeName: userId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: blogId
+          KeyType: HASH
+        - AttributeName: userId
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: UserIndex
+          KeySchema:
+            - AttributeName: userId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+  Hashtag:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: Hashtag
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      AttributeDefinitions:
+        - AttributeName: hashtagId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: hashtagId
+          KeyType: HASH

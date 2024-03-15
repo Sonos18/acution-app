@@ -1,0 +1,30 @@
+{
+    "include": ["**/*.ts"],
+	"exclude": ["node_modules"],
+    "compilerOptions": {
+        "target": "ESNext",
+        "lib": ["es6"],
+        "module": "commonjs",
+		"experimentalDecorators": true,
+        "emitDecoratorMetadata":true,
+		"allowJs": true,
+		"baseUrl": ".",
+        "composite": false,
+        "declaration": true,
+        "declarationMap": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "inlineSources": false,
+        "isolatedModules": true,
+        "moduleResolution": "node",
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
+        "preserveWatchOutput": true,
+        "skipLibCheck": true,
+        "strict": true,
+        "strictNullChecks": true,
+        "paths": {
+          "~/*": ["./src/*"]
+        }
+    }
+}
