@@ -12,28 +12,35 @@ provider:
   httpApi:
     cors: true
     metrics: true #enables detailed metric
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:*
+      Resource: "arn:aws:dynamodb:*:*:*"
 
 plugins:
   - serverless-plugin-typescript
+  - serverless-esbuild
 
-iam:
-  role:
-    statements:
-      - Effect: Allow
-        Action:
-          - "dynamodb:PutItem"
-          - "dynamodb:GetItem"
-          - "dynamodb:DeleteItem"
-          - "dynamodb:Scan"
-        Resource:
-          - { "Fn::GetAtt": ["Hashtag", "Arn"] }
+package:
+  individually: true
+custom:
+  esbuild:
+    bundle: true
+    target: node18
+    exclude: ['aws-sdk']
+
+# custom:
+#   serverless-plugin-typescript:
+#     outDir: .build
+
 functions:
   createUser:
-    handler: src/handler/user/create.handler
+    handler: src/handler/user/signup.handler
     events:
       - httpApi:
-          path: /
-          method: get
+          path: /user
+          method: post
   createBlog:
     handler: src/handler/blog/create.handler
     events:

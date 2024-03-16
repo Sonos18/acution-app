@@ -4,3 +4,8 @@ jspm_packages
 dist
 # Serverless directories
 .serverless
+build
+# debug
+yarn-error.log*
+# esbuild
+.esbuild

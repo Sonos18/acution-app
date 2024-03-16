@@ -1,0 +1,19 @@
+import type { AnyObject, Maybe } from 'yup';
+
+import type { ExtractDataFromRequestProps } from './form-data-validate';
+import { customError } from '../createHandler';
+import { yupValidator } from '../validators/yup-validator';
+
+export const extractBodyDataFromRequest = <T extends Maybe<AnyObject>>(
+    props: ExtractDataFromRequestProps<T>
+) => {
+    const { event, schema } = props;
+    const data = event?.body ? (JSON.parse(event.body) as T) : undefined;
+
+    const validateRes = yupValidator(schema).validateSync({ ...data });
+    if (!validateRes || !validateRes.data) {
+        throw customError('Unprocessable Content', 422);
+    }
+
+    return validateRes.data as T;
+};
