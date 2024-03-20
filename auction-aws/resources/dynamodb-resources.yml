@@ -1,22 +1,45 @@
 Resources:
-  UsersTable:
+  User:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: UsersTable
+      TableName: User
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
       AttributeDefinitions:
         - AttributeName: userId
           AttributeType: S
+        - AttributeName: email
+          AttributeType: S
+        - AttributeName: phone
+          AttributeType: S
       KeySchema:
         - AttributeName: userId
           KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: EmailIndex
+          KeySchema:
+            - AttributeName: email
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+        - IndexName: PhoneIndex
+          KeySchema:
+            - AttributeName: phone
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
 
-  BlogsTable:
+  Blog:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: BlogsTable
+      TableName: Blog
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1

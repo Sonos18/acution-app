@@ -17,7 +17,7 @@ export const handler: HandlerFn = async (event, context, callback) => {
         Item: hashtag
     };
     await dynamoDB.put(params).promise();
-        callback(null, { body: JSON.stringify(hashtag) });	
+    callback(null, { body: JSON.stringify(hashtag) });	
     } catch (error) {
         console.error('Error adding hashtag:', error);
         throw error;

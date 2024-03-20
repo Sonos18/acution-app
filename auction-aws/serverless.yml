@@ -12,34 +12,49 @@ provider:
   httpApi:
     cors: true
     metrics: true #enables detailed metric
+    authorizers:
+      PrivateRouter:
+        type: request
+        functionName: AuthPrivate
+        identitySource:
+          - $request.header.Authorization
+
   iamRoleStatements:
     - Effect: Allow
       Action:
         - dynamodb:*
-      Resource: "arn:aws:dynamodb:*:*:*"
+      Resource: 'arn:aws:dynamodb:*:*:*'
 
 plugins:
-  - serverless-plugin-typescript
+  # - serverless-plugin-typescript
   - serverless-esbuild
+  - serverless-dotenv-plugin
 
 package:
   individually: true
+
 custom:
   esbuild:
     bundle: true
     target: node18
-    exclude: ['aws-sdk']
-
-# custom:
-#   serverless-plugin-typescript:
-#     outDir: .build
+    exclude: []
 
 functions:
+  AuthPrivate:
+    handler: src/handler/author/private.handler
+
   createUser:
     handler: src/handler/user/signup.handler
     events:
       - httpApi:
           path: /user
+          method: post
+
+  SignIn:
+    handler: src/handler/user/signin.handler
+    events:
+      - httpApi:
+          path: /user/signin
           method: post
   createBlog:
     handler: src/handler/blog/create.handler
@@ -47,6 +62,8 @@ functions:
       - httpApi:
           path: /blog
           method: get
+          authorizer:
+            name: PrivateRouter
 
 resources:
   - ${file(resources/dynamodb-resources.yml)}

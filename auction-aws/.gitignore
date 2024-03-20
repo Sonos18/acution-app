@@ -9,3 +9,8 @@ build
 yarn-error.log*
 # esbuild
 .esbuild
+
+.build
+
+# local env
+.env.local
