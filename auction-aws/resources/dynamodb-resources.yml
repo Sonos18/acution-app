@@ -63,6 +63,37 @@ Resources:
           ProvisionedThroughput:
             ReadCapacityUnits: 1
             WriteCapacityUnits: 1
+
+  RefreshToken:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: RefreshToken
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      AttributeDefinitions:
+        - AttributeName: tokenId
+          AttributeType: S
+        - AttributeName: userId
+          AttributeType: S
+        - AttributeName: token
+          AttributeType: S
+      KeySchema:
+        - AttributeName: tokenId
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: TokenIndex
+          KeySchema:
+            - AttributeName: token
+              KeyType: HASH
+            - AttributeName: userId
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+
   Hashtag:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -73,6 +104,59 @@ Resources:
       AttributeDefinitions:
         - AttributeName: hashtagId
           AttributeType: S
+        - AttributeName: content
+          AttributeType: S
       KeySchema:
         - AttributeName: hashtagId
           KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: ContentIndex
+          KeySchema:
+            - AttributeName: content
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+
+  BlogHashtag:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: BlogHashtag
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      AttributeDefinitions:
+        - AttributeName: blogId
+          AttributeType: S
+        - AttributeName: hashtagId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: blogId
+          KeyType: HASH
+        - AttributeName: hashtagId
+          KeyType: RANGE
+
+  Like:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: Like
+      AttributeDefinitions:
+        - AttributeName: likeId
+          AttributeType: S
+        - AttributeName: blogId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: likeId
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: BlogIndex
+          KeySchema:
+            - AttributeName: blogId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1

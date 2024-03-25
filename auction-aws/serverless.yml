@@ -42,26 +42,62 @@ custom:
 functions:
   AuthPrivate:
     handler: src/handler/author/private.handler
-
-  createUser:
+  RefreshToken:
+    handler: src/handler/author/refresh.handler
+    events:
+      - httpApi:
+          path: /user/refresh-token
+          method: post
+  CreateUser:
     handler: src/handler/user/signup.handler
     events:
       - httpApi:
           path: /user
           method: post
-
   SignIn:
     handler: src/handler/user/signin.handler
     events:
       - httpApi:
           path: /user/signin
           method: post
-  createBlog:
+  CreateBlog:
     handler: src/handler/blog/create.handler
     events:
       - httpApi:
           path: /blog
+          method: post
+          authorizer:
+            name: PrivateRouter
+  GetAllBlog:
+    handler: src/handler/blog/get-all.handler
+    events:
+      - httpApi:
+          path: /blog
           method: get
+          authorizer:
+            name: PrivateRouter
+  DeleteBlog:
+    handler: src/handler/blog/delete.handler
+    events:
+      - httpApi:
+          path: /blog/{id}
+          method: delete
+          authorizer:
+            name: PrivateRouter
+  UpdateBlog:
+    handler: src/handler/blog/update.handler
+    events:
+      - httpApi:
+          path: /blog/{id}
+          method: put
+          authorizer:
+            name: PrivateRouter
+  CreateLike:
+    handler: src/handler/like/create.handler
+    events:
+      - httpApi:
+          path: /like
+          method: post
           authorizer:
             name: PrivateRouter
 

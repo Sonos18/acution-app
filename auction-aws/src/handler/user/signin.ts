@@ -1,27 +1,33 @@
 import { DynamoDB } from 'aws-sdk';
 import * as bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { v4 } from 'uuid';
 import type { ObjectSchema } from 'yup';
 import { object, string } from 'yup';
 
-import { User } from '~/db/user-schema';
-
 import { HandlerFn, customError, customErrorOutput } from '~/utils/createHandler';
-import { SigninInput } from '~/utils/types/user-type';
+import { SiginOutput, SigninInput } from '~/utils/types/user-type';
 import { extractBodyDataFromRequest } from '~/utils/validate-request/validate-body';
 
 const dynamoDB = new DynamoDB.DocumentClient();
-const keySecret = process.env.JWT_SECRET ?? '';
+const keyAccess = process.env.KEY_ACCESS_TOKEN ?? '';
+const keyRefresh = process.env.KEY_REFRESH_TOKEN ?? '';
+
 export const handler: HandlerFn = async (event, context, callback) => {
 	try {
-		console.log('show keySecret', keySecret);
 		const data = extractBodyDataFromRequest({ event, schema: SigninSchema });
 		const user = await signin(data);
-		const accessToken = generateAccessToken(user);
-		const refreshToken = generateRefreshToken(user);
+		const accessToken = generateAccessToken(user.userId, user.role);
+		const refreshToken = generateRefreshToken(user.userId, user.role);
+		await saveToken(user.userId, refreshToken);
+
+		const response: SiginOutput = {
+			access_token: accessToken,
+			user
+		};
 		callback(null, {
 			statusCode: 200,
-			body: JSON.stringify(accessToken)
+			body: JSON.stringify(response)
 		});
 	} catch (e) {
 		const error = e as Error;
@@ -54,14 +60,26 @@ export const SigninSchema: ObjectSchema<SigninInput> = object({
 	password: string().required()
 });
 
-export const generateAccessToken = (user: User) => {
-	return jwt.sign({ id: user.userId, role: user.role }, 'key', {
+export const generateAccessToken = (userId: string, role: string) => {
+	return jwt.sign({ id: userId, role: role }, keyAccess, {
 		expiresIn: 3600
 	});
 };
 
-export const generateRefreshToken = (user: User) => {
-	return jwt.sign({ id: user.userId, role: user.role }, 'keySecret', {
+export const generateRefreshToken = (userId: string, role: string) => {
+	return jwt.sign({ id: userId, role: role }, keyRefresh, {
 		expiresIn: '60d'
 	});
+};
+
+export const saveToken = async (userId: string, token: string) => {
+	const params = {
+		TableName: 'RefreshToken',
+		Item: {
+			tokenId: v4(),
+			userId,
+			token
+		}
+	};
+	await dynamoDB.put(params).promise();
 };

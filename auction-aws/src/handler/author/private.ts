@@ -2,17 +2,15 @@ import jwt from 'jsonwebtoken';
 
 import { AuthorizationHandlerFn } from '~/utils/createHandler';
 
-export const TOKEN_USE = process.env.TOKEN_USE as 'id' | 'access' | null | undefined;
-export const USER_POOL_ID = process.env.USER_POOL_ID;
-export const CLIENT_ID = process.env.CLIENT_ID;
-
 export const handler: AuthorizationHandlerFn = async (event, content, callback) => {
 	try {
 		if (event.headers?.authorization === undefined) {
 			throw Error();
 		}
-		const token = event.identitySource[0];
-		const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
+		const token = event.identitySource[0].replace('Bearer ', '');
+		const keySecret = process.env.KEY_ACCESS_TOKEN ?? '';
+		console.log('token', keySecret);
+		const decoded = jwt.verify(token, keySecret);
 		console.log(decoded);
 		return generatePolicy({ allow: true });
 	} catch (error) {

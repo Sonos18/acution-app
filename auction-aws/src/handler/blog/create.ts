@@ -1,25 +1,110 @@
+import { DynamoDB } from 'aws-sdk';
+import { create } from 'domain';
+import jwt from 'jsonwebtoken';
+import { v4 } from 'uuid';
+import { ObjectSchema, array, object, string } from 'yup';
 
-import { DynamoDB } from "aws-sdk";
-import { Hashtag } from "~/db/hashtag-schema";
-import { HandlerFn } from "~/utils/createHandler";
-import { v4 } from "uuid";
+import { Blog } from '~/db/blog-schema';
+import { Hashtag } from '~/db/hashtag-schema';
 
+import { HandlerFn, customError, customErrorOutput } from '~/utils/createHandler';
+import { CreateBlogInput } from '~/utils/types/blog-type';
+import { extractBodyDataFromRequest } from '~/utils/validate-request/validate-body';
+
+const dynamoDB = new DynamoDB.DocumentClient();
+
+const keyAccess = process.env.KEY_ACCESS_TOKEN ?? '';
 export const handler: HandlerFn = async (event, context, callback) => {
-    try {
-        const hashtag: Hashtag = {
-        hashtagId:v4(),
-        name: "hi",
-    };
-    const dynamoDB = new DynamoDB.DocumentClient();
+	try {
+		if (event.headers?.authorization === undefined) {
+			throw customError('Authorization header is missing', 401);
+		}
+		const token = event.headers.authorization.replace('Bearer ', '');
+		const decoded = jwt.verify(token, keyAccess) as jwt.JwtPayload;
+		console.log('decoded', decoded);
+		const blogData = extractBodyDataFromRequest({ event, schema: createBlogSchema });
+		console.log('blogData', blogData);
+		const { hashtags } = blogData;
+		for (const hashtag of hashtags) {
+			await addHashtag(hashtag);
+		}
+		console.log('hashtags added');
+		const blog = await createBlog(blogData, decoded.id);
+		callback(null, { body: JSON.stringify(blog) });
+	} catch (error) {
+		const e = error as Error;
+		customErrorOutput(e, callback);
+	}
+};
 
-    const params: DynamoDB.DocumentClient.PutItemInput = {
-        TableName: 'Hashtag',
-        Item: hashtag
-    };
-    await dynamoDB.put(params).promise();
-    callback(null, { body: JSON.stringify(hashtag) });	
-    } catch (error) {
-        console.error('Error adding hashtag:', error);
-        throw error;
-    }
+export const createBlogSchema: ObjectSchema<CreateBlogInput> = object({
+	title: string().required(),
+	content: string().required(),
+	hashtags: array().of(string().defined()).required()
+});
+
+export const createBlog = async (blogData: CreateBlogInput, userId: string) => {
+	const blog: Blog = {
+		blogId: v4(),
+		title: blogData.title,
+		content: blogData.content,
+		userId
+	};
+	const params: DynamoDB.DocumentClient.PutItemInput = {
+		TableName: 'Blog',
+		Item: blog
+	};
+	await dynamoDB.put(params).promise();
+	return blog;
+};
+export const addHashtag = async (content: string) => {
+	// Check if the hashtag exists
+	const params = {
+		TableName: 'Hashtag',
+		IndexName: 'ContentIndex',
+		KeyConditionExpression: 'content = :content',
+		ExpressionAttributeValues: {
+			':content': content
+		}
+	};
+	console.log('params', params);
+	let hashtagId: string = '';
+	try {
+		const getResult = await dynamoDB.query(params).promise();
+		console.log('getResult', getResult);
+
+		if (getResult.Items && getResult.Items.length > 0) {
+			hashtagId = getResult.Items[0].hashtagId as string;
+			console.log('get right');
+		} else {
+			// If the hashtag doesn't exist, create a new one
+			console.log('get wrong');
+			const hashtag: Hashtag = {
+				hashtagId: v4(),
+				content
+			};
+			const putParams: DynamoDB.DocumentClient.PutItemInput = {
+				TableName: 'Hashtag',
+				Item: hashtag
+			};
+			await dynamoDB.put(putParams).promise();
+			hashtagId = hashtag.hashtagId as string;
+		}
+	} catch (error) {
+		const e = error as Error;
+		throw customError(e.message, 500);
+	}
+
+	createBlogHashtag(hashtagId, hashtagId);
+};
+export const createBlogHashtag = async (blogId: string, hashtagId: string) => {
+	const params: DynamoDB.DocumentClient.PutItemInput = {
+		TableName: 'BlogHashtag',
+		Item: {
+			BlogHashtagId: v4(),
+			blogId,
+			hashtagId
+		}
+	};
+	await dynamoDB.put(params).promise();
 };

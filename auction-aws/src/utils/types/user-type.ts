@@ -1,3 +1,5 @@
+import { User } from '~/db/user-schema';
+
 export interface CreateUserInput {
 	firstName: string;
 	lastName: string;
@@ -29,4 +31,9 @@ export interface CreateUserOutput {
 export interface SigninInput {
 	email: string;
 	password: string;
+}
+
+export interface SiginOutput {
+	access_token: string;
+	user: User;
 }

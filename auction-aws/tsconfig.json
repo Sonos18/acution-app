@@ -1,32 +1,32 @@
 {
-    "$schema": "https://json.schemastore.org/tsconfig",
-    "include": ["**/*.ts"],
+	"$schema": "https://json.schemastore.org/tsconfig",
+	"include": ["**/*.ts"],
 	"exclude": ["node_modules"],
-    "compilerOptions": {
-        "target": "ESNext",
-        "lib": ["es6"],
-        "module": "CommonJS",
+	"compilerOptions": {
+		"target": "ESNext",
+		"lib": ["es6"],
+		"module": "CommonJS",
 		"experimentalDecorators": true,
-        "emitDecoratorMetadata":true,
+		"emitDecoratorMetadata": true,
 		"allowJs": true,
 		"baseUrl": ".",
-        "types": [ "node" ],
-        "composite": false,
-        "declaration": true,
-        "declarationMap": true,
-        "esModuleInterop": true,
-        "forceConsistentCasingInFileNames": true,
-        "inlineSources": false,
-        "isolatedModules": true,
-        "moduleResolution": "node",
-        "noUnusedLocals": false,
-        "noUnusedParameters": false,
-        "preserveWatchOutput": true,
-        "skipLibCheck": true,
-        "strict": true,
-        "strictNullChecks": true,
-        "paths": {
-          "~/*": ["./src/*"]
-        }
-    }
+		"types": ["node"],
+		"composite": false,
+		"declaration": true,
+		"declarationMap": true,
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"inlineSources": false,
+		"isolatedModules": true,
+		"moduleResolution": "node",
+		"noUnusedLocals": false,
+		"noUnusedParameters": false,
+		"preserveWatchOutput": true,
+		"skipLibCheck": true,
+		"strict": true,
+		"strictNullChecks": true,
+		"paths": {
+			"~/*": ["./src/*"]
+		}
+	}
 }
