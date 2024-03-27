@@ -142,18 +142,21 @@ Resources:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: Like
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
       AttributeDefinitions:
-        - AttributeName: likeId
-          AttributeType: S
         - AttributeName: blogId
           AttributeType: S
+        - AttributeName: userId
+          AttributeType: S
       KeySchema:
-        - AttributeName: likeId
+        - AttributeName: blogId
           KeyType: HASH
       GlobalSecondaryIndexes:
-        - IndexName: BlogIndex
+        - IndexName: UserIndex
           KeySchema:
-            - AttributeName: blogId
+            - AttributeName: userId
               KeyType: HASH
           Projection:
             ProjectionType: ALL

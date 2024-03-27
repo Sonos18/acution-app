@@ -62,7 +62,7 @@ export const SigninSchema: ObjectSchema<SigninInput> = object({
 
 export const generateAccessToken = (userId: string, role: string) => {
 	return jwt.sign({ id: userId, role: role }, keyAccess, {
-		expiresIn: 3600
+		expiresIn: '6d'
 	});
 };
 

@@ -101,6 +101,15 @@ functions:
           authorizer:
             name: PrivateRouter
 
+  DisLike:
+    handler: src/handler/like/delete.handler
+    events:
+      - httpApi:
+          path: /dislike
+          method: post
+          authorizer:
+            name: PrivateRouter
+
 resources:
   - ${file(resources/dynamodb-resources.yml)}
   # test:
