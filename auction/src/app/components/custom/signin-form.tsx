@@ -37,7 +37,7 @@ const SigninForm = () => {
       setIsLoading(true);
       const result = await authApiRequest.signIn(data);
       await authApiRequest.auth({
-        sessionToken: result.payload.access_token,
+        accessToken: result.payload.access_token,
         refreshToken: result.payload.refresh_token,
       });
       router.push("/");

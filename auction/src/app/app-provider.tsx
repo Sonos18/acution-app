@@ -1,22 +1,22 @@
 "use client";
 
-import { sessionToken } from "@/lib/http";
+import { accessToken } from "@/lib/http";
 import { session } from "@/lib/session";
 import { useState } from "react";
 
 export default function AppProvider({
   children,
-  inititalSessionToken = "",
+  inititalaccessToken = "",
   inititalRefreshToken = "",
 }: {
   children: React.ReactNode;
-  inititalSessionToken?: string;
+  inititalaccessToken?: string;
   inititalRefreshToken?: string;
 }) {
   useState(() => {
     if (typeof window !== "undefined") {
-      sessionToken.value = inititalSessionToken;
-      sessionToken.refresh = inititalRefreshToken;
+      accessToken.value = inititalaccessToken;
+      accessToken.refresh = inititalRefreshToken;
     }
   });
   return <>{children}</>;

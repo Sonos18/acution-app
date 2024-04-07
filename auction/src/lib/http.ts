@@ -1,6 +1,8 @@
 import envConfig from "@/config";
 import { SignInResSchemaType } from "@/schemaValidations/auth.schema";
 import { normalizePath } from "./utils";
+import { use } from "react";
+import { useRefreshToken } from "./hooks/use-refresh-token";
 
 type CustomOptions = Omit<RequestInit, "method"> & {
   baseUrl?: string | undefined;
@@ -46,7 +48,7 @@ export class EntityError extends HttpError {
   }
 }
 
-class SessionToken {
+class Token {
   private accessToken = "";
   private refreshToken = "";
   get refresh() {
@@ -67,7 +69,7 @@ class SessionToken {
   }
 }
 
-export const sessionToken = new SessionToken();
+export const accessToken = new Token();
 
 const request = async <Response>(
   method: "GET" | "POST" | "PUT" | "DELETE",
@@ -75,9 +77,11 @@ const request = async <Response>(
   options?: CustomOptions | undefined
 ) => {
   const body = options?.body ? JSON.stringify(options.body) : undefined;
+  const token = await useRefreshToken(accessToken.value, accessToken.refresh);
+  console.log(token);
   const baseHeaders = {
     "Content-Type": "application/json",
-    Authorization: sessionToken.value ? `Bearer ${sessionToken.value}` : "",
+    Authorization: accessToken.value ? `Bearer ${accessToken.value}` : "",
   };
   const baseUrl =
     options?.baseUrl === undefined
@@ -119,11 +123,11 @@ const request = async <Response>(
       )
     ) {
       const res = payload as SignInResSchemaType;
-      sessionToken.value = res.access_token;
-      sessionToken.refresh = res.refresh_token;
+      accessToken.value = res.access_token;
+      accessToken.refresh = res.refresh_token;
     } else if ("auth/logout" === normalizePath(url)) {
-      sessionToken.value = "";
-      sessionToken.refresh = "";
+      accessToken.value = "";
+      accessToken.refresh = "";
     }
   }
   return data;

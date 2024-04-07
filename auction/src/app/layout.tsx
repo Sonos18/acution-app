@@ -9,6 +9,7 @@ import Footer from "./components/footer";
 import ToastProvider from "./providers/toast.provider";
 import AppProvider from "./app-provider";
 import { cookies } from "next/headers";
+import { Toaster } from "@/components/ui/toaster";
 const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",
@@ -24,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const cookieStore = cookies();
-  const sessionToken = cookieStore.get("sessionToken");
+  const accessToken = cookieStore.get("accessToken");
   const refreshToken = cookieStore.get("refreshToken");
   return (
     <html lang="en" suppressHydrationWarning>
@@ -43,9 +44,10 @@ export default function RootLayout({
           >
             <AppProvider
               inititalRefreshToken={refreshToken?.value}
-              inititalSessionToken={sessionToken?.value}
+              inititalaccessToken={accessToken?.value}
             >
               {children}
+              <Toaster />
             </AppProvider>
             <ModeToggle />
           </ThemeProvider>

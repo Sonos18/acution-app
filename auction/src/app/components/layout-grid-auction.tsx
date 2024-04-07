@@ -1,8 +1,16 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import { LayoutGrid } from "@/components/ui/layout-grid";
+import blogApiRequest from "@/apiRequests/blog";
 
 export function LayoutGridAuction() {
+  useEffect(() => {
+    const loadBlogs = async () => {
+      const res = await blogApiRequest.getBlogs("?limit=4");
+      console.log(res);
+    };
+    loadBlogs();
+  }, []);
   return (
     <div className="h-screen py-20 w-full">
       <LayoutGrid cards={cards} />
