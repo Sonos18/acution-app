@@ -21,7 +21,7 @@ export const handler: HandlerFn = async (event, context, callback) => {
 		customErrorOutput(e, callback);
 	}
 };
-export const checkLiked = async (userId: string, blogId: string) => {
+const checkLiked = async (userId: string, blogId: string) => {
 	const params: DynamoDB.DocumentClient.QueryInput = {
 		TableName: 'Like',
 		IndexName: 'UserIndex',

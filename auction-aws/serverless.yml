@@ -25,6 +25,28 @@ provider:
         - dynamodb:*
       Resource: 'arn:aws:dynamodb:*:*:*'
 
+    - Effect: 'Allow'
+      Action:
+        - 's3:GetObject'
+        - 's3:PutObject'
+      Resource:
+        # concatenate the following strings
+        Fn::Join:
+          - ''
+          - - 'arn:aws:s3:::'
+            - 'my-auction-bucket'
+            # "*" used as a wildcard means "any files"
+            - '/*'
+    # allow for list files on my-auction-bucket
+    - Effect: 'Allow'
+      Action:
+        - 's3:ListBucket'
+      Resource:
+        Fn::Join:
+          - ''
+          - - 'arn:aws:s3:::'
+            - 'my-auction-bucket'
+
 plugins:
   # - serverless-plugin-typescript
   - serverless-esbuild
@@ -52,7 +74,7 @@ functions:
     handler: src/handler/user/signup.handler
     events:
       - httpApi:
-          path: /user
+          path: /user/signup
           method: post
   SignIn:
     handler: src/handler/user/signin.handler
@@ -106,7 +128,7 @@ functions:
     events:
       - httpApi:
           path: /dislike
-          method: post
+          method: delete
           authorizer:
             name: PrivateRouter
 

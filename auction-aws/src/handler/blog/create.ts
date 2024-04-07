@@ -1,5 +1,4 @@
-import { DynamoDB } from 'aws-sdk';
-import { create } from 'domain';
+import { DynamoDB, S3 } from 'aws-sdk';
 import jwt from 'jsonwebtoken';
 import { v4 } from 'uuid';
 import { ObjectSchema, array, object, string } from 'yup';
@@ -12,6 +11,8 @@ import { CreateBlogInput } from '~/utils/types/blog-type';
 import { extractBodyDataFromRequest } from '~/utils/validate-request/validate-body';
 
 const dynamoDB = new DynamoDB.DocumentClient();
+const bucketName = process.env.BUCKET_NAME ?? '';
+const s3 = new S3();
 
 const keyAccess = process.env.KEY_ACCESS_TOKEN ?? '';
 export const handler: HandlerFn = async (event, context, callback) => {
@@ -107,4 +108,23 @@ export const createBlogHashtag = async (blogId: string, hashtagId: string) => {
 		}
 	};
 	await dynamoDB.put(params).promise();
+};
+
+const uploadImage = async (image: string) => {
+	const params = {
+		Bucket: bucketName,
+		Key: image,
+		Body: image,
+		ACL: 'public-read'
+	};
+	await s3.upload(params).promise();
+};
+
+const getImage = async (image: string) => {
+	const params = {
+		Bucket: bucketName,
+		Key: image
+	};
+	const res = await s3.getObject(params).promise();
+	return res.Body;
 };

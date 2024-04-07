@@ -1,11 +1,15 @@
+import { APIGatewayProxyEvent } from 'aws-lambda';
 import { DynamoDB } from 'aws-sdk';
+import { decode } from 'punycode';
 import { ObjectSchema, number, object, string } from 'yup';
 
 import { Blog } from '~/db/blog-schema';
+import { Like } from '~/db/like-schema';
 
 import { HandlerFn, customError, customErrorOutput } from '~/utils/createHandler';
 import { paginateBase } from '~/utils/paginate';
 import { GetBlogsInput, lastKeyBlogs } from '~/utils/types/blog-type';
+import { decodedTokenFromHeader } from '~/utils/validate-request/validate-header';
 import { extractPathParamsFromRequest } from '~/utils/validate-request/validate-params';
 
 const dynamoDB = new DynamoDB.DocumentClient();
@@ -20,9 +24,9 @@ export const handler: HandlerFn = async (event, context, callback) => {
 			params.keyUserId
 		);
 		const blogs = await getBlogs(page, limit, params.userId, lastKey);
-		const res = await countLikesForBlogs(blogs.items as Blog[]);
-		console.log(res);
-		callback(null, { body: JSON.stringify(blogs) });
+		const likes = await countLikesForBlogs(blogs.items as Blog[]);
+		const result = responsesGetBlogs(blogs, likes, event);
+		callback(null, { body: JSON.stringify(result) });
 	} catch (error) {
 		const e = error as Error;
 		customErrorOutput(e, callback);
@@ -74,9 +78,35 @@ export const getBlogs = async (
 	};
 };
 
+const responsesGetBlogs = (
+	blogs: Awaited<ReturnType<typeof getBlogs>>,
+	likes: Like[],
+	event: APIGatewayProxyEvent
+) => {
+	let result: Object[] = [];
+	if (blogs.items) {
+		result = blogs.items.map((item: DynamoDB.DocumentClient.AttributeMap) => {
+			const likesForBlog = likes?.filter((like) => like.blogId === item.blogId);
+			const userIdsWhoLiked = likesForBlog?.map((like) => like.userId) || [];
+			const { id } = decodedTokenFromHeader(event);
+			const isLiked = userIdsWhoLiked.find((userId) => userId === id);
+			return {
+				...item,
+				likes: likesForBlog?.length || 0,
+				isLiked: isLiked ? true : false
+			};
+		});
+	}
+	return {
+		data: result,
+		lastKey: blogs.lastKey
+	};
+};
+
 export const countLikesForBlogs = async (blogs: Blog[]) => {
 	console.log('blogs', blogs);
 	const blogIds = [...new Set(blogs.map((blog: Blog) => blog.blogId))];
+	console.log('blogIds', blogIds);
 	const params: DynamoDB.DocumentClient.BatchGetItemInput = {
 		RequestItems: {
 			Like: {
@@ -86,10 +116,11 @@ export const countLikesForBlogs = async (blogs: Blog[]) => {
 			}
 		}
 	};
-
+	console.log('params', params);
 	try {
 		const result = await dynamoDB.batchGet(params).promise();
-		return result;
+		console.log('Like', result.Responses?.Like);
+		return result.Responses?.Like as Like[];
 	} catch (error) {
 		throw customError((error as Error).message, 500);
 	}
