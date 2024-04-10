@@ -14,7 +14,6 @@ import {
   SignUpSchemaType,
 } from "@/schemaValidations/auth.schema";
 import authApiRequest from "@/apiRequests/auth";
-import { useToast } from "react-toastify";
 
 const SignupForm = () => {
   const [isLoading, setIsLoading] = useState(false);

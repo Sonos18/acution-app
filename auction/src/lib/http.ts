@@ -76,12 +76,18 @@ const request = async <Response>(
   url: string,
   options?: CustomOptions | undefined
 ) => {
-  const body = options?.body ? JSON.stringify(options.body) : undefined;
   const token = await useRefreshToken(accessToken.value, accessToken.refresh);
-  console.log(token);
+  if (token) {
+    accessToken.value = token;
+  }
+  const body = options?.body
+    ? options.body instanceof FormData
+      ? options.body
+      : JSON.stringify(options.body)
+    : undefined;
   const baseHeaders = {
-    "Content-Type": "application/json",
     Authorization: accessToken.value ? `Bearer ${accessToken.value}` : "",
+    "Content-Type": "application/json",
   };
   const baseUrl =
     options?.baseUrl === undefined
@@ -114,7 +120,11 @@ const request = async <Response>(
           payload: EntityErrorPayload;
         }
       );
-    } else throw new HttpError(data);
+    } else {
+      console.log("accessToken", accessToken.value);
+
+      console.log(data);
+    }
   }
   if (typeof window !== "undefined") {
     if (

@@ -22,7 +22,7 @@ export const useRefreshToken = async (
       const data = await res.json();
       const accessToken = data.accessToken;
       await authApiRequest.auth({ accessToken, refreshToken });
-      return accessToken;
+      return accessToken as string;
     }
   } catch (error) {
     return accessToken;

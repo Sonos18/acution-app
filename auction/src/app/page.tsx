@@ -3,13 +3,10 @@ import { LayoutGridAuction } from "./components/layout-grid-auction";
 import { TbMessageShare } from "react-icons/tb";
 import { HoverEffect } from "@/components/ui/card-hover-effect";
 import { Rate } from "./components/rate";
-import { Nav } from "./components/navbar-menu";
-import Footer from "./components/footer";
 
 export default function Home() {
   return (
     <>
-      <Nav />
       <Banner />
       <div className="w-full mt-12">
         <div className="text-center text-4xl font-semibold">
@@ -57,7 +54,6 @@ export default function Home() {
       <LayoutGridAuction />
 
       <Rate />
-      <Footer />
     </>
   );
 }

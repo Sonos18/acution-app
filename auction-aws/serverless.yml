@@ -82,6 +82,14 @@ functions:
       - httpApi:
           path: /user/signin
           method: post
+  GetUser:
+    handler: src/handler/user/get-one.handler
+    events:
+      - httpApi:
+          path: /user
+          method: get
+          authorizer:
+            name: PrivateRouter
   CreateBlog:
     handler: src/handler/blog/create.handler
     events:
@@ -131,6 +139,13 @@ functions:
           method: delete
           authorizer:
             name: PrivateRouter
+
+  UploadFile:
+    handler: src/handler/s3/get-signed-url.handler
+    events:
+      - httpApi:
+          path: /file
+          method: post
 
 resources:
   - ${file(resources/dynamodb-resources.yml)}

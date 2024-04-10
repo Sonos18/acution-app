@@ -5,10 +5,11 @@ import { ObjectSchema, number, object, string } from 'yup';
 
 import { Blog } from '~/db/blog-schema';
 import { Like } from '~/db/like-schema';
+import { User } from '~/db/user-schema';
 
 import { HandlerFn, customError, customErrorOutput } from '~/utils/createHandler';
 import { paginateBase } from '~/utils/paginate';
-import { GetBlogsInput, lastKeyBlogs } from '~/utils/types/blog-type';
+import { BlogInput, GetBlogsInput, GetBlogsOutput, lastKeyBlogs } from '~/utils/types/blog-type';
 import { decodedTokenFromHeader } from '~/utils/validate-request/validate-header';
 import { extractPathParamsFromRequest } from '~/utils/validate-request/validate-params';
 
@@ -25,7 +26,8 @@ export const handler: HandlerFn = async (event, context, callback) => {
 		);
 		const blogs = await getBlogs(page, limit, params.userId, lastKey);
 		const likes = await countLikesForBlogs(blogs.items as Blog[]);
-		const result = responsesGetBlogs(blogs, likes, event);
+		const users = await getUsersForBlogs(blogs.items as Blog[]);
+		const result = responsesGetBlogs(blogs, likes, event, users);
 		callback(null, { body: JSON.stringify(result) });
 	} catch (error) {
 		const e = error as Error;
@@ -41,9 +43,9 @@ export const getBlogs = async (
 	let params: DynamoDB.DocumentClient.QueryInput | DynamoDB.DocumentClient.ScanInput = {
 		TableName: 'Blog',
 		Limit: limit,
-		FilterExpression: 'attribute_not_exists(deleted) OR deleted = :deleted',
+		FilterExpression: 'deleted <> :deleted',
 		ExpressionAttributeValues: {
-			':deleted': false
+			':deleted': true
 		}
 	};
 	// If it's not the first page, set ExclusiveStartKey
@@ -81,25 +83,41 @@ export const getBlogs = async (
 const responsesGetBlogs = (
 	blogs: Awaited<ReturnType<typeof getBlogs>>,
 	likes: Like[],
-	event: APIGatewayProxyEvent
-) => {
-	let result: Object[] = [];
+	event: APIGatewayProxyEvent,
+	users: User[]
+): GetBlogsOutput => {
 	if (blogs.items) {
-		result = blogs.items.map((item: DynamoDB.DocumentClient.AttributeMap) => {
+		const result: BlogInput[] = blogs.items.map((item: DynamoDB.DocumentClient.AttributeMap) => {
 			const likesForBlog = likes?.filter((like) => like.blogId === item.blogId);
 			const userIdsWhoLiked = likesForBlog?.map((like) => like.userId) || [];
+			const user = users.find((user) => user.userId === item.userId);
 			const { id } = decodedTokenFromHeader(event);
 			const isLiked = userIdsWhoLiked.find((userId) => userId === id);
 			return {
-				...item,
+				blogId: item.blogId,
+				user: {
+					userId: item.userId,
+					firstName: user?.firstName ?? '',
+					lastName: user?.lastName ?? ''
+				},
+				title: item.title,
+				content: item.content,
+				hashtags: item.hashtags,
+				createdAt: item.createdAt,
+				updatedAt: item.updatedAt,
 				likes: likesForBlog?.length || 0,
 				isLiked: isLiked ? true : false
 			};
 		});
+		return {
+			data: result,
+			lastKey: blogs.lastKey as lastKeyBlogs
+		};
 	}
+	const result: BlogInput[] = [];
 	return {
 		data: result,
-		lastKey: blogs.lastKey
+		lastKey: blogs.lastKey as lastKeyBlogs
 	};
 };
 
@@ -121,6 +139,27 @@ export const countLikesForBlogs = async (blogs: Blog[]) => {
 		const result = await dynamoDB.batchGet(params).promise();
 		console.log('Like', result.Responses?.Like);
 		return result.Responses?.Like as Like[];
+	} catch (error) {
+		throw customError((error as Error).message, 500);
+	}
+};
+
+const getUsersForBlogs = async (blogs: Blog[]) => {
+	const userIds = [...new Set(blogs.map((blog: Blog) => blog.userId))].filter(
+		(userId) => userId !== undefined
+	);
+	const params: DynamoDB.DocumentClient.BatchGetItemInput = {
+		RequestItems: {
+			User: {
+				Keys: userIds.map((userId: string | undefined) => ({
+					userId: userId
+				}))
+			}
+		}
+	};
+	try {
+		const result = await dynamoDB.batchGet(params).promise();
+		return result.Responses?.User as User[];
 	} catch (error) {
 		throw customError((error as Error).message, 500);
 	}

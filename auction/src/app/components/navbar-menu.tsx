@@ -16,8 +16,10 @@ import { Combobox } from "./combobox";
 import { Input } from "@/components/ui/input";
 import { IoSearchSharp } from "react-icons/io5";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { UserResType } from "@/schemaValidations/user.schema";
 
-export function Nav() {
+export function Nav({ user }: { user: UserResType | null }) {
+  console.log(user);
   const [items, setItems] = useState(navItems);
   const router = useRouter();
   const handleItemClick = (
@@ -54,12 +56,16 @@ export function Nav() {
             />
           </div>
         </div>
-        <div className="col-span-1 mx-auto">
-          <Avatar className="" onClick={() => router.push("/profile")}>
-            <AvatarImage src="https://github.com/shadcn.png" />
-            <AvatarFallback>CN</AvatarFallback>
-          </Avatar>
-        </div>
+        {user ? (
+          <div className="col-span-1 mx-auto">
+            <Avatar className="" onClick={() => router.push("/profile")}>
+              <AvatarImage src="https://github.com/shadcn.png" />
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
+          </div>
+        ) : (
+          <div>Signin</div>
+        )}
       </div>
       <FloatingNav navItems={items} handleItemClick={handleItemClick} />
     </>

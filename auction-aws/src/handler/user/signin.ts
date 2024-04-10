@@ -24,7 +24,9 @@ export const handler: HandlerFn = async (event, context, callback) => {
 		const response: SiginOutput = {
 			access_token: accessToken,
 			refresh_token: refreshToken,
-			user
+			user: {
+				userId: user.userId
+			}
 		};
 		callback(null, {
 			statusCode: 200,

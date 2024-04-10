@@ -10,10 +10,9 @@ import { HandlerFn, customError, customErrorOutput } from '~/utils/createHandler
 import { CreateBlogInput } from '~/utils/types/blog-type';
 import { extractBodyDataFromRequest } from '~/utils/validate-request/validate-body';
 
-const dynamoDB = new DynamoDB.DocumentClient();
-const bucketName = process.env.BUCKET_NAME ?? '';
-const s3 = new S3();
+import { GetImgUrl } from '../s3/get-url';
 
+const dynamoDB = new DynamoDB.DocumentClient();
 const keyAccess = process.env.KEY_ACCESS_TOKEN ?? '';
 export const handler: HandlerFn = async (event, context, callback) => {
 	try {
@@ -26,8 +25,10 @@ export const handler: HandlerFn = async (event, context, callback) => {
 		const blogData = extractBodyDataFromRequest({ event, schema: createBlogSchema });
 		console.log('blogData', blogData);
 		const { hashtags } = blogData;
-		for (const hashtag of hashtags) {
-			await addHashtag(hashtag);
+		if (hashtags) {
+			for (const hashtag of hashtags) {
+				await addHashtag(hashtag);
+			}
 		}
 		console.log('hashtags added');
 		const blog = await createBlog(blogData, decoded.id);
@@ -41,15 +42,21 @@ export const handler: HandlerFn = async (event, context, callback) => {
 export const createBlogSchema: ObjectSchema<CreateBlogInput> = object({
 	title: string().required(),
 	content: string().required(),
-	hashtags: array().of(string().defined()).required()
+	hashtags: array().of(string().defined()).optional(),
+	keyImage: string().required()
 });
 
 export const createBlog = async (blogData: CreateBlogInput, userId: string) => {
+	const urlImage = await GetImgUrl(blogData.keyImage);
+	console.log('urlImage', urlImage);
 	const blog: Blog = {
 		blogId: v4(),
 		title: blogData.title,
 		content: blogData.content,
-		userId
+		userId,
+		image: urlImage,
+		created_at: new Date(),
+		updated_at: new Date()
 	};
 	const params: DynamoDB.DocumentClient.PutItemInput = {
 		TableName: 'Blog',
@@ -68,7 +75,6 @@ export const addHashtag = async (content: string) => {
 			':content': content
 		}
 	};
-	console.log('params', params);
 	let hashtagId: string = '';
 	try {
 		const getResult = await dynamoDB.query(params).promise();
@@ -108,23 +114,4 @@ export const createBlogHashtag = async (blogId: string, hashtagId: string) => {
 		}
 	};
 	await dynamoDB.put(params).promise();
-};
-
-const uploadImage = async (image: string) => {
-	const params = {
-		Bucket: bucketName,
-		Key: image,
-		Body: image,
-		ACL: 'public-read'
-	};
-	await s3.upload(params).promise();
-};
-
-const getImage = async (image: string) => {
-	const params = {
-		Bucket: bucketName,
-		Key: image
-	};
-	const res = await s3.getObject(params).promise();
-	return res.Body;
 };
