@@ -16,7 +16,8 @@ export const handler: HandlerFn = async (event, context, callback) => {
 			lastName: user.lastName,
 			email: user.email,
 			phone: user.phone,
-			role: user.role
+			role: user.role,
+			avatar: user.avatar
 		};
 		callback(null, {
 			statusCode: 200,

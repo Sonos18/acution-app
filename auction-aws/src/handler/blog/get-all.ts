@@ -28,7 +28,7 @@ export const handler: HandlerFn = async (event, context, callback) => {
 		const likes = await countLikesForBlogs(blogs.items as Blog[]);
 		const users = await getUsersForBlogs(blogs.items as Blog[]);
 		const result = responsesGetBlogs(blogs, likes, event, users);
-		callback(null, { body: JSON.stringify(result) });
+		callback(null, { statusCode: 200, body: JSON.stringify(result) });
 	} catch (error) {
 		const e = error as Error;
 		customErrorOutput(e, callback);
@@ -46,7 +46,8 @@ export const getBlogs = async (
 		FilterExpression: 'deleted <> :deleted',
 		ExpressionAttributeValues: {
 			':deleted': true
-		}
+		},
+		ScanIndexForward: false
 	};
 	// If it's not the first page, set ExclusiveStartKey
 	if (page > 1) {
@@ -98,12 +99,14 @@ const responsesGetBlogs = (
 				user: {
 					userId: item.userId,
 					firstName: user?.firstName ?? '',
-					lastName: user?.lastName ?? ''
+					lastName: user?.lastName ?? '',
+					avatar:user?.avatar ?? ''
 				},
 				title: item.title,
 				content: item.content,
 				hashtags: item.hashtags,
 				createdAt: item.createdAt,
+				image: item.image,
 				updatedAt: item.updatedAt,
 				likes: likesForBlog?.length || 0,
 				isLiked: isLiked ? true : false

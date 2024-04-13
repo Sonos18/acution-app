@@ -91,7 +91,7 @@ export const SignInResSchema = z
       lastName: z.string(),
       phone: z.string(),
       role: z.string(),
-      password: z.string(),
+      avatar: z.string(),
     }),
   })
   .strict();

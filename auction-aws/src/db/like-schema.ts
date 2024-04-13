@@ -1,6 +1,6 @@
 import { attribute, hashKey, rangeKey, table } from '@aws/dynamodb-data-mapper-annotations';
 
-import { ISOdateType } from './date-dynamo';
+import { dateMarshall, dateUnmarshall } from './date-dynamo';
 
 @table('Like')
 export class Like {
@@ -13,9 +13,9 @@ export class Like {
 	@attribute()
 	likeId?: string;
 
-	@attribute({ ...ISOdateType, defaultProvider: () => new Date() })
-	created_at?: Date;
+	@attribute({ marshall: dateMarshall, unmarshall: dateUnmarshall })
+	created_at?: string;
 
-	@attribute({ ...ISOdateType, defaultProvider: () => new Date() })
-	updated_at?: Date;
+	@attribute({ marshall: dateMarshall, unmarshall: dateUnmarshall })
+	updated_at?: string;
 }

@@ -31,7 +31,7 @@ export const handler: HandlerFn = async (event, context, callback) => {
 			}
 		}
 		console.log('hashtags added');
-		const blog = await createBlog(blogData, decoded.id);
+		const blog = await createBlog(blogData, decoded.id, hashtags);
 		callback(null, { body: JSON.stringify(blog) });
 	} catch (error) {
 		const e = error as Error;
@@ -46,7 +46,11 @@ export const createBlogSchema: ObjectSchema<CreateBlogInput> = object({
 	keyImage: string().required()
 });
 
-export const createBlog = async (blogData: CreateBlogInput, userId: string) => {
+export const createBlog = async (
+	blogData: CreateBlogInput,
+	userId: string,
+	hashtags?: string[]
+) => {
 	const urlImage = await GetImgUrl(blogData.keyImage);
 	console.log('urlImage', urlImage);
 	const blog: Blog = {
@@ -55,8 +59,9 @@ export const createBlog = async (blogData: CreateBlogInput, userId: string) => {
 		content: blogData.content,
 		userId,
 		image: urlImage,
-		created_at: new Date(),
-		updated_at: new Date()
+		created_at: new Date().toDateString(),
+		updated_at: new Date().toDateString(),
+		hashtags
 	};
 	const params: DynamoDB.DocumentClient.PutItemInput = {
 		TableName: 'Blog',

@@ -1,6 +1,7 @@
 import { S3 } from 'aws-sdk';
+import { publicDecrypt } from 'crypto';
 import { v4 } from 'uuid';
-import { ObjectSchema, object, string } from 'yup';
+import { ObjectSchema, number, object, string } from 'yup';
 
 import { HandlerFn } from '~/utils/createHandler';
 import { ContentTypeInput } from '~/utils/types/s3-type';
@@ -12,7 +13,12 @@ export const handler: HandlerFn = async (event, context, callback) => {
 		const s3 = new S3();
 		const bucketName = process.env.BUCKET_NAME ?? '';
 		const key = v4();
-		const params = { Bucket: bucketName, Key: key, Expires: 5 * 60, ContentType: type };
+		const params = {
+			Bucket: bucketName,
+			Key: key,
+			Expires: 5 * 60,
+			ContentType: type
+		};
 		const url = s3.getSignedUrl('putObject', params);
 		callback(null, {
 			statusCode: 200,

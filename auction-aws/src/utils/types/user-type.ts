@@ -24,8 +24,9 @@ export interface CreateUserOutput {
 	email: string;
 	phone: string;
 	user_id: string;
-	created_at: Date;
-	updated_at: Date;
+	created_at: string;
+	updated_at: string;
+	avatar: string;
 }
 
 export interface SigninInput {

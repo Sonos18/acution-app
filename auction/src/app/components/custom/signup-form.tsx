@@ -14,10 +14,13 @@ import {
   SignUpSchemaType,
 } from "@/schemaValidations/auth.schema";
 import authApiRequest from "@/apiRequests/auth";
+import { useToast } from "@/components/ui/use-toast";
+import { useRouter } from "next/navigation";
 
 const SignupForm = () => {
   const [isLoading, setIsLoading] = useState(false);
-  // const toast=useToast();
+  const { toast } = useToast();
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -39,6 +42,12 @@ const SignupForm = () => {
       const formData = { ...data, role: "user" };
       const res = await authApiRequest.signUp(formData);
       console.log(res);
+      toast({
+        title: "Account created.",
+        description: "We've created your account for you.",
+        className: "bg-green-500 text-white",
+      });
+      router.push("/signin");
     } catch (error) {
       setIsLoading(false);
       console.log(error);

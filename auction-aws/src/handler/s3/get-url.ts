@@ -5,8 +5,7 @@ export const GetImgUrl = async (key: string) => {
 	const bucketName = process.env.BUCKET_NAME ?? '';
 	const params = {
 		Bucket: bucketName,
-		Key: key,
-		Expires: 60 * 60 // URL expires in 1 hour
+		Key: key
 	};
 
 	return new Promise<string>((resolve, reject) => {

@@ -15,6 +15,7 @@ export interface BlogInput {
 		userId: string;
 		firstName: string;
 		lastName: string;
+		avatar: string;
 	};
 	title: string;
 	content: string;
