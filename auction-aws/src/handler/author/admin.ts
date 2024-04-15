@@ -9,7 +9,10 @@ export const handler: AuthorizationHandlerFn = async (event, callback) => {
 		}
 		const token = event.identitySource[0].replace('Bearer ', '');
 		const keySecret = process.env.KEY_ACCESS_TOKEN ?? '';
-		jwt.verify(token, keySecret);
+		const decoded = jwt.verify(token, keySecret);
+		if (typeof decoded === 'string' || decoded.role !== 'admin') {
+			throw Error();
+		}
 		return generatePolicy({ allow: true });
 	} catch (error) {
 		return callback('Unauthorized');

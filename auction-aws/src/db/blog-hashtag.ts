@@ -10,7 +10,4 @@ export class BlogHashtag {
 
 	@attribute()
 	hashtagId!: string;
-
-	@attribute()
-	deleted?: boolean;
 }

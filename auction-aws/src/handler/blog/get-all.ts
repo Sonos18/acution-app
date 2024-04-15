@@ -15,7 +15,7 @@ import { extractPathParamsFromRequest } from '~/utils/validate-request/validate-
 
 const dynamoDB = new DynamoDB.DocumentClient();
 
-export const handler: HandlerFn = async (event, context, callback) => {
+export const handler: HandlerFn = async (event, callback) => {
 	try {
 		const params = extractPathParamsFromRequest({ event, schema: getBlogsSchema });
 		const { lastKey, page, limit } = paginateBase(
@@ -100,7 +100,7 @@ const responsesGetBlogs = (
 					userId: item.userId,
 					firstName: user?.firstName ?? '',
 					lastName: user?.lastName ?? '',
-					avatar:user?.avatar ?? ''
+					avatar: user?.avatar ?? ''
 				},
 				title: item.title,
 				content: item.content,

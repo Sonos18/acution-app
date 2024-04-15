@@ -13,6 +13,7 @@ import {
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const BlogCard = ({ blog }: { blog: BlogResType }) => {
@@ -22,6 +23,7 @@ const BlogCard = ({ blog }: { blog: BlogResType }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [isSaved, setIsSaved] = useState<boolean>(false);
   const { toast } = useToast();
+  const router = useRouter();
   const handleLike = async () => {
     console.log("like", isLiked);
     try {
@@ -108,7 +110,7 @@ const BlogCard = ({ blog }: { blog: BlogResType }) => {
         </Link>
 
         {user?.userId === blog.user.userId && (
-          <Link href={`/edit-post/${blog.blogId}`}>
+          <Link href={`/blog/${blog.blogId}/edit`}>
             <BorderColor sx={{ color: "white", cursor: "pointer" }} />
           </Link>
         )}
@@ -117,15 +119,15 @@ const BlogCard = ({ blog }: { blog: BlogResType }) => {
       <p className="text-body-normal text-white max-sm:text-small-normal">
         {blog.content}
       </p>
-
-      <Image
-        src={blog.image}
-        alt="post photo"
-        width={200}
-        height={150}
-        className="rounded-lg w-full"
-      />
-
+      <Link href={`/blog/${blog.blogId}`}>
+        <Image
+          src={blog.image}
+          alt="post photo"
+          width={200}
+          height={150}
+          className="rounded-lg w-full"
+        />
+      </Link>
       <p className="text-base-semibold text-purple-400 max-sm:text-small-normal">
         {blog.hashtags &&
           blog.hashtags.length > 0 &&

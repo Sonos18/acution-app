@@ -14,14 +14,13 @@ import { GetImgUrl } from '../s3/get-url';
 
 const dynamoDB = new DynamoDB.DocumentClient();
 const keyAccess = process.env.KEY_ACCESS_TOKEN ?? '';
-export const handler: HandlerFn = async (event, context, callback) => {
+export const handler: HandlerFn = async (event, callback) => {
 	try {
 		if (event.headers?.authorization === undefined) {
 			throw customError('Authorization header is missing', 401);
 		}
 		const token = event.headers.authorization.replace('Bearer ', '');
 		const decoded = jwt.verify(token, keyAccess) as jwt.JwtPayload;
-		console.log('decoded', decoded);
 		const blogData = extractBodyDataFromRequest({ event, schema: createBlogSchema });
 		console.log('blogData', blogData);
 		const { hashtags } = blogData;
@@ -30,7 +29,6 @@ export const handler: HandlerFn = async (event, context, callback) => {
 				await addHashtag(hashtag);
 			}
 		}
-		console.log('hashtags added');
 		const blog = await createBlog(blogData, decoded.id, hashtags);
 		callback(null, { body: JSON.stringify(blog) });
 	} catch (error) {

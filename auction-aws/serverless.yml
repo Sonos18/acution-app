@@ -122,6 +122,14 @@ functions:
           method: put
           authorizer:
             name: PrivateRouter
+  GetBlog:
+    handler: src/handler/blog/get-one.handler
+    events:
+      - httpApi:
+          path: /blog/{id}
+          method: get
+          authorizer:
+            name: PrivateRouter
   CreateLike:
     handler: src/handler/like/create.handler
     events:

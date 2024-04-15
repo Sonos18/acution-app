@@ -4,9 +4,7 @@ import blogApiRequest from "@/apiRequests/blog";
 import BlogCard from "@/components/custom/blog/blog-card";
 import Loader from "@/components/loading";
 import { BlogsReponseType, LastKeyType } from "@/schemaValidations/blog.schema";
-import { report } from "process";
 import { useEffect, useState } from "react";
-import { set } from "zod";
 
 export default function Blog() {
   const [lastKey, setLastKey] = useState<LastKeyType | undefined>(undefined);
@@ -18,7 +16,6 @@ export default function Blog() {
       setBlogs(response.payload.data);
       setLastKey(response.payload.lastKey);
       setLoading(false);
-      console.log(response);
     } catch (error) {
       console.error("Error fetching data: ", error);
     }

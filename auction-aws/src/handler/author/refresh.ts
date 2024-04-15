@@ -10,7 +10,7 @@ import { generateAccessToken } from '../user/signin';
 const dynamoDB = new DynamoDB.DocumentClient();
 
 const keyRefresh = process.env.KEY_REFRESH_TOKEN ?? '';
-export const handler: HandlerFn = async (event, context, callback) => {
+export const handler: HandlerFn = async (event, callback) => {
 	try {
 		if (event.headers?.authorization === undefined) {
 			throw new Error('Authorization header is missing');
