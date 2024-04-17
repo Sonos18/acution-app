@@ -31,7 +31,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 
 export const FormBlog = ({ blog }: { blog?: BlogResType }) => {
@@ -42,31 +42,37 @@ export const FormBlog = ({ blog }: { blog?: BlogResType }) => {
   const [loading, setLoading] = useState(false);
   const { toast }: { toast: any } = useToast();
   const router = useRouter();
-  console.log("blog", blog);
-
   const form = useForm<BlogInputType>({
     resolver: zodResolver(BlogInput),
     defaultValues: {
-      title: blog?.title || "",
-      content: blog?.content || "",
-      keyImage: blog?.image || "",
-      hashtags: blog?.hashtags || [],
+      title: "",
+      content: "",
+      keyImage: "",
+      hashtags: [],
     },
   });
-  const image = form.watch("keyImage");
-  const onSubmit = async (data: BlogInputType) => {
-    try {
-      setLoading(true);
-      if (!file) {
-        return;
-      }
-      console.log("hashtags", data.hashtags);
+  useEffect(() => {
+    if (blog) {
+      form.reset({
+        title: blog.title,
+        content: blog.content,
+        keyImage: blog.image,
+        hashtags: blog.hashtags,
+      });
+    }
+  }, [blog]);
 
+  const image = form.watch("keyImage");
+
+  const handleImageUpload = async (file: File | null) => {
+    if (!file) {
+      return;
+    }
+    try {
       const preSignedUrl = await blogApiRequest.getSignedUrl({
         type: file.type,
         size: file.size,
       });
-
       if (!preSignedUrl || !preSignedUrl.payload) {
         console.error("Failed to get pre-signed URL");
         return;
@@ -75,9 +81,37 @@ export const FormBlog = ({ blog }: { blog?: BlogResType }) => {
         method: "PUT",
         body: file,
       });
-      console.log("response", response);
-      data.keyImage = preSignedUrl.payload.key;
-      const res = await blogApiRequest.createBlog(data);
+      return preSignedUrl.payload.key;
+    } catch (error) {
+      console.error("Error uploading image", error);
+    }
+  };
+  const handleCreateBlog = async (data: BlogInputType) => {
+    const keyImage = await handleImageUpload(file);
+    if (!keyImage) {
+      return;
+    }
+    data.keyImage = keyImage;
+    await blogApiRequest.createBlog(data);
+  };
+  const handleUpdateBlog = async (data: BlogInputType) => {
+    if (file) {
+      const keyImage = await handleImageUpload(file);
+      if (!keyImage) {
+        return;
+      }
+      data.keyImage = keyImage;
+    }
+    await blogApiRequest.updateBlog(blog?.blogId ?? "", data);
+  };
+  const onSubmit = async (data: BlogInputType) => {
+    try {
+      setLoading(true);
+      if (blog) {
+        await handleUpdateBlog(data);
+      } else {
+        await handleCreateBlog(data);
+      }
       toast({
         title: "Success",
         description: "Blog created successfully",
@@ -109,8 +143,12 @@ export const FormBlog = ({ blog }: { blog?: BlogResType }) => {
   return (
     <Card className="w-1/3 mx-auto">
       <CardHeader>
-        <CardTitle>Create Blog</CardTitle>
-        <CardDescription>Deploy your new blog in one-click.</CardDescription>
+        <CardTitle className="mx-auto">
+          {blog ? "Update Blog" : "Create Blogs"}
+        </CardTitle>
+        <CardDescription className="mx-auto">
+          Deploy your new blog in one-click.
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -227,7 +265,7 @@ export const FormBlog = ({ blog }: { blog?: BlogResType }) => {
                 className={`bg-red-400 ${loading ? "opacity-70" : ""}`}
                 variant="destructive"
                 onClick={() => {
-                  router.back;
+                  router.push("/blog");
                 }}
               >
                 Cancel
@@ -238,8 +276,10 @@ export const FormBlog = ({ blog }: { blog?: BlogResType }) => {
               >
                 {loading ? (
                   <Loader2 className="mx-auto h-4 w-4 animate-spin" />
+                ) : blog ? (
+                  "Update"
                 ) : (
-                  "Deploy"
+                  "Create"
                 )}
               </Button>
             </div>

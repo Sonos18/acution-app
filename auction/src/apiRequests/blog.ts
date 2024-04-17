@@ -7,7 +7,8 @@ const blogApiRequest = {
   createBlog: (body: any) => http.post("/blog", body),
   getSignedUrl: (body: { type: string; size: number }) =>
     http.post<GetSignedUrlResType>("/file", body),
-  getBlog: (id: string) => http.get<BlogResType>(`/blog/${id}`),
+  getBlog: (id: string) => http.get<BlogResType>(`/blog/?id=${id}`),
+  updateBlog: (id: string, body: any) => http.put(`/blog/?id=${id}`, body),
 };
 
 export default blogApiRequest;

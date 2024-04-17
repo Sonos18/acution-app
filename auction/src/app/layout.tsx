@@ -52,7 +52,7 @@ export default async function RootLayout({
             inititalaccessToken={accessToken?.value}
             user={user}
           >
-            {/* <Nav user={user} /> */}
+            {user !== null ? <Nav user={user} /> : <></>}
             {children}
             <Toaster />
           </AppProvider>

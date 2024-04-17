@@ -10,9 +10,6 @@ import { useEffect, useState } from "react";
 export default function EditBlog() {
   const [blog, setBlog] = useState<BlogResType>();
   const { id } = useParams<{ id: string }>();
-  useEffect(() => {
-    loadBlog();
-  }, []);
   const loadBlog = async () => {
     try {
       const res = await blogApiRequest.getBlog(id);
@@ -21,6 +18,9 @@ export default function EditBlog() {
       console.log("Error fetching data: ", error);
     }
   };
+  useEffect(() => {
+    loadBlog();
+  }, []);
   return (
     <>
       <h1>Edit</h1>

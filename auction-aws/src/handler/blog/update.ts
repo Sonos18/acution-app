@@ -31,11 +31,13 @@ const updateBlog = async (userId: string, blogId: string, data: UpdateBlogInput)
 			blogId,
 			userId
 		},
-		UpdateExpression: 'SET title = :title, content = :content, hashtags = :hashtags',
+		UpdateExpression:
+			'SET title = :title, content = :content, hashtags = :hashtags, image = :image',
 		ExpressionAttributeValues: {
 			':title': data.title,
 			':content': data.content,
-			':hashtags': data.hashtags
+			':hashtags': data.hashtags,
+			':image': data.image
 		},
 		ReturnValues: 'ALL_NEW'
 	};
@@ -51,5 +53,6 @@ const updateBlog = async (userId: string, blogId: string, data: UpdateBlogInput)
 const updateBlogSchema: ObjectSchema<UpdateBlogInput> = object({
 	title: string().required(),
 	content: string().required(),
-	hashtags: array().of(string().defined()).required()
+	hashtags: array().of(string().defined()).required(),
+	image: string().required()
 });

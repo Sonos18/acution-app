@@ -17,6 +17,8 @@ import { Input } from "@/components/ui/input";
 import { IoSearchSharp } from "react-icons/io5";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { UserResType } from "@/schemaValidations/user.schema";
+import { Setting } from "@/components/custom/setting";
+import { Link } from "lucide-react";
 
 export function Nav({ user }: { user: UserResType | null }) {
   console.log(user);
@@ -56,16 +58,7 @@ export function Nav({ user }: { user: UserResType | null }) {
             />
           </div>
         </div>
-        {user ? (
-          <div className="col-span-1 mx-auto">
-            <Avatar className="" onClick={() => router.push("/profile")}>
-              <AvatarImage src="https://github.com/shadcn.png" />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
-          </div>
-        ) : (
-          <div>Signin</div>
-        )}
+        {user ? <Setting avatar={user.avatar} /> : <div>Signin</div>}
       </div>
       <FloatingNav navItems={items} handleItemClick={handleItemClick} />
     </>
@@ -91,8 +84,13 @@ function Navbar({
             <HoveredLink href="/branding">Branding</HoveredLink>
           </div>
         </MenuItem>
+        <MenuItem
+          navigation="/blog"
+          setActive={setActive}
+          active={active}
+          item={items[4].name}
+        />
         <MenuItem setActive={setActive} active={active} item={items[3].name} />
-        <MenuItem setActive={setActive} active={active} item={items[4].name} />
         <MenuItem setActive={setActive} active={active} item={items[1].name}>
           <div className="  text-sm grid grid-cols-2 gap-10 p-4">
             <ProductItem

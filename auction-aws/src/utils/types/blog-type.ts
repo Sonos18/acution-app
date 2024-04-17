@@ -44,4 +44,5 @@ export interface UpdateBlogInput {
 	title: string;
 	content: string;
 	hashtags: string[];
+	image: string;
 }

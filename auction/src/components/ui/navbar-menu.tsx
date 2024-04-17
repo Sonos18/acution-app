@@ -4,6 +4,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const transition = {
   type: "spring",
@@ -15,19 +16,28 @@ const transition = {
 };
 
 export const MenuItem = ({
+  navigation,
   setActive,
   active,
   item,
   children,
 }: {
+  navigation?: string;
   setActive: (item: string) => void;
   active: string | null;
   item: string;
   children?: React.ReactNode;
 }) => {
+  const router = useRouter();
+  const navigate = () => {
+    if (navigation) router.push(navigation);
+  };
   return (
-
-    <div onMouseEnter={() => setActive(item)} className="relative ">
+    <div
+      onClick={navigate}
+      onMouseEnter={() => setActive(item)}
+      className="relative "
+    >
       <motion.p
         transition={{ duration: 0.3 }}
         className="cursor-pointer text-black hover:opacity-[0.9] dark:text-white"
@@ -43,7 +53,7 @@ export const MenuItem = ({
           {active === item && (
             <>
               <span className="absolute inset-x-0 w-full mx-auto -bottom-px bg-gradient-to-r from-transparent via-blue-500 to-transparent  h-px" />
-              {children &&
+              {children && (
                 <div className="absolute top-[calc(100%_+_1.7rem-4px)] left-1/2 transform -translate-x-1/2">
                   <motion.div
                     transition={transition}
@@ -58,7 +68,7 @@ export const MenuItem = ({
                     </motion.div>
                   </motion.div>
                 </div>
-              }
+              )}
             </>
           )}
         </motion.div>

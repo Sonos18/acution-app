@@ -8,6 +8,7 @@ export const UserRes = z
     email: z.string(),
     phone: z.string(),
     role: z.string(),
+    avatar: z.string(),
   })
   .strict();
 
