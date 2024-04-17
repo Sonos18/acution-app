@@ -15,7 +15,7 @@ import { extractPathParamsFromRequest } from '~/utils/validate-request/validate-
 
 const dynamoDB = new DynamoDB.DocumentClient();
 
-export const handler: HandlerFn = async (event, callback) => {
+export const handler: HandlerFn = async (event, context, callback) => {
 	try {
 		const params = extractPathParamsFromRequest({ event, schema: getBlogsSchema });
 		const { lastKey, page, limit } = paginateBase(
@@ -125,9 +125,7 @@ const responsesGetBlogs = (
 };
 
 export const countLikesForBlogs = async (blogs: Blog[]) => {
-	console.log('blogs', blogs);
 	const blogIds = [...new Set(blogs.map((blog: Blog) => blog.blogId))];
-	console.log('blogIds', blogIds);
 	const params: DynamoDB.DocumentClient.BatchGetItemInput = {
 		RequestItems: {
 			Like: {
@@ -137,7 +135,6 @@ export const countLikesForBlogs = async (blogs: Blog[]) => {
 			}
 		}
 	};
-	console.log('params', params);
 	try {
 		const result = await dynamoDB.batchGet(params).promise();
 		console.log('Like', result.Responses?.Like);

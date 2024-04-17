@@ -22,7 +22,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
-import { BlogInput, BlogInputType } from "@/schemaValidations/blog.schema";
+import {
+  BlogInput,
+  BlogInputType,
+  BlogResType,
+} from "@/schemaValidations/blog.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
@@ -30,7 +34,7 @@ import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 
-export const FormBlog = () => {
+export const FormBlog = ({ blog }: { blog?: BlogResType }) => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [errorFile, setErrorFile] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
@@ -38,14 +42,15 @@ export const FormBlog = () => {
   const [loading, setLoading] = useState(false);
   const { toast }: { toast: any } = useToast();
   const router = useRouter();
+  console.log("blog", blog);
 
   const form = useForm<BlogInputType>({
     resolver: zodResolver(BlogInput),
     defaultValues: {
-      title: "",
-      content: "",
-      keyImage: "",
-      hashtags: [],
+      title: blog?.title || "",
+      content: blog?.content || "",
+      keyImage: blog?.image || "",
+      hashtags: blog?.hashtags || [],
     },
   });
   const image = form.watch("keyImage");

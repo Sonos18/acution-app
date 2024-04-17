@@ -14,7 +14,7 @@ import { GetImgUrl } from '../s3/get-url';
 
 const dynamoDB = new DynamoDB.DocumentClient();
 const keyAccess = process.env.KEY_ACCESS_TOKEN ?? '';
-export const handler: HandlerFn = async (event, callback) => {
+export const handler: HandlerFn = async (event, context, callback) => {
 	try {
 		if (event.headers?.authorization === undefined) {
 			throw customError('Authorization header is missing', 401);

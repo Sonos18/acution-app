@@ -8,7 +8,7 @@ import { HandlerFn, customErrorOutput } from '~/utils/createHandler';
 import { createSchema } from '~/utils/query-dynamo.ts/create';
 import { extractBodyDataFromRequest } from '~/utils/validate-request/validate-body';
 
-export const handler: HandlerFn = async (event, callback) => {
+export const handler: HandlerFn = async (event, context, callback) => {
 	try {
 		const { nameCategory } = extractBodyDataFromRequest({ event, schema: createCategorySchema });
 		const category = await createCategory(nameCategory);

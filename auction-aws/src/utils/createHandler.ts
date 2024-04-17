@@ -7,7 +7,11 @@ import {
 	Context
 } from 'aws-lambda';
 
-export type HandlerFn = (event: APIGatewayEvent, callback: APIGatewayProxyCallbackV2) => void;
+export type HandlerFn = (
+	event: APIGatewayEvent,
+	context: Context,
+	callback: APIGatewayProxyCallbackV2
+) => void;
 export type CreateHandlerCallback = () => Promise<Record<string, unknown> | void>;
 
 export const createHandler =

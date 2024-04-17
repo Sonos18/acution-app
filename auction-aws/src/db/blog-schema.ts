@@ -8,7 +8,7 @@ export class Blog {
 	blogId!: string;
 
 	@attribute()
-	userId?: string;
+	userId!: string;
 
 	@attribute()
 	title?: string;

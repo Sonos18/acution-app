@@ -12,7 +12,7 @@ import { extractPathParamsFromRequest } from '~/utils/validate-request/validate-
 
 const dynamoDB = new DynamoDB.DocumentClient();
 
-export const handler: HandlerFn = async (event, callback) => {
+export const handler: HandlerFn = async (event, context, callback) => {
 	try {
 		const { id } = decodedTokenFromHeader(event);
 		const params = extractPathParamsFromRequest({ event, schema: deleteOrUpdateBlogSchema });

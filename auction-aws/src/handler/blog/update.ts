@@ -11,7 +11,7 @@ import { checkBlogOwner, deleteOrUpdateBlogSchema } from './delete';
 
 const dynamoDB = new DynamoDB.DocumentClient();
 
-export const handler: HandlerFn = async (event, callback) => {
+export const handler: HandlerFn = async (event, context, callback) => {
 	try {
 		const { id } = decodedTokenFromHeader(event);
 		const blog = extractPathParamsFromRequest({ event, schema: deleteOrUpdateBlogSchema });

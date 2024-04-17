@@ -8,7 +8,7 @@ import { createSchema } from '~/utils/query-dynamo.ts/create';
 import { CreateProductInput } from '~/utils/types/product-type';
 import { extractBodyDataFromRequest } from '~/utils/validate-request/validate-body';
 
-export const handler: HandlerFn = async (event, callback) => {
+export const handler: HandlerFn = async (event, context, callback) => {
 	try {
 		const productData = extractBodyDataFromRequest({ event, schema: createProductSchema });
 		const product = await createProduct(productData);

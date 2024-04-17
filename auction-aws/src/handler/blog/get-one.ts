@@ -1,38 +1,37 @@
+import { DynamoDB } from 'aws-sdk';
+import { StatusCodes } from 'http-status-codes';
 import { ObjectSchema, object, string } from 'yup';
 
 import { Blog } from '~/db/blog-schema';
-import { Like } from '~/db/like-schema';
 import { User } from '~/db/user-schema';
 
-import { HandlerFn, customErrorOutput } from '~/utils/createHandler';
-import { getMany, getOne } from '~/utils/query-dynamo.ts/get';
+import { HandlerFn, customError, customErrorOutput } from '~/utils/createHandler';
 import { decodedTokenFromHeader } from '~/utils/validate-request/validate-header';
 import { extractPathParamsFromRequest } from '~/utils/validate-request/validate-params';
 
-export const handler: HandlerFn = async (event, callback) => {
+import { getBlogById } from '~/service/blog';
+import { countLikesForBlog } from '~/service/like';
+import { getUserById } from '~/service/user';
+
+const dynamoDB = new DynamoDB.DocumentClient();
+export const handler: HandlerFn = async (event, context, callback) => {
 	try {
 		const { id } = extractPathParamsFromRequest({ event, schema: getOneBlogSchema });
+		console.log('id', id);
+
 		const userId = decodedTokenFromHeader(event);
-		const { blog, user } = await getBlog(id);
-		const likes = await countLikesForBlog(id);
-		const res = treeShakingBlog(blog, user, likes, userId.id);
+		console.log('userId', userId);
+
+		const { blog, user, likes, isLiked } = await getBlog(id);
+		const res = treeShakingBlog(blog, user, likes, isLiked);
 		callback(null, { statusCode: 200, body: JSON.stringify(res) });
 	} catch (error) {
 		const e = error as Error;
 		customErrorOutput(e, callback);
 	}
 };
-export const countLikesForBlog = async (blogId: string) => {
-	const condition = {
-		KeyConditionExpression: 'blogId = :blogId',
-		ExpressionAttributeValues: {
-			':blogId': blogId
-		}
-	};
-	const likes = (await getMany('like', condition)) as Like[];
-	return likes;
-};
-const treeShakingBlog = (blog: Blog, user: User, likes: Like[], userId: string) => {
+
+const treeShakingBlog = (blog: Blog, user: User, likes: number, isLiked: boolean) => {
 	return {
 		blogId: blog.blogId,
 		title: blog.title,
@@ -47,27 +46,20 @@ const treeShakingBlog = (blog: Blog, user: User, likes: Like[], userId: string) 
 			lastName: user.lastName,
 			avatar: user.avatar
 		},
-		likes: likes.length,
-		isLiked: likes.some((like) => like.userId === userId)
+		likes: likes,
+		isLiked: isLiked
 	};
 };
 
 const getBlog = async (id: string) => {
-	const condition = {
-		KeyConditionExpression: 'blogId = :blogId',
-		ExpressionAttributeValues: {
-			':blogId': id
-		}
-	};
-	const blog = (await getOne('blog', condition)) as Blog;
-	const conditionUser = {
-		KeyConditionExpression: 'userId = :userId',
-		ExpressionAttributeValues: {
-			userId: blog.userId
-		}
-	};
-	const user = (await getOne('user', conditionUser)) as User;
-	return { user, blog };
+	const blog = await getBlogById(id);
+	console.log('blog', blog);
+
+	const user = await getUserById(blog.userId);
+	console.log('user', user);
+	const { likes, isLiked } = await countLikesForBlog(id, blog.userId);
+	console.log('likes', likes);
+	return { blog, user, likes, isLiked };
 };
 
 const getOneBlogSchema: ObjectSchema<{ id: string }> = object({

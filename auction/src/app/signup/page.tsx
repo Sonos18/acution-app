@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import SignupForm from "../components/custom/signup-form";
 
