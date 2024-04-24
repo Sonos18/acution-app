@@ -26,6 +26,7 @@ import {
   BlogInput,
   BlogInputType,
   BlogResType,
+  UpdateBlogInput,
 } from "@/schemaValidations/blog.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
@@ -69,19 +70,21 @@ export const FormBlog = ({ blog }: { blog?: BlogResType }) => {
       return;
     }
     try {
+      const types = [file.type];
       const preSignedUrl = await blogApiRequest.getSignedUrl({
-        type: file.type,
-        size: file.size,
+        types,
       });
       if (!preSignedUrl || !preSignedUrl.payload) {
         console.error("Failed to get pre-signed URL");
         return;
       }
-      const response = await fetch(preSignedUrl.payload.url, {
+      await fetch(preSignedUrl.payload.urls[0], {
         method: "PUT",
         body: file,
       });
-      return preSignedUrl.payload.key;
+      console.log("Uploaded image");
+
+      return preSignedUrl.payload.keys[0];
     } catch (error) {
       console.error("Error uploading image", error);
     }
@@ -92,17 +95,21 @@ export const FormBlog = ({ blog }: { blog?: BlogResType }) => {
       return;
     }
     data.keyImage = keyImage;
+    console.log("data", data);
+
     await blogApiRequest.createBlog(data);
   };
   const handleUpdateBlog = async (data: BlogInputType) => {
+    console.log("data", data);
+    let updatedData = { ...data, keyImage: [data.keyImage] };
     if (file) {
       const keyImage = await handleImageUpload(file);
       if (!keyImage) {
         return;
       }
-      data.keyImage = keyImage;
+      updatedData.keyImage = [keyImage];
     }
-    await blogApiRequest.updateBlog(blog?.blogId ?? "", data);
+    await blogApiRequest.updateBlog(blog?.blogId ?? "", updatedData);
   };
   const onSubmit = async (data: BlogInputType) => {
     try {

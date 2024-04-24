@@ -1,5 +1,7 @@
 import { attribute, hashKey, rangeKey, table } from '@aws/dynamodb-data-mapper-annotations';
 
+import { dateMarshall, dateUnmarshall } from './date-dynamo';
+
 @table('Product')
 export class Product {
 	@hashKey()
@@ -19,4 +21,10 @@ export class Product {
 
 	@attribute()
 	origin!: string;
+
+	@attribute({ marshall: dateMarshall, unmarshall: dateUnmarshall })
+	createdAt?: string;
+
+	@attribute({ marshall: dateMarshall, unmarshall: dateUnmarshall })
+	updatedAt?: string;
 }

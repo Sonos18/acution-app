@@ -1,24 +1,26 @@
 import { customError } from './createHandler';
+import { lastKeyAuctions } from './types/auction-type';
 import { lastKeyBlogs } from './types/blog-type';
 
-export const paginateBase = (
-	page?: number,
-	limit?: number,
-	keyBlogId?: string,
-	keyUserId?: string
-) => {
-	const pageNum = page ?? 1;
+export const paginateBase = (limit?: number, key?: string) => {
 	const limitNum = limit ?? 20;
-	if (pageNum > 1 && (!keyBlogId || !keyUserId)) {
-		throw customError('LastEvaluatedKey is required', 400);
-	}
 	let lastKey: lastKeyBlogs | undefined;
-	if (keyBlogId && keyUserId) {
-		lastKey = { blogId: keyBlogId, userId: keyUserId };
+	if (key) {
+		lastKey = { blogId: key };
 	}
 	return {
 		lastKey: lastKey,
-		page: pageNum,
 		limit: limitNum
+	};
+};
+export const paginateAuction = (limit?: number, auctionId?: string, status?: string) => {
+	const limitNum = limit ?? 20;
+	let lastKey: lastKeyAuctions | undefined;
+	if (auctionId && status) {
+		lastKey = { auctionId: auctionId, status: status };
+	}
+	return {
+		limit: limitNum,
+		lastKey: lastKey
 	};
 };

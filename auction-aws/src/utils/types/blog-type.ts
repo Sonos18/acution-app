@@ -2,11 +2,10 @@ export interface CreateBlogInput {
 	title: string;
 	content: string;
 	hashtags?: string[];
-	keyImage: string;
+	keyImage: string[];
 }
 export interface lastKeyBlogs {
 	blogId: string;
-	userId: string;
 }
 
 export interface BlogInput {
@@ -28,14 +27,12 @@ export interface BlogInput {
 
 export interface GetBlogsOutput {
 	data: BlogInput[];
-	lastKey: lastKeyBlogs;
+	lastKey?: lastKeyBlogs;
 }
 export interface GetBlogsInput {
-	page?: number;
 	limit?: number;
 	userId?: string;
 	keyBlogId?: string;
-	keyUserId?: string;
 }
 export interface DeleteBlogInput {
 	id: string;
@@ -44,5 +41,5 @@ export interface UpdateBlogInput {
 	title: string;
 	content: string;
 	hashtags: string[];
-	image: string;
+	keyImage: string[];
 }

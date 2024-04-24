@@ -17,12 +17,8 @@ const dynamoDB = new DynamoDB.DocumentClient();
 export const handler: HandlerFn = async (event, context, callback) => {
 	try {
 		const { id } = extractPathParamsFromRequest({ event, schema: getOneBlogSchema });
-		console.log('id', id);
-
 		const userId = decodedTokenFromHeader(event);
-		console.log('userId', userId);
-
-		const { blog, user, likes, isLiked } = await getBlog(id);
+		const { blog, user, likes, isLiked } = await getBlog(id, userId.id);
 		const res = treeShakingBlog(blog, user, likes, isLiked);
 		callback(null, { statusCode: 200, body: JSON.stringify(res) });
 	} catch (error) {
@@ -36,8 +32,8 @@ const treeShakingBlog = (blog: Blog, user: User, likes: number, isLiked: boolean
 		blogId: blog.blogId,
 		title: blog.title,
 		content: blog.content,
-		createdAt: blog.created_at,
-		updatedAt: blog.updated_at,
+		createdAt: blog.createdAt,
+		updatedAt: blog.updatedAt,
 		hashtags: blog.hashtags,
 		image: blog.image,
 		user: {
@@ -51,14 +47,10 @@ const treeShakingBlog = (blog: Blog, user: User, likes: number, isLiked: boolean
 	};
 };
 
-const getBlog = async (id: string) => {
+const getBlog = async (id: string, userId: string) => {
 	const blog = await getBlogById(id);
-	console.log('blog', blog);
-
 	const user = await getUserById(blog.userId);
-	console.log('user', user);
-	const { likes, isLiked } = await countLikesForBlog(id, blog.userId);
-	console.log('likes', likes);
+	const { likes, isLiked } = await countLikesForBlog(id, userId);
 	return { blog, user, likes, isLiked };
 };
 

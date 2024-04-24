@@ -13,18 +13,15 @@ import { BlogInput, GetBlogsInput, GetBlogsOutput, lastKeyBlogs } from '~/utils/
 import { decodedTokenFromHeader } from '~/utils/validate-request/validate-header';
 import { extractPathParamsFromRequest } from '~/utils/validate-request/validate-params';
 
+import { getBlogs, getBlogsByUserId } from '~/service/blog';
+
 const dynamoDB = new DynamoDB.DocumentClient();
 
 export const handler: HandlerFn = async (event, context, callback) => {
 	try {
 		const params = extractPathParamsFromRequest({ event, schema: getBlogsSchema });
-		const { lastKey, page, limit } = paginateBase(
-			params.page,
-			params.limit,
-			params.keyBlogId,
-			params.keyUserId
-		);
-		const blogs = await getBlogs(page, limit, params.userId, lastKey);
+		const { lastKey, limit } = paginateBase(params.limit, params.keyBlogId);
+		const blogs = await getListBlogs(limit, params.userId, lastKey);
 		const likes = await countLikesForBlogs(blogs.items as Blog[]);
 		const users = await getUsersForBlogs(blogs.items as Blog[]);
 		const result = responsesGetBlogs(blogs, likes, event, users);
@@ -34,51 +31,22 @@ export const handler: HandlerFn = async (event, context, callback) => {
 		customErrorOutput(e, callback);
 	}
 };
-export const getBlogs = async (
-	page: number,
-	limit: number,
-	userId?: string,
-	lastKey?: lastKeyBlogs
-) => {
-	let params: DynamoDB.DocumentClient.QueryInput | DynamoDB.DocumentClient.ScanInput = {
-		TableName: 'Blog',
-		Limit: limit,
-		FilterExpression: 'deleted <> :deleted',
-		ExpressionAttributeValues: {
-			':deleted': true
-		},
-		ScanIndexForward: false
-	};
-	// If it's not the first page, set ExclusiveStartKey
-	if (page > 1) {
-		params.ExclusiveStartKey = lastKey;
-	}
-
-	let result;
+export const getListBlogs = async (limit: number, userId?: string, lastKey?: lastKeyBlogs) => {
 	try {
+		let blogs: {
+			items: Blog[];
+			lastKey: lastKeyBlogs;
+		};
 		if (userId) {
-			params = {
-				...params,
-				IndexName: 'UserIndex',
-				KeyConditionExpression: 'userId = :userId',
-				ExpressionAttributeValues: {
-					...params.ExpressionAttributeValues,
-					':userId': userId
-				}
-			};
-			result = await dynamoDB.query(params as DynamoDB.DocumentClient.QueryInput).promise();
+			blogs = await getBlogsByUserId(userId, limit, lastKey);
 		} else {
-			result = await dynamoDB.scan(params as DynamoDB.DocumentClient.ScanInput).promise();
+			blogs = await getBlogs(limit, lastKey);
 		}
+		return blogs;
 	} catch (error) {
 		const e = error as Error;
 		throw customError(e.message, 500);
 	}
-
-	return {
-		items: result.Items,
-		lastKey: result.LastEvaluatedKey
-	};
 };
 
 const responsesGetBlogs = (
@@ -169,6 +137,5 @@ const getBlogsSchema: ObjectSchema<GetBlogsInput> = object({
 	page: number().optional(),
 	limit: number().optional(),
 	userId: string().optional(),
-	keyBlogId: string().optional(),
-	keyUserId: string().optional()
+	keyBlogId: string().optional()
 });

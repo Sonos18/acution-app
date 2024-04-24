@@ -24,6 +24,8 @@ export default function Blog() {
     loadBlogs();
   }, []);
   const safeBlogs = blogs || [];
+  console.log("Blogs", blogs);
+
   return loading ? (
     <Loader />
   ) : (

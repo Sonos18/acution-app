@@ -5,8 +5,9 @@ import { object, string } from 'yup';
 import { Category } from '~/db/category-schema';
 
 import { HandlerFn, customErrorOutput } from '~/utils/createHandler';
-import { createSchema } from '~/utils/query-dynamo.ts/create';
 import { extractBodyDataFromRequest } from '~/utils/validate-request/validate-body';
+
+import { createCategory } from '~/service/category';
 
 export const handler: HandlerFn = async (event, context, callback) => {
 	try {
@@ -18,15 +19,7 @@ export const handler: HandlerFn = async (event, context, callback) => {
 		customErrorOutput(error, callback);
 	}
 };
-const createCategory = async (nameCategory: string) => {
-	const category = new Category();
-	category.categoryName = nameCategory;
-	category.categoryId = v4();
-	category.createdAt = new Date().toISOString();
-	category.updatedAt = new Date().toISOString();
-	await createSchema('Category', category);
-	return category;
-};
+
 export const createCategorySchema = object({
 	nameCategory: string().required()
 });

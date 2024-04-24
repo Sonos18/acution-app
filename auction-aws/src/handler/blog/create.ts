@@ -22,7 +22,6 @@ export const handler: HandlerFn = async (event, context, callback) => {
 		const token = event.headers.authorization.replace('Bearer ', '');
 		const decoded = jwt.verify(token, keyAccess) as jwt.JwtPayload;
 		const blogData = extractBodyDataFromRequest({ event, schema: createBlogSchema });
-		console.log('blogData', blogData);
 		const { hashtags } = blogData;
 		if (hashtags) {
 			for (const hashtag of hashtags) {
@@ -41,7 +40,7 @@ export const createBlogSchema: ObjectSchema<CreateBlogInput> = object({
 	title: string().required(),
 	content: string().required(),
 	hashtags: array().of(string().defined()).optional(),
-	keyImage: string().required()
+	keyImage: array().of(string().required()).required()
 });
 
 export const createBlog = async (
@@ -56,10 +55,11 @@ export const createBlog = async (
 		title: blogData.title,
 		content: blogData.content,
 		userId,
-		image: urlImage,
-		created_at: new Date().toDateString(),
-		updated_at: new Date().toDateString(),
-		hashtags
+		image: urlImage[0],
+		createdAt: new Date().toDateString(),
+		updatedAt: new Date().toDateString(),
+		hashtags,
+		deleted: 'false'
 	};
 	const params: DynamoDB.DocumentClient.PutItemInput = {
 		TableName: 'Blog',

@@ -17,7 +17,7 @@ export class Auction {
 	startPrice!: number;
 
 	@attribute()
-	currentPrice!: number;
+	currentPrice?: number;
 
 	@attribute()
 	winner?: string;
@@ -38,8 +38,8 @@ export class Auction {
 	deleted?: boolean;
 
 	@attribute({ marshall: dateMarshall, unmarshall: dateUnmarshall })
-	createdAt?: string;
+	createdAt!: string;
 
 	@attribute({ marshall: dateMarshall, unmarshall: dateUnmarshall })
-	updatedAt?: string;
+	updatedAt!: string;
 }

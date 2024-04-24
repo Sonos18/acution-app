@@ -10,11 +10,14 @@ import {
   Favorite,
   FavoriteBorder,
 } from "@mui/icons-material";
+import { Alert } from "@mui/material";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { AlertDialogConfirm } from "../alert-dialog-confirm";
+import blogApiRequest from "@/apiRequests/blog";
 
 const BlogCard = ({ blog }: { blog: BlogResType }) => {
   const { user } = useAppContext();
@@ -24,6 +27,7 @@ const BlogCard = ({ blog }: { blog: BlogResType }) => {
   const [isSaved, setIsSaved] = useState<boolean>(false);
   const { toast } = useToast();
   const router = useRouter();
+
   const handleLike = async () => {
     console.log("like", isLiked);
     try {
@@ -33,10 +37,11 @@ const BlogCard = ({ blog }: { blog: BlogResType }) => {
         const res = await likeApiRequest.like({ blogId: blog.blogId });
         if (res.status === 400)
           throw new Error("You have already liked this blog");
-
         setLikes(likes + 1);
       } else {
-        const res = await likeApiRequest.disLike({ blogId: blog.blogId });
+        console.log("blog", blog.blogId);
+
+        await likeApiRequest.disLike({ blogId: blog.blogId });
         setLikes(likes - 1);
         description = "Disliked a blog";
       }
@@ -60,7 +65,30 @@ const BlogCard = ({ blog }: { blog: BlogResType }) => {
     }
   };
 
-  const handleDelete = async () => {};
+  const handleDelete = async () => {
+    try {
+      setLoading(true);
+      const res = await blogApiRequest.deleteBlog(blog.blogId);
+      console.log(res);
+      if (res.status !== 200) throw new Error(String(res.payload));
+      toast({
+        description: "Deleted a blog",
+        title: "Success",
+        className: "bg-green-500 text-white",
+      });
+      router.refresh();
+    } catch (error) {
+      const e = error as Error;
+      toast({
+        description: e.message,
+        title: "Error",
+        className: "bg-red-500 text-white",
+      });
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
+  };
   const handleSave = async () => {
     try {
       setLoading(true);
@@ -89,7 +117,7 @@ const BlogCard = ({ blog }: { blog: BlogResType }) => {
     }
   };
   return (
-    <div className="mx-auto w-full max-w-xl rounded-lg flex flex-col gap-4 bg-black p-5 max-sm:gap-2">
+    <div className="mx-auto w-full max-w-xl rounded-lg flex flex-col gap-4 bg-gray-400 dark:bg-gray-200 p-5 max-sm:gap-2">
       <div className="flex justify-between">
         <Link href={`/profile/posts`}>
           <div className="flex gap-3 items-center">
@@ -100,19 +128,21 @@ const BlogCard = ({ blog }: { blog: BlogResType }) => {
               height={50}
               className="rounded-full"
             />
-            <div className="flex flex-col gap-1">
-              <p className="text-small-semibold text-white">
+            <div className="flex flex-col gap-1 text-white dark:text-black">
+              <p className="text-small-semibold ">
                 {blog.user.firstName} {blog.user.lastName}
               </p>
-              <p className="text-subtle-medium text-white">@{blog.createdAt}</p>
+              <p className="text-subtle-medium">@{blog.createdAt}</p>
             </div>
           </div>
         </Link>
 
         {user?.userId === blog.user.userId && (
-          <Link href={`/blog/${blog.blogId}/edit`}>
-            <BorderColor sx={{ color: "white", cursor: "pointer" }} />
-          </Link>
+          <div className="text-white dark:text-black">
+            <Link href={`/blog/${blog.blogId}/edit`}>
+              <BorderColor sx={{ cursor: "pointer" }} />
+            </Link>
+          </div>
         )}
       </div>
 
@@ -166,10 +196,13 @@ const BlogCard = ({ blog }: { blog: BlogResType }) => {
         )}
 
         {user?.userId === blog.user.userId && (
-          <Delete
-            sx={{ color: "white", cursor: "pointer" }}
-            onClick={() => handleDelete()}
-          />
+          <AlertDialogConfirm
+            title="Warning"
+            description="Are you sure you want to delete this post"
+            handleLogout={handleDelete}
+          >
+            <Delete sx={{ color: "white", cursor: "pointer" }} />
+          </AlertDialogConfirm>
         )}
       </div>
     </div>

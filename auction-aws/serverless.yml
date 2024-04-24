@@ -18,6 +18,11 @@ provider:
         functionName: AuthPrivate
         identitySource:
           - $request.header.Authorization
+      AdminRouter:
+        type: request
+        functionName: AuthAdmin
+        identitySource:
+          - $request.header.Authorization
 
   iamRoleStatements:
     - Effect: Allow
@@ -30,12 +35,10 @@ provider:
         - 's3:GetObject'
         - 's3:PutObject'
       Resource:
-        # concatenate the following strings
         Fn::Join:
           - ''
           - - 'arn:aws:s3:::'
             - 'my-auction-bucket'
-            # "*" used as a wildcard means "any files"
             - '/*'
     # allow for list files on my-auction-bucket
     - Effect: 'Allow'
@@ -64,6 +67,8 @@ custom:
 functions:
   AuthPrivate:
     handler: src/handler/author/private.handler
+  AuthAdmin:
+    handler: src/handler/author/admin.handler
   RefreshToken:
     handler: src/handler/author/refresh.handler
     events:
@@ -148,13 +153,61 @@ functions:
           authorizer:
             name: PrivateRouter
 
-  UploadFile:
+  GetSignedUrl:
     handler: src/handler/s3/get-signed-url.handler
     events:
       - httpApi:
           path: /file
           method: post
 
+  CreateAuction:
+    handler: src/handler/auction/create.handler
+    events:
+      - httpApi:
+          path: /auction
+          method: post
+          authorizer:
+            name: PrivateRouter
+  UpdateAuction:
+    handler: src/handler/auction/update.handler
+    events:
+      - httpApi:
+          path: /auction/{id}
+          method: put
+          authorizer:
+            name: PrivateRouter
+  GetAuction:
+    handler: src/handler/auction/get-one.handler
+    events:
+      - httpApi:
+          path: /auction/{id}
+          method: get
+          authorizer:
+            name: PrivateRouter
+  GetAllAuction:
+    handler: src/handler/auction/get-all.handler
+    events:
+      - httpApi:
+          path: /auction
+          method: get
+          authorizer:
+            name: PrivateRouter
+  DeleteAuction:
+    handler: src/handler/auction/delete.handler
+    events:
+      - httpApi:
+          path: /auction/{id}
+          method: delete
+          authorizer:
+            name: PrivateRouter
+  CreateCategory:
+    handler: src/handler/category/create.handler
+    events:
+      - httpApi:
+          path: /category
+          method: post
+          authorizer:
+            name: PrivateRouter
 resources:
   - ${file(resources/dynamodb-resources.yml)}
   # test:

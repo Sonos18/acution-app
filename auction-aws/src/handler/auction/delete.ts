@@ -1,15 +1,17 @@
 import { ObjectSchema, object, string } from 'yup';
 
 import { HandlerFn, customErrorOutput } from '~/utils/createHandler';
-import { checkExist } from '~/utils/query-dynamo.ts/get';
-import { DeleteAuctionInput } from '~/utils/types/auction-type';
+import { DeleteOrGetOneAuctionInput } from '~/utils/types/auction-type';
 import { decodedTokenFromHeader } from '~/utils/validate-request/validate-header';
 import { extractPathParamsFromRequest } from '~/utils/validate-request/validate-params';
 
-export const handler: HandlerFn = async (event, callback) => {
+export const handler: HandlerFn = async (event, context, callback) => {
 	try {
 		const { id } = decodedTokenFromHeader(event);
-		const { auctionId } = extractPathParamsFromRequest({ event, schema: deleteAuctionSchema });
+		const { auctionId } = extractPathParamsFromRequest({
+			event,
+			schema: DeleteOrGetOneAuctionInputSchema
+		});
 		await checkAuction(auctionId, id);
 		callback(null, { statusCode: 200, body: JSON.stringify({ message: 'Delete success' }) });
 	} catch (error) {
@@ -25,8 +27,7 @@ const checkAuction = async (auctionId: string, userId: string) => {
 			':auctionId': auctionId
 		}
 	};
-	await checkExist('Auction', params);
 };
-const deleteAuctionSchema: ObjectSchema<DeleteAuctionInput> = object({
+export const DeleteOrGetOneAuctionInputSchema: ObjectSchema<DeleteOrGetOneAuctionInput> = object({
 	auctionId: string().required()
 });

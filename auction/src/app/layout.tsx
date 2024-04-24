@@ -29,10 +29,12 @@ export default async function RootLayout({
   const accessToken = cookieStore.get("accessToken");
   const refreshToken = cookieStore.get("refreshToken");
   let user: UserResType | null = null;
+
   if (accessToken) {
     const data = await userApiRequest.get(accessToken.value);
     user = data.payload;
   }
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -52,7 +54,7 @@ export default async function RootLayout({
             inititalaccessToken={accessToken?.value}
             user={user}
           >
-            {user !== null ? <Nav user={user} /> : <></>}
+            {user && <Nav user={user} />}
             {children}
             <Toaster />
           </AppProvider>

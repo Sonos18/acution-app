@@ -69,3 +69,11 @@ export const BlogRes = z
   .strict();
 
 export type BlogResType = z.infer<typeof BlogRes>;
+
+export interface UpdateBlogInput {
+  title: string;
+  content: string;
+  hashtags: string[];
+  image?: string;
+  keyImage: string[];
+}

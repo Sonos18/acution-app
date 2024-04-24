@@ -2,8 +2,8 @@ import { z } from "zod";
 
 export const GetSignedUrlRes = z
   .object({
-    url: z.string(),
-    key: z.string(),
+    urls: z.array(z.string()),
+    keys: z.array(z.string()),
   })
   .strict();
 

@@ -122,17 +122,15 @@ const request = async <Response>(
       );
     } else {
       console.log("accessToken", accessToken.value);
-
       console.log(data);
     }
   }
+
   if (typeof window !== "undefined") {
-    if (
-      ["auth/login", "auth/register"].some(
-        (item) => item === normalizePath(url)
-      )
-    ) {
+    if (normalizePath(url) === "user/signin") {
       const res = payload as SignInResSchemaType;
+      console.log("true");
+
       accessToken.value = res.access_token;
       accessToken.refresh = res.refresh_token;
     } else if ("auth/logout" === normalizePath(url)) {
@@ -140,6 +138,7 @@ const request = async <Response>(
       accessToken.refresh = "";
     }
   }
+
   return data;
 };
 
@@ -166,10 +165,9 @@ const http = {
   },
   delete<Response>(
     url: string,
-    body: any,
     options?: Omit<CustomOptions, "body"> | undefined
   ) {
-    return request<Response>("DELETE", url, { ...options, body });
+    return request<Response>("DELETE", url, { ...options });
   },
 };
 

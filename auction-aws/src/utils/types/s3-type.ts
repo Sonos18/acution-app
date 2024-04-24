@@ -1,3 +1,3 @@
-export interface ContentTypeInput {
-	type: string;
+export interface GetSignedUrlInput {
+	types: string[];
 }
