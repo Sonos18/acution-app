@@ -14,11 +14,8 @@ export class Bid {
 	auctionId!: string;
 
 	@attribute()
-	price?: string;
+	price?: number;
 
 	@attribute({ marshall: dateMarshall, unmarshall: dateUnmarshall })
-	created_at?: string;
-
-	@attribute({ marshall: dateMarshall, unmarshall: dateUnmarshall })
-	updated_at?: string;
+	createdAt?: string;
 }

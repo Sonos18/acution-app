@@ -200,6 +200,22 @@ functions:
           method: delete
           authorizer:
             name: PrivateRouter
+  BidAuction:
+    handler: src/handler/auction/bid.handler
+    events:
+      - httpApi:
+          path: /auction/bid/{id}
+          method: post
+          authorizer:
+            name: PrivateRouter
+  BuyAuction:
+    handler: src/handler/auction/buy.handler
+    events:
+      - httpApi:
+          path: /auction/buy/{id}
+          method: post
+          authorizer:
+            name: PrivateRouter
   CreateCategory:
     handler: src/handler/category/create.handler
     events:

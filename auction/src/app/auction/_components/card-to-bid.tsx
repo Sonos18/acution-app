@@ -1,16 +1,31 @@
 import React, { useEffect, useState } from "react";
-import { useTheme } from "next-themes";
 import { HiOutlinePlusSm, HiMinusSm } from "react-icons/hi";
-import { BsCartPlus } from "react-icons/bs";
 import { AuctionType } from "@/schemaValidations/auction.schema";
 import Clock from "@/app/components/count-down";
 import { Button } from "@/components/ui/moving-border";
+import auctionApiRequest from "@/apiRequests/auction";
+import Loader from "@/components/loading";
+import GavelIcon from "@mui/icons-material/Gavel";
 
 interface Props {
   auction: AuctionType;
 }
 const CardToBid: React.FC<Props> = ({ auction }) => {
   const [value, setValue] = useState<number>(auction.currentPrice + 1);
+  const [loading, setLoading] = useState<boolean>(false);
+  const bid = async () => {
+    try {
+      setLoading(true);
+      const res = await auctionApiRequest.bidAuction(auction.auctionId, {
+        price: value,
+      });
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="flex flex-col items-center flex-grow sticky top-10 md:top-36 max-w-[350px] mt-8 rtl:mr-auto ltr:ml-auto xl:rtl:ml-2 px-6 py-4 sm:p-4 xl:p-6 border-2 shadow-lg">
       <Clock endTime={new Date(auction.endTime).getTime()} />
@@ -54,7 +69,8 @@ const CardToBid: React.FC<Props> = ({ auction }) => {
         <Button
           containerClassName="w-20 h-10"
           borderRadius="1.75rem"
-          className="bg-rose-200 dark:bg-slate-900 text-black dark:text-white border-rose-300 dark:border-slate-800"
+          className="bg-rose-200 dark:bg-slate-900 text-black dark:text-white border-rose-300 dark:border-slate-800 "
+          disabled={loading}
         >
           Buy Now
         </Button>
@@ -62,8 +78,16 @@ const CardToBid: React.FC<Props> = ({ auction }) => {
           containerClassName="w-20 h-10 "
           borderRadius="1.75rem"
           className="bg-green-200 dark:bg-slate-900 text-black dark:text-white border-green-300 dark:border-slate-800"
+          onClick={bid}
+          disabled={loading}
         >
-          Bid
+          {loading ? (
+            <Loader />
+          ) : (
+            <>
+              Bid <GavelIcon className="hover:text-rose-400 pl-1" />
+            </>
+          )}
         </Button>
       </div>
     </div>

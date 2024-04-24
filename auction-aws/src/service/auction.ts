@@ -2,6 +2,7 @@ import { DynamoDB } from 'aws-sdk';
 import { v4 } from 'uuid';
 
 import { Auction } from '~/db/auction-schema';
+import { Bid } from '~/db/bid-schema';
 import { Category } from '~/db/category-schema';
 import { Product } from '~/db/product-schema';
 import { User } from '~/db/user-schema';
@@ -102,6 +103,9 @@ export const getAuctionById = async (auctionId: string) => {
 		}
 	};
 	const result = await dynamoDB.get(params).promise();
+	if (!result.Item) {
+		throw new Error('Auction not found');
+	}
 	return result.Item as Auction;
 };
 export const treeShakingAuctions = (
@@ -176,5 +180,84 @@ export const treeShakingAuction = (
 		},
 		createdAt: auction.createdAt,
 		updatedAt: auction.updatedAt
+	};
+};
+export const bidAuction = async (auctionId: string, price: number, userId: string) => {
+	const auction = await getAuctionById(auctionId);
+	if (auction.status !== 'open') {
+		throw new Error('Auction is not open');
+	}
+	if (price <= auction.currentPrice) {
+		throw new Error('Price is not valid');
+	}
+	const params: DynamoDB.DocumentClient.UpdateItemInput = {
+		TableName: 'Auction',
+		Key: {
+			auctionId
+		},
+		UpdateExpression: 'SET currentPrice = :price',
+		ExpressionAttributeValues: {
+			':price': price
+		},
+		ReturnValues: 'ALL_NEW'
+	};
+	await dynamoDB.update(params).promise();
+	const item: Bid = {
+		bidId: v4(),
+		auctionId,
+		userId,
+		price,
+		createdAt: new Date().toISOString()
+	};
+	const param: DynamoDB.DocumentClient.PutItemInput = {
+		TableName: 'Bid',
+		Item: item
+	};
+	await dynamoDB.put(param).promise();
+	return item;
+};
+export const updateCurrentPrice = async (auctionId: string, price: number) => {
+	const params: DynamoDB.DocumentClient.UpdateItemInput = {
+		TableName: 'Auction',
+		Key: {
+			auctionId
+		},
+		UpdateExpression: 'SET currentPrice = :price',
+		ExpressionAttributeValues: {
+			':price': price
+		}
+	};
+	await dynamoDB.update(params).promise();
+};
+export const buyAuction = async (auctionId: string, userId: string) => {
+	const params: DynamoDB.DocumentClient.UpdateItemInput = {
+		TableName: 'Auction',
+		Key: {
+			auctionId
+		},
+		UpdateExpression: 'SET #st = :status AND currentPrice = endPrice AND userId = :userId',
+		ExpressionAttributeNames: {
+			'#st': 'status'
+		},
+		ExpressionAttributeValues: {
+			':status': 'closed',
+			':userId': userId
+		}
+	};
+	await dynamoDB.update(params).promise();
+};
+export const CloseAuction = async (auctionId: string) => {
+	const param: DynamoDB.DocumentClient.UpdateItemInput = {
+		TableName: 'Auction',
+		Key: {
+			auctionId
+		},
+		UpdateExpression: 'SET #st = :status',
+		ExpressionAttributeNames: {
+			'#st': 'status'
+		},
+		ExpressionAttributeValues: {
+			':status': 'cancelled'
+		}
 	};
 };

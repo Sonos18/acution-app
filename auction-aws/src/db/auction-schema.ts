@@ -17,7 +17,7 @@ export class Auction {
 	startPrice!: number;
 
 	@attribute()
-	currentPrice?: number;
+	currentPrice!: number;
 
 	@attribute()
 	winner?: string;
