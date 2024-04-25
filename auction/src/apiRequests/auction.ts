@@ -13,6 +13,7 @@ const auctionApiRequest = {
     http.post(`/auction/bid/?id=${id}`, body),
   buyAuction: (id: string, body: { price: number }) =>
     http.post(`/auction/buy/?id=${id}`, body),
+  getMyAuctionsCofirm: () => http.get("/auction/my"),
 };
 
 export default auctionApiRequest;

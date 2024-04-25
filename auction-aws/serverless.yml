@@ -87,6 +87,7 @@ functions:
       - httpApi:
           path: /user/signup
           method: post
+
   SignIn:
     handler: src/handler/user/signin.handler
     events:
@@ -195,6 +196,14 @@ functions:
     events:
       - httpApi:
           path: /auction
+          method: get
+          authorizer:
+            name: PrivateRouter
+  GetAllAuctionClosing:
+    handler: src/handler/auction/get-all-closing.handler
+    events:
+      - httpApi:
+          path: /auction/closing
           method: get
           authorizer:
             name: PrivateRouter

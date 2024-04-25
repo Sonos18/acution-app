@@ -360,3 +360,19 @@ export const confirmStatusAuction = async (auctionId: string, userId: string) =>
 	};
 	await dynamoDB.update(params).promise();
 };
+export const getAllClosingAuctions = async (userId: string) => {
+	const params: DynamoDB.DocumentClient.QueryInput = {
+		TableName: 'Auction',
+		IndexName: 'UserIndex',
+		KeyConditionExpression: 'userId = :userId AND #st = :status',
+		ExpressionAttributeNames: {
+			'#st': 'status'
+		},
+		ExpressionAttributeValues: {
+			':userId': userId,
+			':status': 'closing'
+		}
+	};
+	const result = await dynamoDB.query(params).promise();
+	return result.Items as Auction[];
+};
