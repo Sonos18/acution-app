@@ -6,24 +6,59 @@ import { Button } from "@/components/ui/moving-border";
 import auctionApiRequest from "@/apiRequests/auction";
 import Loader from "@/components/loading";
 import GavelIcon from "@mui/icons-material/Gavel";
-
+import PaidIcon from "@mui/icons-material/Paid";
+import { toast } from "@/components/ui/use-toast";
+import { Loader2 } from "lucide-react";
 interface Props {
   auction: AuctionType;
 }
 const CardToBid: React.FC<Props> = ({ auction }) => {
   const [value, setValue] = useState<number>(auction.currentPrice + 1);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<string | null>(null);
+  const [currentPrice, setCurrentPrice] = useState<number>(
+    auction.currentPrice
+  );
   const bid = async () => {
     try {
-      setLoading(true);
-      const res = await auctionApiRequest.bidAuction(auction.auctionId, {
+      setLoading("bid");
+      await auctionApiRequest.bidAuction(auction.auctionId, {
         price: value,
+      });
+      setCurrentPrice(value);
+      setValue(value + 1);
+      toast({
+        title: "Success",
+        description: `You bid successfully with price is ${value}`,
+        className: "bg-green-100",
+        duration: 3000,
+      });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(null);
+    }
+  };
+  const buy = async () => {
+    setLoading("buy");
+    if (value >= auction.endPrice * 0.9) {
+      toast({
+        title: "Warning",
+        description: "You dont buy this product",
+        className: "bg-yellow-100",
+        duration: 3000,
+      });
+      setLoading(null);
+      return;
+    }
+    try {
+      const res = await auctionApiRequest.buyAuction(auction.auctionId, {
+        price: auction.endPrice,
       });
       console.log(res);
     } catch (error) {
       console.log(error);
     } finally {
-      setLoading(false);
+      setLoading(null);
     }
   };
   return (
@@ -31,12 +66,12 @@ const CardToBid: React.FC<Props> = ({ auction }) => {
       <Clock endTime={new Date(auction.endTime).getTime()} />
       <div className="flex justify-around w-full pt-1">
         <div className="flex flex-col w-full text-center">
-          <p className="text-lg text-rose-300">End Price</p>
+          <p className="text-lg text-rose-700">End Price</p>
           <p>{auction.endPrice}</p>
         </div>
         <div className="flex flex-col w-full text-center ">
-          <p className="text-lg text-green-300">Current Price</p>
-          <p>{auction.currentPrice}</p>
+          <p className="text-lg text-green-700">Current Price</p>
+          <p>{currentPrice}</p>
         </div>
       </div>
 
@@ -44,13 +79,13 @@ const CardToBid: React.FC<Props> = ({ auction }) => {
         <div
           className="p-2"
           onClick={() => {
-            if (value > auction.currentPrice + 1) setValue(value - 1);
+            if (value > currentPrice + 1) setValue(value - 1);
           }}
         >
           <HiMinusSm
             style={{
               fontSize: "1.5rem",
-              opacity: `${value === auction.currentPrice + 1 ? 0.6 : 1}`,
+              opacity: `${value === currentPrice + 1 ? 0.6 : 1}`,
             }}
           />
         </div>
@@ -58,7 +93,7 @@ const CardToBid: React.FC<Props> = ({ auction }) => {
           className="text-center inline-block w-[70px] rtl:pr-8 ltr:pl-7 py-2 mx-1 sm:mx-4 border-[1px] border-gray-400"
           type="number"
           value={value}
-          min={auction.currentPrice + 1}
+          min={currentPrice + 1}
         />
         <div className="p-2" onClick={() => setValue(value + 1)}>
           <HiOutlinePlusSm style={{ fontSize: "1.5rem" }} />
@@ -67,22 +102,29 @@ const CardToBid: React.FC<Props> = ({ auction }) => {
       <br />
       <div className="flex justify-around w-full">
         <Button
-          containerClassName="w-20 h-10"
+          containerClassName="w-24 h-10"
           borderRadius="1.75rem"
           className="bg-rose-200 dark:bg-slate-900 text-black dark:text-white border-rose-300 dark:border-slate-800 "
-          disabled={loading}
+          disabled={loading ? true : false}
+          onClick={buy}
         >
-          Buy Now
+          {loading === "buy" ? (
+            <Loader2 className="mx-auto h-4 w-4 animate-spin" />
+          ) : (
+            <>
+              Buy <PaidIcon className="hover:text-green-400 pl-1" />
+            </>
+          )}
         </Button>
         <Button
           containerClassName="w-20 h-10 "
           borderRadius="1.75rem"
           className="bg-green-200 dark:bg-slate-900 text-black dark:text-white border-green-300 dark:border-slate-800"
           onClick={bid}
-          disabled={loading}
+          disabled={loading ? true : false}
         >
-          {loading ? (
-            <Loader />
+          {loading === "bid" ? (
+            <Loader2 className="mx-auto h-4 w-4 animate-spin" />
           ) : (
             <>
               Bid <GavelIcon className="hover:text-rose-400 pl-1" />

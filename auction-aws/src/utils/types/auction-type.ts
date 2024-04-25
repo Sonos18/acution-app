@@ -58,3 +58,7 @@ export interface GetAuctionsInput {
 	auctionId?: string;
 	status?: string;
 }
+export interface UpdateAuctionStatusInput {
+	auctionId: string;
+	status: string;
+}

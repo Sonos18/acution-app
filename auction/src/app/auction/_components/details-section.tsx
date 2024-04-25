@@ -14,8 +14,20 @@ const DetailsSection: React.FC<Props> = ({ auction }) => {
       </h2>
       <hr className="mt-1 hidden md:block" />
       <div className="flex items-start flex-wrap relative">
-        <div className="flex-grow mt-6">
-          <h3 className="text-lg mt-2">{auction.product.description}</h3>
+        <div className="flex-grow mt-4 w-1/2">
+          <h1 className="text-lg">Product Details:</h1>
+          <h3 className="text-lg mt-2 flex">
+            <p>Category:</p>
+            {auction.product.category}
+          </h3>
+          <h3 className="text-lg mt-2 flex">
+            <p>Origin:</p>
+            {auction.product.origin}
+          </h3>
+          <h3 className="text-lg mt-2">
+            <p>Description:</p>
+            {auction.product.description}
+          </h3>
         </div>
         <CardToBid auction={auction} />
       </div>

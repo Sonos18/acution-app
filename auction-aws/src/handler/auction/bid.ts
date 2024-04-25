@@ -22,6 +22,6 @@ export const handler: HandlerFn = async (event, context, callback) => {
 export const schema: ObjectSchema<{ id: string }> = object({
 	id: string().required()
 });
-const bidSchema: ObjectSchema<{ price: number }> = object({
+export const bidSchema: ObjectSchema<{ price: number }> = object({
 	price: number().required()
 });

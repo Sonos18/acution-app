@@ -75,6 +75,12 @@ functions:
       - httpApi:
           path: /user/refresh-token
           method: post
+  RefeshStatusAuction:
+    handler: src/handler/auction/refresh-status.handler
+    events:
+      - eventBridge:
+          name: event-bridge-refresh-status-auction
+          schedule: cron(1 0 * * ? *)
   CreateUser:
     handler: src/handler/user/signup.handler
     events:
