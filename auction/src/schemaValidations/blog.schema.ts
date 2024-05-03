@@ -14,7 +14,7 @@ export type BlogInputType = z.infer<typeof BlogInput>;
 export const lastKey = z
   .object({
     blogId: z.string(),
-    userId: z.string(),
+    deleted: z.string(),
   })
   .strict();
 export type LastKeyType = z.infer<typeof lastKey>;
@@ -42,7 +42,7 @@ export const BlogsResponse = z
     ),
     lastKey: z.object({
       blogId: z.string(),
-      userId: z.string(),
+      deleted: z.string(),
     }),
   })
   .strict();

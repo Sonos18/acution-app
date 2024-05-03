@@ -10,8 +10,6 @@ export const extractBodyDataFromRequest = <T extends Maybe<AnyObject>>(
 	const { event, schema } = props;
 	const data = event?.body ? (JSON.parse(event.body) as T) : undefined;
 	const validateRes = yupValidator(schema).validateSync({ ...data });
-	console.log('validateRes', validateRes);
-	console.log('validateRes.error', validateRes.error);
 
 	if (validateRes.error || validateRes.data === null || validateRes.data === undefined) {
 		throw customError('Unprocessable Content', 422);

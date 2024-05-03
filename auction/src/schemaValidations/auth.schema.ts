@@ -82,15 +82,13 @@ export type SignUpSchemaType = z.infer<typeof SignUpSchema>;
 
 export const SignInResSchema = z
   .object({
-    access_token: z.string(),
-    refresh_token: z.string(),
+    accessToken: z.string(),
+    refreshToken: z.string(),
     user: z.object({
       userId: z.string(),
       email: z.string(),
       firstName: z.string(),
       lastName: z.string(),
-      phone: z.string(),
-      role: z.string(),
       avatar: z.string(),
     }),
   })

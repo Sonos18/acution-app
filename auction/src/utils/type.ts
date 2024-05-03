@@ -1,6 +1,6 @@
 export type NavItem = {
-    name: string;
-    link: string;
-    icon?: JSX.Element;
-    active:Boolean;
-  };
+  name: string;
+  link: string;
+  items?: JSX.Element;
+  active: Boolean;
+};

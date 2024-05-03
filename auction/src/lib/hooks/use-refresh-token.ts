@@ -2,7 +2,7 @@ import envConfig from "@/config";
 import jwt from "jsonwebtoken";
 import authApiRequest from "@/apiRequests/auth";
 const baseURL = envConfig.NEXT_PUBLIC_URL;
-export const useRefreshToken = async (
+export const UseRefreshToken = async (
   accessToken: string,
   refreshToken: string
 ) => {

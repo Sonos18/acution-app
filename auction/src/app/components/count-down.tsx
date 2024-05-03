@@ -41,7 +41,7 @@ const Clock: React.FC<ClockProps> = ({ endTime }) => {
   }, [endTime]);
 
   return (
-    <div className="ml-10 clock__wrapper flex items-center space-x-3">
+    <div className="ml-5 clock__wrapper flex items-center space-x-3">
       <div className="clock__data flex items-center space-x-3">
         <div className="text-center">
           <h1 className="text-lg mb-2">{days}</h1>

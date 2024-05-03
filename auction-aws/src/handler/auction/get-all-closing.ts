@@ -10,22 +10,29 @@ import { getProductsByListId } from '~/service/product';
 export const handler: HandlerFn = async (event, context, callback) => {
 	try {
 		const user = decodedTokenFromHeader(event);
-		const result = await getAllClosingAuctions(user.id);
-		const products = await getProductsByListId(result);
-		const response = treeShakingAuctionsClosing(result, products);
-		callback(null, { statusCode: 200, body: JSON.stringify(response) });
+		const auctions = await getAllClosingAuctions(user.id);
+		const products = await getProductsByListId(auctions);
+		console.log('auctions', auctions);
+		console.log('products', products);
+
+		const res = treeShakingAuctionsClosing(auctions, products);
+		console.log('res', res);
+		callback(null, { statusCode: 200, body: JSON.stringify(res) });
 	} catch (error) {
 		customErrorOutput(error as Error, callback);
 	}
 };
-const treeShakingAuctionsClosing = async (auctions: Auction[], products: Product[]) => {
+const treeShakingAuctionsClosing = (auctions: Auction[], products: Product[]) => {
 	const result = auctions.map((auction) => {
 		const product = products.find((product) => product.productId === auction.productId);
 		return {
-			image: product?.images[0],
 			productName: product?.productName,
 			endTime: auction.endTime,
-			currentPrice: auction.currentPrice
+			endPrice: auction.currentPrice,
+			startPrice: auction.startPrice,
+			startTime: auction.startTime,
+			auctionId: auction.auctionId
 		};
 	});
+	return result;
 };

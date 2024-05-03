@@ -79,30 +79,40 @@ export default function FormAuction() {
       setLoading(true);
       const fileTypes = file.map((f) => f.type);
       const res = await blogApiRequest.getSignedUrl({ types: fileTypes });
-      res.payload.urls.forEach(async (url, index) => {
-        await fetch(url, {
+      console.log("res", res);
+      const { urls, keys } = res.payload;
+      console.log("urls", urls);
+      console.log("keys", keys);
+      for (let i = 0; i < keys.length; i++) {
+        await fetch(urls[i], {
           method: "PUT",
-          body: file[index],
+          body: file[i],
         });
-      });
-      data.images = res.payload.keys;
+      }
       const newData = {
         ...data,
+        images: keys,
         startTime: data.startTime.toISOString(),
         endTime: data.endTime.toISOString(),
       };
-      await auctionApiRequest.createAuction(newData);
+      console.log("newData", newData);
+
+      const auction = await auctionApiRequest.createAuction(newData);
       toast({
         title: "Success",
         description: "Auction created successfully",
         className: "bg-green-400 text-white",
       });
+      if (auction.status !== 201) {
+        throw new Error("Failed to create auction");
+      }
       router.push("/auction");
       router.refresh();
     } catch (error) {
+      const e = error as Error;
       toast({
         title: "Error",
-        description: "Failed to upload images",
+        description: e.message,
         className: "bg-red-400 text-white",
       });
       setLoading(false);
@@ -348,7 +358,7 @@ export default function FormAuction() {
               {file && (
                 <div className="flex">
                   {Array.from(file).map((f, index) => (
-                    <div className="mt-1 mx-auto">
+                    <div className="mt-1 mx-auto" key={index}>
                       <Image
                         className="w-40 h-40 object-cover"
                         alt="preview"

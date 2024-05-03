@@ -1,3 +1,4 @@
+import { start } from "repl";
 import { z } from "zod";
 
 export const AuctionInput = z
@@ -83,3 +84,12 @@ export const AuctionsResponse = z
   })
   .strict();
 export type AuctionsResponseType = z.infer<typeof AuctionsResponse>;
+export const AuctionClosing = z.object({
+  productName: z.string(),
+  startTime: z.string(),
+  endTime: z.string(),
+  startPrice: z.number(),
+  endPrice: z.number(),
+  auctionId: z.string(),
+});
+export type AuctionClosingType = z.infer<typeof AuctionClosing>;

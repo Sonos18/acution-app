@@ -21,6 +21,7 @@ const ImageSection: React.FC<Props> = ({ auction }) => {
             alt="product img"
             width={450}
             height={330}
+            priority
             className="object-contain md:drop-shadow-xl dark:bg-palette-card"
           />
         </div>

@@ -35,7 +35,7 @@ export interface SigninInput {
 }
 
 export interface SiginOutput {
-	refresh_token: string;
-	access_token: string;
+	refreshToken: string;
+	accessToken: string;
 	user: User;
 }

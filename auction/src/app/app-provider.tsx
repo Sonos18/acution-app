@@ -1,11 +1,17 @@
 "use client";
 
-import { accessToken } from "@/lib/http";
 import { session } from "@/lib/session";
+import { SignInResSchemaType } from "@/schemaValidations/auth.schema";
 import { UserResType } from "@/schemaValidations/user.schema";
-import { createContext, useContext, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
-type User = UserResType;
+type User = SignInResSchemaType["user"];
 
 const AppContext = createContext<{
   user: User | null;
@@ -22,22 +28,26 @@ export const useAppContext = () => {
 
 export default function AppProvider({
   children,
-  inititalaccessToken = "",
-  inititalRefreshToken = "",
-  user: userProp,
 }: {
   children: React.ReactNode;
-  inititalaccessToken?: string;
-  inititalRefreshToken?: string;
-  user: User | null;
 }) {
-  const [user, setUser] = useState<User | null>(userProp);
-  useState(() => {
-    if (typeof window !== "undefined") {
-      accessToken.value = inititalaccessToken;
-      accessToken.refresh = inititalRefreshToken;
-    }
+  const [user, setUserState] = useState<User | null>(() => {
+    return null;
   });
+  const isAuthenticated = Boolean(user);
+  const setUser = useCallback(
+    (user: User | null) => {
+      setUserState(user);
+      localStorage.setItem("user", JSON.stringify(user));
+    },
+    [setUserState]
+  );
+
+  useEffect(() => {
+    const _user = localStorage.getItem("user");
+    setUserState(_user ? JSON.parse(_user) : null);
+  }, [setUserState]);
+
   return (
     <AppContext.Provider
       value={{

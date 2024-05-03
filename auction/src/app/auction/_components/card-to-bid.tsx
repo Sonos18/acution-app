@@ -9,12 +9,15 @@ import GavelIcon from "@mui/icons-material/Gavel";
 import PaidIcon from "@mui/icons-material/Paid";
 import { toast } from "@/components/ui/use-toast";
 import { Loader2 } from "lucide-react";
+import { AlertDialogConfirm } from "@/components/custom/alert-dialog-confirm";
+import { useRouter } from "next/navigation";
 interface Props {
   auction: AuctionType;
 }
 const CardToBid: React.FC<Props> = ({ auction }) => {
   const [value, setValue] = useState<number>(auction.currentPrice + 1);
   const [loading, setLoading] = useState<string | null>(null);
+  const router = useRouter();
   const [currentPrice, setCurrentPrice] = useState<number>(
     auction.currentPrice
   );
@@ -43,7 +46,7 @@ const CardToBid: React.FC<Props> = ({ auction }) => {
     if (value >= auction.endPrice * 0.9) {
       toast({
         title: "Warning",
-        description: "You dont buy this product",
+        description: "You dont buy this product, Let bid it!",
         className: "bg-yellow-100",
         duration: 3000,
       });
@@ -51,10 +54,17 @@ const CardToBid: React.FC<Props> = ({ auction }) => {
       return;
     }
     try {
-      const res = await auctionApiRequest.buyAuction(auction.auctionId, {
+      await auctionApiRequest.buyAuction(auction.auctionId, {
         price: auction.endPrice,
       });
-      console.log(res);
+      router.push("/auction");
+      toast({
+        title: "Success",
+        description: "You bought this product successfully",
+        className: "bg-green-100",
+        duration: 3000,
+      });
+      router.refresh();
     } catch (error) {
       console.log(error);
     } finally {
@@ -101,21 +111,26 @@ const CardToBid: React.FC<Props> = ({ auction }) => {
       </div>
       <br />
       <div className="flex justify-around w-full">
-        <Button
-          containerClassName="w-24 h-10"
-          borderRadius="1.75rem"
-          className="bg-rose-200 dark:bg-slate-900 text-black dark:text-white border-rose-300 dark:border-slate-800 "
-          disabled={loading ? true : false}
-          onClick={buy}
+        <AlertDialogConfirm
+          title="Confirm"
+          description="Are you sure you want to buy this product?"
+          handleLogout={buy}
         >
-          {loading === "buy" ? (
-            <Loader2 className="mx-auto h-4 w-4 animate-spin" />
-          ) : (
-            <>
-              Buy <PaidIcon className="hover:text-green-400 pl-1" />
-            </>
-          )}
-        </Button>
+          <Button
+            containerClassName="w-24 h-10"
+            borderRadius="1.75rem"
+            className="bg-rose-200 dark:bg-slate-900 text-black dark:text-white border-rose-300 dark:border-slate-800 "
+            disabled={loading ? true : false}
+          >
+            {loading === "buy" ? (
+              <Loader2 className="mx-auto h-4 w-4 animate-spin" />
+            ) : (
+              <>
+                Buy <PaidIcon className="hover:text-green-400 pl-1" />
+              </>
+            )}
+          </Button>
+        </AlertDialogConfirm>
         <Button
           containerClassName="w-20 h-10 "
           borderRadius="1.75rem"

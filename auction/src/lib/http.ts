@@ -1,8 +1,7 @@
 import envConfig from "@/config";
 import { SignInResSchemaType } from "@/schemaValidations/auth.schema";
 import { normalizePath } from "./utils";
-import { use } from "react";
-import { useRefreshToken } from "./hooks/use-refresh-token";
+import { UseRefreshToken } from "./hooks/use-refresh-token";
 
 type CustomOptions = Omit<RequestInit, "method"> & {
   baseUrl?: string | undefined;
@@ -48,47 +47,31 @@ export class EntityError extends HttpError {
   }
 }
 
-class Token {
-  private accessToken = "";
-  private refreshToken = "";
-  get refresh() {
-    return this.refreshToken;
-  }
-  set refresh(refreshToken: string) {
-    if (typeof window === "undefined")
-      throw new Error("Cannot set accessToken in server side");
-    this.refreshToken = refreshToken;
-  }
-  get value() {
-    return this.accessToken;
-  }
-  set value(accessToken: string) {
-    if (typeof window === "undefined")
-      throw new Error("Cannot set accessToken in server side");
-    this.accessToken = accessToken;
-  }
-}
-
-export const accessToken = new Token();
-
 const request = async <Response>(
   method: "GET" | "POST" | "PUT" | "DELETE",
   url: string,
   options?: CustomOptions | undefined
 ) => {
-  const token = await useRefreshToken(accessToken.value, accessToken.refresh);
-  if (token) {
-    accessToken.value = token;
+  let accessToken = localStorage.getItem("accessToken");
+  const refreshToken = localStorage.getItem("refreshToken");
+  if (accessToken && refreshToken) {
+    const token = await UseRefreshToken(accessToken, refreshToken);
+    if (token) {
+      accessToken = token;
+      localStorage.setItem("accessToken", token);
+    }
   }
-  const body = options?.body
-    ? options.body instanceof FormData
-      ? options.body
-      : JSON.stringify(options.body)
-    : undefined;
-  const baseHeaders = {
-    Authorization: accessToken.value ? `Bearer ${accessToken.value}` : "",
-    "Content-Type": "application/json",
-  };
+  let body: FormData | string | undefined = undefined;
+  if (options?.body instanceof FormData) {
+    body = options.body;
+  } else if (options?.body) {
+    body = JSON.stringify(options.body);
+  }
+  const baseHeaders: { [key: string]: string } =
+    body instanceof FormData ? {} : { "Content-Type": "application/json" };
+  if (accessToken) {
+    baseHeaders.Authorization = `Bearer ${accessToken}`;
+  }
   const baseUrl =
     options?.baseUrl === undefined
       ? envConfig.NEXT_PUBLIC_URL
@@ -121,21 +104,17 @@ const request = async <Response>(
         }
       );
     } else {
-      console.log("accessToken", accessToken.value);
       console.log(data);
     }
   }
-
   if (typeof window !== "undefined") {
     if (normalizePath(url) === "user/signin") {
-      const res = payload as SignInResSchemaType;
-      console.log("true");
-
-      accessToken.value = res.access_token;
-      accessToken.refresh = res.refresh_token;
+      const { accessToken, refreshToken } = payload as SignInResSchemaType;
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
     } else if ("auth/logout" === normalizePath(url)) {
-      accessToken.value = "";
-      accessToken.refresh = "";
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
     }
   }
 

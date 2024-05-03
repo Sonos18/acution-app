@@ -11,8 +11,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { AlertDialogConfirm } from "./alert-dialog-confirm";
 import { Logout } from "./logout";
-
+import PublishedWithChangesIcon from "@mui/icons-material/PublishedWithChanges";
+import PersonIcon from "@mui/icons-material/Person";
+import { useRouter } from "next/navigation";
 export const Setting = ({ avatar }: { avatar: string }) => {
+  const router = useRouter();
   return (
     <div>
       <div className="col-span-1 mx-auto">
@@ -28,13 +31,28 @@ export const Setting = ({ avatar }: { avatar: string }) => {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="center">
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              {dropdownItem.map((item, index) => (
+                <DropdownMenuItem
+                  key={index}
+                  className="text-base"
+                  onClick={() => router.push(item.link)}
+                >
+                  <span>{item.name}</span>
+                  <DropdownMenuShortcut>{item.icon}</DropdownMenuShortcut>
+                </DropdownMenuItem>
+              ))}
+              {/* <DropdownMenuItem className="text-lg">
                 <Link href="/profile">Profile</Link>
-                <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+                <DropdownMenuShortcut>
+                  <PublishedWithChangesIcon className="text-blue-400" />
+                </DropdownMenuShortcut>
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Link href="/profile">Profile</Link>
-              </DropdownMenuItem>
+              <DropdownMenuItem className="text-slate-500 hover:text-slate-700 ">
+                <Link href="/auction/confirm">Confirm your auction</Link>
+                <DropdownMenuShortcut>
+                  <PublishedWithChangesIcon className="ml-1 " />
+                </DropdownMenuShortcut>
+              </DropdownMenuItem> */}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
@@ -46,3 +64,15 @@ export const Setting = ({ avatar }: { avatar: string }) => {
     </div>
   );
 };
+const dropdownItem = [
+  {
+    name: "Profile",
+    link: "/profile",
+    icon: <PersonIcon />,
+  },
+  {
+    name: "Confirm my auctions",
+    link: "/auction/confirm",
+    icon: <PublishedWithChangesIcon className="ml-3" />,
+  },
+];

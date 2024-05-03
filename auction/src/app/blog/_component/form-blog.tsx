@@ -94,10 +94,10 @@ export const FormBlog = ({ blog }: { blog?: BlogResType }) => {
     if (!keyImage) {
       return;
     }
-    data.keyImage = keyImage;
-    console.log("data", data);
+    const updatedData = { ...data, keyImage: [keyImage] };
+    console.log("data", updatedData);
 
-    await blogApiRequest.createBlog(data);
+    await blogApiRequest.createBlog(updatedData);
   };
   const handleUpdateBlog = async (data: BlogInputType) => {
     console.log("data", data);

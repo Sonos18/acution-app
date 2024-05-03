@@ -22,10 +22,14 @@ export const handler: HandlerFn = async (event, context, callback) => {
 		await saveToken(user.userId, refreshToken);
 
 		const response: SiginOutput = {
-			access_token: accessToken,
-			refresh_token: refreshToken,
+			accessToken,
+			refreshToken,
 			user: {
-				userId: user.userId
+				userId: user.userId,
+				firstName: user.firstName,
+				lastName: user.lastName,
+				email: user.email,
+				avatar: user.avatar
 			}
 		};
 		callback(null, {

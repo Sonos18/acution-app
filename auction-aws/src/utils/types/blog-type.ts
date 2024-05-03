@@ -6,6 +6,7 @@ export interface CreateBlogInput {
 }
 export interface lastKeyBlogs {
 	blogId: string;
+	deleted:string;
 }
 
 export interface BlogInput {

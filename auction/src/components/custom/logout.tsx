@@ -10,8 +10,8 @@ export const Logout = () => {
   return (
     <div className="text-center">
       <AlertDialogConfirm
-        title="asa"
-        description="ASJGDJAS"
+        title="LOGOUT!!!"
+        description="Are you sure you want to log out?"
         handleLogout={handleLogout}
       >
         <Button className="bg-gray-600">Logout</Button>

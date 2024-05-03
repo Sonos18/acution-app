@@ -1,5 +1,6 @@
 import http from "@/lib/http";
 import {
+  AuctionClosingType,
   AuctionType,
   AuctionsResponseType,
 } from "@/schemaValidations/auction.schema";
@@ -13,7 +14,7 @@ const auctionApiRequest = {
     http.post(`/auction/bid/?id=${id}`, body),
   buyAuction: (id: string, body: { price: number }) =>
     http.post(`/auction/buy/?id=${id}`, body),
-  getMyAuctionsCofirm: () => http.get("/auction/my"),
+  getMyAuctionsCofirm: () => http.get<AuctionClosingType[]>("/auction/closing"),
 };
 
 export default auctionApiRequest;

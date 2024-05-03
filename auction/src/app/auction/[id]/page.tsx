@@ -24,7 +24,6 @@ export default function BlogPost({ params }: { params: { id: string } }) {
   return (
     auction && (
       <div>
-        <h1>{params.id}</h1>;
         <div className="flex flex-col w-3/4 mx-auto">
           <div className="w-full xl:max-w-[2100px] mx-auto">
             <div className="flex flex-col md:flex-row flex-wrap md:flex-nowrap items-center md:items-start mt-8 relative">

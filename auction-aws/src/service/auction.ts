@@ -23,12 +23,14 @@ export const createAuction = async (
 	userId: string,
 	productId: string
 ) => {
+	const now = new Date().getTime();
+	const startTime = new Date(data.startTime).getTime();
 	const auction: Auction = {
 		startPrice: data.startPrice,
 		endPrice: data.endPrice,
 		startTime: data.startTime,
 		endTime: data.endTime,
-		status: 'spending',
+		status: startTime < now ? 'open' : 'spending',
 		currentPrice: data.startPrice,
 		productId,
 		userId,
@@ -263,7 +265,7 @@ export const buyAuction = async (auctionId: string, userId: string, endPrice: nu
 		throw customError((error as Error).message, 500);
 	}
 };
-export const CloseAuction = async (auctionId: string) => {
+export const UpdateStatusAuction = async (auctionId: string, status: string) => {
 	const param: DynamoDB.DocumentClient.UpdateItemInput = {
 		TableName: 'Auction',
 		Key: {
@@ -274,9 +276,14 @@ export const CloseAuction = async (auctionId: string) => {
 			'#st': 'status'
 		},
 		ExpressionAttributeValues: {
-			':status': 'cancelled'
+			':status': status
 		}
 	};
+	try {
+		await dynamoDB.update(param).promise();
+	} catch (error) {
+		throw customError((error as Error).message, StatusCodes.INTERNAL_SERVER_ERROR);
+	}
 };
 export const refreshAuctionStatus = async (status: string, end: boolean) => {
 	const params: DynamoDB.DocumentClient.QueryInput = {
@@ -293,48 +300,18 @@ export const refreshAuctionStatus = async (status: string, end: boolean) => {
 	const result = await dynamoDB.query(params).promise();
 	const auctions = result.Items as Auction[];
 	const now = new Date().getTime();
-	const updateAuctions = auctions.map((auction) => {
+	console.log('auctions', auctions);
+	console.log('now', now);
+	for (const auction of auctions) {
 		if (!end) {
 			if (new Date(auction.startTime).getTime() < now) {
-				return {
-					auctionId: auction.auctionId,
-					status: 'open'
-				};
+				UpdateStatusAuction(auction.auctionId, 'open');
 			}
-			return null;
 		} else {
 			if (new Date(auction.endTime).getTime() < now) {
-				return {
-					auctionId: auction.auctionId,
-					status: 'closing'
-				};
+				UpdateStatusAuction(auction.auctionId, 'closing');
 			}
-			return null;
 		}
-	});
-	const filterAuction = updateAuctions.filter(
-		(auction) => auction !== null
-	) as UpdateAuctionStatusInput[];
-	const updateParams = filterAuction.map((auction) => {
-		return {
-			PutRequest: {
-				Item: {
-					TableName: 'Auction',
-					auctionId: auction.auctionId,
-					status: auction.status
-				}
-			}
-		};
-	});
-	const batchParams: DynamoDB.DocumentClient.BatchWriteItemInput = {
-		RequestItems: {
-			Auction: updateParams
-		}
-	};
-	try {
-		await dynamoDB.batchWrite(batchParams).promise();
-	} catch (error) {
-		customError((error as Error).message, StatusCodes.INTERNAL_SERVER_ERROR);
 	}
 };
 export const confirmStatusAuction = async (auctionId: string, userId: string) => {
@@ -345,20 +322,7 @@ export const confirmStatusAuction = async (auctionId: string, userId: string) =>
 	if (auction.status !== 'closing') {
 		throw customError('Auction is not closing', StatusCodes.BAD_REQUEST);
 	}
-	const params: DynamoDB.DocumentClient.UpdateItemInput = {
-		TableName: 'Auction',
-		Key: {
-			auctionId
-		},
-		UpdateExpression: 'SET #st = :status',
-		ExpressionAttributeNames: {
-			'#st': 'status'
-		},
-		ExpressionAttributeValues: {
-			':status': 'closed'
-		}
-	};
-	await dynamoDB.update(params).promise();
+	UpdateStatusAuction(auctionId, 'closed');
 };
 export const getAllClosingAuctions = async (userId: string) => {
 	const params: DynamoDB.DocumentClient.QueryInput = {

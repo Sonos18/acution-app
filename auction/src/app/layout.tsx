@@ -5,12 +5,10 @@ import { cn } from "@/lib/utils";
 import { Nav } from "./components/navbar-menu";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ModeToggle } from "./components/toggle-mode";
+import { Toaster } from "@/components/ui/toaster";
 import Footer from "./components/footer";
 import AppProvider from "./app-provider";
-import { cookies } from "next/headers";
-import { Toaster } from "@/components/ui/toaster";
-import { UserResType } from "@/schemaValidations/user.schema";
-import userApiRequest from "@/apiRequests/user";
+
 const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",
@@ -25,21 +23,11 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookieStore = cookies();
-  const accessToken = cookieStore.get("accessToken");
-  const refreshToken = cookieStore.get("refreshToken");
-  let user: UserResType | null = null;
-
-  if (accessToken) {
-    const data = await userApiRequest.get(accessToken.value);
-    user = data.payload;
-  }
-
   return (
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased",
+          "min-h-screen bg-slate-100 font-sans antialiased",
           fontSans.variable
         )}
       >
@@ -49,15 +37,12 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <AppProvider
-            inititalRefreshToken={refreshToken?.value}
-            inititalaccessToken={accessToken?.value}
-            user={user}
-          >
-            {user && <Nav user={user} />}
+          <AppProvider>
+            <Nav />
             {children}
-            <Toaster />
+            <Footer />
           </AppProvider>
+          <Toaster />
           <ModeToggle />
         </ThemeProvider>
       </body>

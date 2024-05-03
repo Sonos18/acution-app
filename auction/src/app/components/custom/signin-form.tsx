@@ -15,10 +15,12 @@ import {
   SignInSchema,
   SignInSchemaType,
 } from "@/schemaValidations/auth.schema";
-import { handleErrorApi } from "@/lib/utils";
+import { toast } from "@/components/ui/use-toast";
+import { useAppContext } from "@/app/app-provider";
 
 const SigninForm = () => {
   const [isLoading, setIsLoading] = React.useState(false);
+  const { setUser } = useAppContext();
   const {
     register,
     handleSubmit,
@@ -36,15 +38,26 @@ const SigninForm = () => {
     try {
       setIsLoading(true);
       const result = await authApiRequest.signIn(data);
-
+      const { accessToken, refreshToken, user } = result.payload;
+      setUser(user);
       await authApiRequest.auth({
-        accessToken: result.payload.access_token,
-        refreshToken: result.payload.refresh_token,
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+      });
+      toast({
+        description: "Sign in successfully",
+        title: "success",
+        className: "bg-green-500",
+        duration: 3000,
       });
       router.push("/");
     } catch (error) {
-      setIsLoading(false);
-      handleErrorApi({ error, setError });
+      toast({
+        description: "Account or password is incorrect",
+        title: "error",
+        className: "bg-red-500",
+        duration: 3000,
+      });
     } finally {
       setIsLoading(false);
     }

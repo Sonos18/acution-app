@@ -12,6 +12,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Card } from "@/components/ui/card-hover-effect";
 import { ThreeDCardCategory } from "../components/category";
 import { AuctionCard } from "./_components/auction-card";
+import Image from "next/image";
 
 const Auction = () => {
   const [lastKey, setLastKey] = useState<LastKeyType | undefined>(undefined);
@@ -39,12 +40,12 @@ const Auction = () => {
     <Loader />
   ) : (
     <div className="mx-auto w-3/4">
-      <h1>Auction</h1>
       <div
         className={cn("grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3  py-10")}
       >
         {safeAuctions.map((item, idx) => (
           <div
+            key={item.auctionId}
             className="relative group  block p-2 h-full w-full"
             onMouseEnter={() => setHoveredIndex(idx)}
             onMouseLeave={() => setHoveredIndex(null)}
