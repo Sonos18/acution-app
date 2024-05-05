@@ -70,7 +70,11 @@ const request = async <Response>(
   const baseHeaders: { [key: string]: string } =
     body instanceof FormData ? {} : { "Content-Type": "application/json" };
   if (accessToken) {
-    baseHeaders.Authorization = `Bearer ${accessToken}`;
+    if (normalizePath(url) === "user/logout") {
+      baseHeaders.Authorization = `Bearer ${refreshToken}`;
+    } else {
+      baseHeaders.Authorization = `Bearer ${accessToken}`;
+    }
   }
   const baseUrl =
     options?.baseUrl === undefined
@@ -112,7 +116,7 @@ const request = async <Response>(
       const { accessToken, refreshToken } = payload as SignInResSchemaType;
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
-    } else if ("auth/logout" === normalizePath(url)) {
+    } else if ("user/logout" === normalizePath(url)) {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
     }

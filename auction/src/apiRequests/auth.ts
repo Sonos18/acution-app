@@ -15,6 +15,15 @@ const authApiRequest = {
     }),
   refreshToken: (body: { refreshToken: string }) =>
     http.post("/user/refresh-token", body),
+  logoutFromNextServer: () =>
+    http.post(
+      "/api/auth/logout",
+      {},
+      {
+        baseUrl: "",
+      }
+    ),
+  logout: () => http.get("/user/logout"),
 };
 
 export default authApiRequest;

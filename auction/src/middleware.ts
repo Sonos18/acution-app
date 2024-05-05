@@ -7,8 +7,6 @@ const authPaths = ["/signin", "/signup"];
 // This function can be marked `async` if using `await` inside
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  console.log("pathname", pathname);
-
   const accessToken = request.cookies.get("accessToken")?.value;
   // Chưa đăng nhập thì không cho vào private paths
   if (

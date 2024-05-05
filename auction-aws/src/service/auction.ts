@@ -286,31 +286,14 @@ export const UpdateStatusAuction = async (auctionId: string, status: string) => 
 	}
 };
 export const refreshAuctionStatus = async (status: string, end: boolean) => {
-	const params: DynamoDB.DocumentClient.QueryInput = {
-		TableName: 'Auction',
-		IndexName: 'StatusIndex',
-		KeyConditionExpression: '#st = :status',
-		ExpressionAttributeNames: {
-			'#st': 'status'
-		},
-		ExpressionAttributeValues: {
-			':status': status
-		}
-	};
-	const result = await dynamoDB.query(params).promise();
-	const auctions = result.Items as Auction[];
+	const auctions = await getAuctionsByStatus(status);
 	const now = new Date().getTime();
-	console.log('auctions', auctions);
-	console.log('now', now);
+	if (auctions.length === 0) return;
 	for (const auction of auctions) {
-		if (!end) {
-			if (new Date(auction.startTime).getTime() < now) {
-				UpdateStatusAuction(auction.auctionId, 'open');
-			}
-		} else {
-			if (new Date(auction.endTime).getTime() < now) {
-				UpdateStatusAuction(auction.auctionId, 'closing');
-			}
+		if (status === 'spending' && new Date(auction.startTime).getTime() < now) {
+			UpdateStatusAuction(auction.auctionId, 'open');
+		} else if (status === 'open' && new Date(auction.endTime).getTime() < now) {
+			UpdateStatusAuction(auction.auctionId, 'closing');
 		}
 	}
 };
@@ -335,6 +318,21 @@ export const getAllClosingAuctions = async (userId: string) => {
 		ExpressionAttributeValues: {
 			':userId': userId,
 			':status': 'closing'
+		}
+	};
+	const result = await dynamoDB.query(params).promise();
+	return result.Items as Auction[];
+};
+export const getAuctionsByStatus = async (status: string) => {
+	const params: DynamoDB.DocumentClient.QueryInput = {
+		TableName: 'Auction',
+		IndexName: 'StatusIndex',
+		KeyConditionExpression: '#st = :status',
+		ExpressionAttributeNames: {
+			'#st': 'status'
+		},
+		ExpressionAttributeValues: {
+			':status': status
 		}
 	};
 	const result = await dynamoDB.query(params).promise();

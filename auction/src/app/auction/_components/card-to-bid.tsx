@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useState } from "react";
 import { HiOutlinePlusSm, HiMinusSm } from "react-icons/hi";
 import { AuctionType } from "@/schemaValidations/auction.schema";
@@ -11,10 +12,12 @@ import { toast } from "@/components/ui/use-toast";
 import { Loader2 } from "lucide-react";
 import { AlertDialogConfirm } from "@/components/custom/alert-dialog-confirm";
 import { useRouter } from "next/navigation";
+import { useAppContext } from "@/app/app-provider";
 interface Props {
   auction: AuctionType;
 }
 const CardToBid: React.FC<Props> = ({ auction }) => {
+  const { user } = useAppContext();
   const [value, setValue] = useState<number>(auction.currentPrice + 1);
   const [loading, setLoading] = useState<string | null>(null);
   const router = useRouter();
@@ -71,6 +74,7 @@ const CardToBid: React.FC<Props> = ({ auction }) => {
       setLoading(null);
     }
   };
+  if (user?.userId === auction.user.userId) return <></>;
   return (
     <div className="flex flex-col items-center flex-grow sticky top-10 md:top-36 max-w-[350px] mt-8 rtl:mr-auto ltr:ml-auto xl:rtl:ml-2 px-6 py-4 sm:p-4 xl:p-6 border-2 shadow-lg">
       <Clock endTime={new Date(auction.endTime).getTime()} />

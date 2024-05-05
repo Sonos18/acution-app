@@ -94,6 +94,12 @@ functions:
       - httpApi:
           path: /user/signin
           method: post
+  Logout:
+    handler: src/handler/author/logout.handler
+    events:
+      - httpApi:
+          path: /user/logout
+          method: get
   GetUser:
     handler: src/handler/user/get-one.handler
     events:
