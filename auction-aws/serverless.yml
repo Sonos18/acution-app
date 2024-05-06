@@ -94,6 +94,12 @@ functions:
       - httpApi:
           path: /user/signin
           method: post
+  SignInWithProvider:
+    handler: src/handler/author/signin-with-provider.handler
+    events:
+      - httpApi:
+          path: /user/signin/provider
+          method: post
   Logout:
     handler: src/handler/author/logout.handler
     events:
@@ -205,6 +211,7 @@ functions:
           method: get
           authorizer:
             name: PrivateRouter
+
   GetAllAuctionClosing:
     handler: src/handler/auction/get-all-closing.handler
     events:
@@ -213,6 +220,16 @@ functions:
           method: get
           authorizer:
             name: PrivateRouter
+
+  ConfirmAuction:
+    handler: src/handler/auction/confirm-status.handler
+    events:
+      - httpApi:
+          path: /auction/confirm/{id}
+          method: get
+          authorizer:
+            name: PrivateRouter
+
   DeleteAuction:
     handler: src/handler/auction/delete.handler
     events:
@@ -243,6 +260,14 @@ functions:
       - httpApi:
           path: /category
           method: post
+          authorizer:
+            name: PrivateRouter
+  GetPaymentForUser:
+    handler: src/handler/payment/get-all.handler
+    events:
+      - httpApi:
+          path: /payment
+          method: get
           authorizer:
             name: PrivateRouter
 resources:

@@ -5,6 +5,7 @@ import { v4 } from 'uuid';
 import { Auction } from '~/db/auction-schema';
 import { Bid } from '~/db/bid-schema';
 import { Category } from '~/db/category-schema';
+import { Payment } from '~/db/payment-schema';
 import { Product } from '~/db/product-schema';
 import { User } from '~/db/user-schema';
 
@@ -299,6 +300,9 @@ export const refreshAuctionStatus = async (status: string, end: boolean) => {
 };
 export const confirmStatusAuction = async (auctionId: string, userId: string) => {
 	const auction = await getAuctionById(auctionId);
+	if (!auction.winner) {
+		throw customError('Auction has no winner', StatusCodes.BAD_REQUEST);
+	}
 	if (auction.userId !== userId) {
 		throw customError('You are not owner of this auction', StatusCodes.FORBIDDEN);
 	}
@@ -306,6 +310,15 @@ export const confirmStatusAuction = async (auctionId: string, userId: string) =>
 		throw customError('Auction is not closing', StatusCodes.BAD_REQUEST);
 	}
 	UpdateStatusAuction(auctionId, 'closed');
+	const payment: Payment = {
+		paymentId: v4(),
+		userId: auction.winner,
+		total: auction.currentPrice,
+		status: 'pending',
+		createdAt: new Date().toISOString(),
+		auctionId: auction.auctionId
+	};
+	return payment;
 };
 export const getAllClosingAuctions = async (userId: string) => {
 	const params: DynamoDB.DocumentClient.QueryInput = {

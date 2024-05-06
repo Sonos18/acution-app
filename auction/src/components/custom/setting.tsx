@@ -75,4 +75,9 @@ const dropdownItem = [
     link: "/auction/confirm",
     icon: <PublishedWithChangesIcon className="ml-3" />,
   },
+  {
+    name: "Payment",
+    link: "/payment",
+    icon: <PublishedWithChangesIcon className="ml-3" />,
+  },
 ];

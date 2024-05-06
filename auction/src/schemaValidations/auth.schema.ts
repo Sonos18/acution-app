@@ -1,4 +1,3 @@
-import { RefreshCcw } from "lucide-react";
 import { z } from "zod";
 
 export const SignInSchema = z

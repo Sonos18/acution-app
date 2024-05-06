@@ -12,6 +12,12 @@ export class User {
 	firstName?: string;
 
 	@attribute()
+	provider?: string;
+
+	@attribute()
+	providerAccountId?: string;
+
+	@attribute()
 	lastName?: string;
 
 	@attribute()

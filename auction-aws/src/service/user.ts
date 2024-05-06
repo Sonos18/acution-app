@@ -1,11 +1,13 @@
 import { DynamoDB } from 'aws-sdk';
-import { stat } from 'fs';
 import { StatusCodes } from 'http-status-codes';
+import { v4 } from 'uuid';
 
 import { Auction } from '~/db/auction-schema';
 import { User } from '~/db/user-schema';
 
 import { customError } from '~/utils/createHandler';
+import { SigninWithProviderInput } from '~/utils/types/auth-type';
+import { SiginOutput } from '~/utils/types/user-type';
 
 const dynamoDB = new DynamoDB.DocumentClient();
 
@@ -23,7 +25,7 @@ export const getUserById = async (id: string) => {
 	if (result.Items && result.Items.length > 0) {
 		return result.Items[0] as User;
 	}
-	throw customError('User not exist', 404);
+	return null;
 };
 
 export const getUserByListId = async (auctions: Auction[]) => {
@@ -45,4 +47,50 @@ export const getUserByListId = async (auctions: Auction[]) => {
 	} catch (error) {
 		throw customError((error as Error).message, StatusCodes.INTERNAL_SERVER_ERROR);
 	}
+};
+export const getUserByEmail = async (email: string) => {
+	const params = {
+		TableName: 'User',
+		IndexName: 'EmailIndex',
+		KeyConditionExpression: 'email = :email',
+		ExpressionAttributeValues: {
+			':email': email
+		}
+	};
+	const result = await dynamoDB.query(params).promise();
+	if (result.Items && result.Items.length > 0) {
+		return result.Items[0] as User;
+	}
+	return null;
+};
+export const signinWithProvider = async (data: SigninWithProviderInput, user: User | null) => {
+	if (!user || data.provider !== user.provider) {
+		const item = {
+			userId: data.id,
+			email: data.email,
+			firstName: data.name,
+			avatar: data.picture,
+			provider: data.provider,
+			created_at: new Date().toISOString(),
+			updated_at: new Date().toISOString(),
+			role: 'user'
+		};
+		const params = {
+			TableName: 'User',
+			Item: item
+		};
+		await dynamoDB.put(params).promise();
+		return {
+			avatar: item.avatar,
+			firstName: item.firstName,
+			userId: item.userId,
+			email: item.email
+		};
+	}
+	return {
+		avatar: user.avatar,
+		firstName: user.firstName,
+		userId: user.userId,
+		email: user.email
+	};
 };

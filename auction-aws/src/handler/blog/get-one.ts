@@ -50,6 +50,9 @@ const treeShakingBlog = (blog: Blog, user: User, likes: number, isLiked: boolean
 const getBlog = async (id: string, userId: string) => {
 	const blog = await getBlogById(id);
 	const user = await getUserById(blog.userId);
+	if (!user) {
+		throw customError('User not found', StatusCodes.NOT_FOUND);
+	}
 	const { likes, isLiked } = await countLikesForBlog(id, userId);
 	return { blog, user, likes, isLiked };
 };

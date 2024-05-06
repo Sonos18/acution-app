@@ -3,6 +3,7 @@ import { NextAuthOptions } from "next-auth";
 import NextAuth from "next-auth/next";
 import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
+import authApiRequest from "@/apiRequests/auth";
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID ?? "";
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET ?? "";
@@ -32,21 +33,21 @@ const authOption: NextAuthOptions = {
   ],
   callbacks: {
     async signIn({ account, profile }) {
-      if (!profile?.email) {
+      if (!profile || !account) {
         throw new Error("No profile");
       }
-      console.log(profile);
       return true;
     },
-    session,
     async jwt({ token, user, account, profile }) {
-      if (profile) {
-        // if (!user) {
-        //   throw new Error('No user found')
-        // }
-        token.id = "shafghdsfg";
+      if (profile && account) {
+        token.id = user.id;
+        token.provider = account.provider;
       }
       return token;
+    },
+    async session({ session, token }) {
+      session.user = token;
+      return session;
     },
   },
 };

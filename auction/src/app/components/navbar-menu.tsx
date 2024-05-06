@@ -18,6 +18,8 @@ import { IoSearchSharp } from "react-icons/io5";
 import { Setting } from "@/components/custom/setting";
 import { useAppContext } from "../app-provider";
 import Link from "next/link";
+import logo from "../../../public/logo.jpg";
+import Image from "next/image";
 
 export function Nav() {
   const { user } = useAppContext();
@@ -42,8 +44,14 @@ export function Nav() {
     <>
       <div className="grid grid-cols-10 gap-4 items-center bg-white mb-4">
         <div className="col-span-3 text-center">
-          <Link href="/" className="text-indigo-400">
-            APP AUCTION
+          <Link href="/" className="item-center text-center">
+            <Image
+              src={logo}
+              alt="Logo"
+              height={72}
+              width={128}
+              className="mx-auto"
+            />
           </Link>
         </div>
         <div className="col-span-4 mx-auto ">

@@ -12,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { ItemConfirm } from "./item-confirm";
 
 interface Props {
   auctions: AuctionClosingType[];
@@ -31,24 +32,8 @@ const TableConfirm = ({ auctions }: Props) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {auctions.map((auction, index) => (
-            <TableRow key={index}>
-              <TableCell>{auction.productName}</TableCell>
-              <TableCell>{auction.startPrice}</TableCell>
-              <TableCell>{auction.endPrice}</TableCell>
-              <TableCell>
-                {new Date(auction.startTime).toLocaleString()}
-              </TableCell>
-              <TableCell>
-                {new Date(auction.endTime).toLocaleString()}
-              </TableCell>
-              <TableCell className="text-right">
-                <button className="bg-green-500 text-white px-4 py-2 rounded-md">
-                  Confirm
-                </button>
-              </TableCell>
-            </TableRow>
-          ))}
+          {Array.isArray(auctions) &&
+            auctions.map((auction, index) => <ItemConfirm auction={auction} />)}
         </TableBody>
       </Table>
     </div>

@@ -1,3 +1,4 @@
+import { SignInWithProvider } from "@/app/signin/page";
 import http from "@/lib/http";
 import {
   SignInResSchemaType,
@@ -24,6 +25,8 @@ const authApiRequest = {
       }
     ),
   logout: () => http.get("/user/logout"),
+  signInWithProvider: (body: SignInWithProvider) =>
+    http.post<SignInResSchemaType>("/user/signin/provider", body),
 };
 
 export default authApiRequest;

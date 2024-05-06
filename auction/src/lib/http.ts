@@ -112,7 +112,7 @@ const request = async <Response>(
     }
   }
   if (typeof window !== "undefined") {
-    if (normalizePath(url) === "user/signin") {
+    if (normalizePath(url).startsWith("user/signin")) {
       const { accessToken, refreshToken } = payload as SignInResSchemaType;
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
