@@ -63,3 +63,16 @@ export const updateStatusPayment = async (paymentId: string, status: string) => 
 		throw customError((error as Error).message, StatusCodes.INTERNAL_SERVER_ERROR);
 	}
 };
+export const getPaymentByPaymentId = async (paymentId: string) => {
+	const params = {
+		TableName: 'Payment',
+		Key: {
+			paymentId
+		}
+	};
+	const result = await dynamoDB.get(params).promise();
+	if (!result.Item) {
+		throw customError('Payment not found', StatusCodes.BAD_REQUEST);
+	}
+	return result.Item as Payment;
+};

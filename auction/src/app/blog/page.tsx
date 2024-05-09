@@ -4,8 +4,10 @@ import BlogCard from "@/components/custom/blog/blog-card";
 import Loader from "@/components/loading";
 import { BlogsReponseType, LastKeyType } from "@/schemaValidations/blog.schema";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import ButtonAdd from "./_component/button-add";
+import VideoCameraBackIcon from "@mui/icons-material/VideoCameraBack";
+import CollectionsIcon from "@mui/icons-material/Collections";
+import MoodIcon from "@mui/icons-material/Mood";
 
 export default function Blog() {
   const [lastKey, setLastKey] = useState<LastKeyType | undefined>(undefined);
@@ -32,7 +34,7 @@ export default function Blog() {
     <Loader />
   ) : (
     <div>
-      <ButtonAdd />
+      <ButtonAdd item={addItem} />
       <div className="flex flex-col gap-10 mb-6">
         {safeBlogs.length > 0 &&
           safeBlogs.map((blog) => <BlogCard blog={blog} key={blog.blogId} />)}
@@ -40,3 +42,26 @@ export default function Blog() {
     </div>
   );
 }
+const addItem = {
+  link: "/auction/add",
+  title: "what do you want to share?",
+  cateItems: [
+    {
+      name: "Live Video",
+      icon: (
+        <VideoCameraBackIcon className="text-rose-500 mr-1" fontSize="small" />
+      ),
+    },
+    {
+      name: "Picture/Video",
+      icon: (
+        <CollectionsIcon className="text-green-400 mr-1" fontSize="small" />
+      ),
+    },
+    {
+      name: "Mood/Activity",
+      icon: <MoodIcon className="text-orange-400 mr-1" fontSize="small" />,
+    },
+  ],
+};
+export type addItemType = typeof addItem;

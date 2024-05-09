@@ -1,15 +1,8 @@
 "use client";
-import React, { use, useEffect, useState } from "react";
-import {
-  HoveredLink,
-  Menu,
-  MenuItem,
-  ProductItem,
-} from "@/components/ui/navbar-menu";
+import React, { useState } from "react";
+import { Menu, MenuItem, ProductItem } from "@/components/ui/navbar-menu";
 import { cn } from "@/lib/utils";
 import { FloatingNav } from "@/components/ui/floating-navbar";
-import { IconHome, IconMessage, IconUser } from "@tabler/icons-react";
-import { usePathname, useSearchParams } from "next/navigation";
 import { NavItem } from "@/utils/type";
 import { useRouter } from "next/navigation";
 import { Combobox } from "./combobox";
@@ -23,7 +16,6 @@ import Image from "next/image";
 
 export function Nav() {
   const { user } = useAppContext();
-  if (!user) return <></>;
   const [items, setItems] = useState(navItems);
   const router = useRouter();
   const handleItemClick = (
@@ -40,6 +32,7 @@ export function Nav() {
     setItems(updatedNavItems);
     router.push(ref);
   };
+  if (!user) return <></>;
   return (
     <>
       <div className="grid grid-cols-10 gap-4 items-center bg-white mb-4">

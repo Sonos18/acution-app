@@ -334,7 +334,9 @@ export const getAllClosingAuctions = async (userId: string) => {
 		}
 	};
 	const result = await dynamoDB.query(params).promise();
-	return result.Items as Auction[];
+	if (!result.Items) {
+		return null;
+	} else return result.Items as Auction[];
 };
 export const getAuctionsByStatus = async (status: string) => {
 	const params: DynamoDB.DocumentClient.QueryInput = {

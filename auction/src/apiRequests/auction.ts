@@ -14,7 +14,8 @@ const auctionApiRequest = {
     http.post(`/auction/bid/?id=${id}`, body),
   buyAuction: (id: string, body: { price: number }) =>
     http.post(`/auction/buy/?id=${id}`, body),
-  getMyAuctionsCofirm: () => http.get<AuctionClosingType[]>("/auction/closing"),
+  getMyAuctionsCofirm: () =>
+    http.get<AuctionClosingType[] | []>("/auction/closing"),
   confirmAuction: (id: string) => http.get(`/auction/confirm/?id=${id}`),
 };
 

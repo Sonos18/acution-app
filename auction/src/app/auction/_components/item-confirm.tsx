@@ -14,7 +14,6 @@ export const ItemConfirm = ({ auction }: Props) => {
     try {
       setLoading(true);
       const res = await auctionApiRequest.confirmAuction(id);
-      setTimeout(() => {}, 2000);
       toast({
         title: "Auction Confirmed",
         description: "Auction has been confirmed successfully",

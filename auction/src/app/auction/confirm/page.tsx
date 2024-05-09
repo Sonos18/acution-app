@@ -35,8 +35,10 @@ const AuctionConfirmList = () => {
   return (
     <div className="w-6/7 xl:max-w-[2100px] mx-auto pb-6">
       <div className=" flex justify-center flex-col md:flex-row items-start relative ">
-        {auctions[1] ? (
-          <p className="text-center">No data</p>
+        {auctions.length < 1 ? (
+          <p className="text-center">
+            You don&apos;t have any auction need confirm
+          </p>
         ) : (
           <>
             <TableConfirm auctions={auctions} />

@@ -32,5 +32,6 @@ export const config = {
     "/blog/:path*",
     "/auction/:path*",
     "/",
+    "/payment/:path*",
   ],
 };

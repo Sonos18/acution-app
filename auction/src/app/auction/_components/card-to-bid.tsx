@@ -1,11 +1,10 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { HiOutlinePlusSm, HiMinusSm } from "react-icons/hi";
 import { AuctionType } from "@/schemaValidations/auction.schema";
 import Clock from "@/app/components/count-down";
 import { Button } from "@/components/ui/moving-border";
 import auctionApiRequest from "@/apiRequests/auction";
-import Loader from "@/components/loading";
 import GavelIcon from "@mui/icons-material/Gavel";
 import PaidIcon from "@mui/icons-material/Paid";
 import { toast } from "@/components/ui/use-toast";

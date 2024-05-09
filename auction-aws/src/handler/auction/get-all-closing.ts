@@ -11,10 +11,10 @@ export const handler: HandlerFn = async (event, context, callback) => {
 	try {
 		const user = decodedTokenFromHeader(event);
 		const auctions = await getAllClosingAuctions(user.id);
+		if (!auctions) {
+			return callback(null, { statusCode: 200, body: JSON.stringify([]) });
+		}
 		const products = await getProductsByListId(auctions);
-		console.log('auctions', auctions);
-		console.log('products', products);
-
 		const res = treeShakingAuctionsClosing(auctions, products);
 		console.log('res', res);
 		callback(null, { statusCode: 200, body: JSON.stringify(res) });

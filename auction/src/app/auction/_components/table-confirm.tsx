@@ -33,7 +33,9 @@ const TableConfirm = ({ auctions }: Props) => {
         </TableHeader>
         <TableBody>
           {Array.isArray(auctions) &&
-            auctions.map((auction, index) => <ItemConfirm auction={auction} />)}
+            auctions.map((auction, index) => (
+              <ItemConfirm key={auction.auctionId} auction={auction} />
+            ))}
         </TableBody>
       </Table>
     </div>

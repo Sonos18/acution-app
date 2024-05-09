@@ -270,6 +270,20 @@ functions:
           method: get
           authorizer:
             name: PrivateRouter
+  CreateCheckout:
+    handler: src/handler/payment/create-checkout.handler
+    events:
+      - httpApi:
+          path: /payment/create-checkout
+          method: post
+          authorizer:
+            name: PrivateRouter
+  UpdatePayment:
+    handler: src/handler/payment/stripe-webhooks.webhookHandler
+    events:
+      - httpApi:
+          path: /payment/payment-webhooks
+          method: post
 resources:
   - ${file(resources/dynamodb-resources.yml)}
   # test:

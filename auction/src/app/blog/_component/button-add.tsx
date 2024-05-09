@@ -2,11 +2,13 @@
 
 import { useAppContext } from "@/app/app-provider";
 import Image from "next/image";
-import VideoCameraBackIcon from "@mui/icons-material/VideoCameraBack";
-import CollectionsIcon from "@mui/icons-material/Collections";
-import MoodIcon from "@mui/icons-material/Mood";
+
 import Link from "next/link";
-const ButtonAdd = () => {
+import { addItemType } from "../page";
+interface Props {
+  item: addItemType;
+}
+const ButtonAdd = ({ item }: Props) => {
   const { user } = useAppContext();
   if (!user) return <></>;
   return (
@@ -21,8 +23,8 @@ const ButtonAdd = () => {
         />
 
         <div className="w-full rounded-3xl bg-slate-100 my-auto p-2 hover:bg-slate-200 cursor-pointer">
-          <Link href="/blog/addBlog">
-            {user?.firstName} {user?.lastName}, what do you want to share?
+          <Link href={item.link}>
+            {user?.firstName} {user?.lastName}, {item.title}
           </Link>
         </div>
       </div>
@@ -30,21 +32,15 @@ const ButtonAdd = () => {
         <hr className="h-1/2 bg-slate-600" />
       </div>
       <div className="w-full grid grid-cols-12 items-center">
-        <div className="col-span-4 bg-white hover:bg-slate-300 p-2 rounded-lg text-center">
-          <VideoCameraBackIcon
-            className="text-rose-500 mr-1"
-            fontSize="small"
-          />
-          <span className="text-sm text-slate-600">Live Video</span>
-        </div>
-        <div className="col-span-4 bg-white hover:bg-slate-300 p-2 rounded-lg text-center">
-          <CollectionsIcon className="text-green-400 mr-1" fontSize="small" />
-          <span className="text-sm text-slate-600">Picture/Video</span>
-        </div>
-        <div className="col-span-4 bg-white hover:bg-slate-300 p-2 rounded-lg text-center">
-          <MoodIcon className="text-orange-400 mr-1" fontSize="small" />
-          <span className="text-sm text-slate-600">Mood/Activity</span>
-        </div>
+        {item.cateItems.map((cateItem, idx) => (
+          <div
+            key={idx}
+            className="col-span-4 bg-white hover:bg-slate-300 p-2 rounded-lg text-center"
+          >
+            {cateItem.icon}
+            <span className="text-sm text-slate-600">{cateItem.name}</span>
+          </div>
+        ))}
       </div>
     </div>
   );

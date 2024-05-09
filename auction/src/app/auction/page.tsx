@@ -3,17 +3,17 @@ import auctionApiRequest from "@/apiRequests/auction";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import {
-  AuctionType,
   AuctionsResponseType,
   LastKeyType,
 } from "@/schemaValidations/auction.schema";
 import Loader from "@/components/loading";
 import { AnimatePresence, motion } from "framer-motion";
 import { Card } from "@/components/ui/card-hover-effect";
-import { ThreeDCardCategory } from "../components/category";
 import { AuctionCard } from "./_components/auction-card";
-import Image from "next/image";
-
+import ButtonAdd from "../blog/_component/button-add";
+import SupportAgentIcon from "@mui/icons-material/SupportAgent";
+import CreditCardIcon from "@mui/icons-material/CreditCard";
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 const Auction = () => {
   const [lastKey, setLastKey] = useState<LastKeyType | undefined>(undefined);
   const [loading, setLoading] = useState(true);
@@ -40,6 +40,7 @@ const Auction = () => {
     <Loader />
   ) : (
     <div className="mx-auto w-3/4">
+      <ButtonAdd item={addItem} />
       <div
         className={cn("grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3  py-10")}
       >
@@ -77,3 +78,27 @@ const Auction = () => {
   );
 };
 export default Auction;
+const addItem = {
+  link: "/auction/add",
+  title: "what do you want to auction your product?",
+  cateItems: [
+    {
+      name: "Fast shipping",
+      icon: (
+        <LocalShippingIcon className="text-rose-500 mr-1" fontSize="small" />
+      ),
+    },
+    {
+      name: "Support 24/7",
+      icon: (
+        <SupportAgentIcon className="text-green-400 mr-1" fontSize="small" />
+      ),
+    },
+    {
+      name: "Easy payment",
+      icon: (
+        <CreditCardIcon className="text-orange-400 mr-1" fontSize="small" />
+      ),
+    },
+  ],
+};
