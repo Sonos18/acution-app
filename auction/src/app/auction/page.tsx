@@ -14,15 +14,18 @@ import ButtonAdd from "../blog/_component/button-add";
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
+import { useSearchParams } from "next/navigation";
 const Auction = () => {
   const [lastKey, setLastKey] = useState<LastKeyType | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [auctions, setAuctions] = useState<AuctionsResponseType["data"]>([]);
   let [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-
+  const searchParams = useSearchParams();
+  const search = searchParams.get("search");
   const loadAuctions = async () => {
     try {
-      const response = await auctionApiRequest.getAuctions("?limit=10");
+      const param = search ? `?limit=10&search=${search}` : "?limit=10";
+      const response = await auctionApiRequest.getAuctions(param);
       setAuctions(response.payload.data);
       setLastKey(response.payload.lastKey);
       setLoading(false);

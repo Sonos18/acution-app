@@ -31,6 +31,7 @@ export interface GetBlogsOutput {
 	lastKey?: lastKeyBlogs;
 }
 export interface GetBlogsInput {
+	search?: string;
 	limit?: number;
 	userId?: string;
 	keyBlogId?: string;

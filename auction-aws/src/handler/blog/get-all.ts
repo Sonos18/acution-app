@@ -21,26 +21,35 @@ export const handler: HandlerFn = async (event, context, callback) => {
 	try {
 		const params = extractPathParamsFromRequest({ event, schema: getBlogsSchema });
 		const { lastKey, limit } = paginateBase(params.limit, params.keyBlogId);
-		const blogs = await getListBlogs(limit, params.userId, lastKey);
-		const likes = await countLikesForBlogs(blogs.items as Blog[]);
-		const users = await getUsersForBlogs(blogs.items as Blog[]);
-		const result = responsesGetBlogs(blogs, likes, event, users);
-		callback(null, { statusCode: 200, body: JSON.stringify(result) });
+		const blogs = await getListBlogs(limit, params.userId, lastKey, params.search);
+		if (blogs) {
+			const likes = await countLikesForBlogs(blogs.items as Blog[]);
+			const users = await getUsersForBlogs(blogs.items as Blog[]);
+			const result = responsesGetBlogs(blogs, likes, event, users);
+			callback(null, { statusCode: 200, body: JSON.stringify(result) });
+		} else {
+			callback(null, { statusCode: 200, body: JSON.stringify({ data: [], lastKey: null }) });
+		}
 	} catch (error) {
 		const e = error as Error;
 		customErrorOutput(e, callback);
 	}
 };
-export const getListBlogs = async (limit: number, userId?: string, lastKey?: lastKeyBlogs) => {
+export const getListBlogs = async (
+	limit: number,
+	userId?: string,
+	lastKey?: lastKeyBlogs,
+	hashtag?: string
+) => {
 	try {
 		let blogs: {
 			items: Blog[];
 			lastKey: lastKeyBlogs;
-		};
+		} | null;
 		if (userId) {
 			blogs = await getBlogsByUserId(userId, limit, lastKey);
 		} else {
-			blogs = await getBlogs(limit, lastKey);
+			blogs = await getBlogs(limit, lastKey, hashtag);
 		}
 		return blogs;
 	} catch (error) {
@@ -50,7 +59,7 @@ export const getListBlogs = async (limit: number, userId?: string, lastKey?: las
 };
 
 const responsesGetBlogs = (
-	blogs: Awaited<ReturnType<typeof getBlogs>>,
+	blogs: NonNullable<Awaited<ReturnType<typeof getBlogs>>>,
 	likes: Like[],
 	event: APIGatewayProxyEvent,
 	users: User[]
@@ -134,6 +143,7 @@ const getUsersForBlogs = async (blogs: Blog[]) => {
 };
 
 const getBlogsSchema: ObjectSchema<GetBlogsInput> = object({
+	search: string().optional(),
 	page: number().optional(),
 	limit: number().optional(),
 	userId: string().optional(),

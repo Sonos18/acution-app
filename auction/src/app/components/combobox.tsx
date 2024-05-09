@@ -1,28 +1,31 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { Check, ChevronsUpDown } from "lucide-react"
+import { Check, ChevronsUpDown } from "lucide-react";
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
-} from "@/components/ui/command"
+} from "@/components/ui/command";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
+} from "@/components/ui/popover";
+import { pagesType } from "@/components/custom/search";
+import { Dispatch, SetStateAction, useState } from "react";
 
-
-
-export function Combobox() {
-  const [open, setOpen] = React.useState(false)
-  const [value, setValue] = React.useState("")
+interface Props {
+  pages: pagesType;
+  setPage: Dispatch<SetStateAction<string>>;
+  page: string;
+}
+export function Combobox({ pages, setPage, page }: Props) {
+  const [open, setOpen] = useState(false);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -30,32 +33,32 @@ export function Combobox() {
         <Button
           role="combobox"
           aria-expanded={open}
-          className="w-[110px] justify-between bg-slate-50 text-gray-800 hover:bg-slate-100"
+          className="w-[120px] justify-between bg-slate-50 text-gray-800 hover:bg-slate-100"
         >
-          {value
-            ? category.find((framework) => framework.value === value)?.label
-            : "Category"}
+          {page
+            ? pages.find((framework) => framework.value === page)?.label
+            : "Select Page"}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder="Search framework..." />
-          <CommandEmpty>No framework found.</CommandEmpty>
+          <CommandInput placeholder="Search page..." />
+          <CommandEmpty>No page found.</CommandEmpty>
           <CommandGroup>
-            {category.map((framework) => (
+            {pages.map((framework) => (
               <CommandItem
                 key={framework.value}
                 value={framework.value}
                 onSelect={(currentValue) => {
-                  setValue(currentValue === value ? "" : currentValue)
-                  setOpen(false)
+                  setPage(currentValue === page ? "" : currentValue);
+                  setOpen(false);
                 }}
               >
                 <Check
                   className={cn(
                     "mr-2 h-4 w-4",
-                    value === framework.value ? "opacity-100" : "opacity-0"
+                    page === framework.value ? "opacity-100" : "opacity-0"
                   )}
                 />
                 {framework.label}
@@ -65,27 +68,5 @@ export function Combobox() {
         </Command>
       </PopoverContent>
     </Popover>
-  )
+  );
 }
-const category = [
-    {
-      value: "next.js",
-      label: "Next.js",
-    },
-    {
-      value: "sveltekit",
-      label: "SvelteKit",
-    },
-    {
-      value: "nuxt.js",
-      label: "Nuxt.js",
-    },
-    {
-      value: "remix",
-      label: "Remix",
-    },
-    {
-      value: "astro",
-      label: "Astro",
-    },
-  ]

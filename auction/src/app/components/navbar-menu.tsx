@@ -5,14 +5,13 @@ import { cn } from "@/lib/utils";
 import { FloatingNav } from "@/components/ui/floating-navbar";
 import { NavItem } from "@/utils/type";
 import { useRouter } from "next/navigation";
-import { Combobox } from "./combobox";
-import { Input } from "@/components/ui/input";
-import { IoSearchSharp } from "react-icons/io5";
+
 import { Setting } from "@/components/custom/setting";
 import { useAppContext } from "../app-provider";
 import Link from "next/link";
 import logo from "../../../public/logo.jpg";
 import Image from "next/image";
+import { Search } from "@/components/custom/search";
 
 export function Nav() {
   const { user } = useAppContext();
@@ -52,17 +51,7 @@ export function Nav() {
             <Navbar items={items} className="" />
           </div>
         </div>
-        <div className="col-span-2 ">
-          <div className="bg-slate-50 flex justify-center items-center rounded-md border-2 relative">
-            <Combobox />
-            <Input className="h-8" placeholder="Enter key work" />
-            <IoSearchSharp
-              size={24}
-              className="absolute right-1"
-              color="#475569"
-            />
-          </div>
-        </div>
+        <Search />
         {user ? <Setting avatar={user.avatar} /> : <></>}
       </div>
       <FloatingNav navItems={items} handleItemClick={handleItemClick} />

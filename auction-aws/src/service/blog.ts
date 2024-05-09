@@ -23,7 +23,7 @@ export const getBlogById = async (id: string) => {
 	}
 	throw customError('Blog not exist', 404);
 };
-export const getBlogs = async (limit: number, lastKey?: lastKeyBlogs) => {
+export const getBlogs = async (limit: number, lastKey?: lastKeyBlogs, hashtag?: string) => {
 	const params: DynamoDB.DocumentClient.QueryInput = {
 		TableName: 'Blog',
 		IndexName: 'DeletedIndex',
@@ -37,7 +37,17 @@ export const getBlogs = async (limit: number, lastKey?: lastKeyBlogs) => {
 	if (lastKey) {
 		params.ExclusiveStartKey = lastKey;
 	}
+	if (hashtag) {
+		params.FilterExpression = 'contains(hashtags, :hashtag)';
+		params.ExpressionAttributeValues = {
+			...params.ExpressionAttributeValues,
+			':hashtag': hashtag
+		};
+	}
 	const result = await dynamoDB.query(params).promise();
+	if (!result.Items || result.Items.length < 1) {
+		return null;
+	}
 	return {
 		lastKey: result.LastEvaluatedKey as lastKeyBlogs,
 		items: result.Items as Blog[]
@@ -58,7 +68,11 @@ export const getBlogsByUserId = async (userId: string, limit: number, lastKey?: 
 	if (lastKey) {
 		params.ExclusiveStartKey = lastKey;
 	}
+
 	const result = await dynamoDB.query(params).promise();
+	if (!result.Items || result.Items.length < 1) {
+		return null;
+	}
 	return {
 		lastKey: result.LastEvaluatedKey as lastKeyBlogs,
 		items: result.Items as Blog[]

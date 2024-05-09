@@ -41,18 +41,6 @@ export const Setting = ({ avatar }: { avatar: string }) => {
                   <DropdownMenuShortcut>{item.icon}</DropdownMenuShortcut>
                 </DropdownMenuItem>
               ))}
-              {/* <DropdownMenuItem className="text-lg">
-                <Link href="/profile">Profile</Link>
-                <DropdownMenuShortcut>
-                  <PublishedWithChangesIcon className="text-blue-400" />
-                </DropdownMenuShortcut>
-              </DropdownMenuItem>
-              <DropdownMenuItem className="text-slate-500 hover:text-slate-700 ">
-                <Link href="/auction/confirm">Confirm your auction</Link>
-                <DropdownMenuShortcut>
-                  <PublishedWithChangesIcon className="ml-1 " />
-                </DropdownMenuShortcut>
-              </DropdownMenuItem> */}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
