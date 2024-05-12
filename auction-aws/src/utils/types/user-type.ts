@@ -9,15 +9,6 @@ export interface CreateUserInput {
 	role: string;
 }
 
-export interface UpdateUserInput {
-	userId: string;
-	firstName?: string;
-	lastName?: string;
-	email?: string;
-	password?: string;
-	phone?: string;
-}
-
 export interface CreateUserOutput {
 	first_name: string;
 	last_name: string;
@@ -38,4 +29,10 @@ export interface SiginOutput {
 	refreshToken: string;
 	accessToken: string;
 	user: User;
+}
+export interface UpdateUserInput {
+	firstName: string;
+	lastName: string;
+	email: string;
+	phone: string;
 }

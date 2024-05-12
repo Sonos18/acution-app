@@ -29,7 +29,9 @@ export const handler: HandlerFn = async (event, context, callback) => {
 				firstName: user.firstName,
 				lastName: user.lastName,
 				email: user.email,
-				avatar: user.avatar
+				avatar: user.avatar,
+				phone: user.phone,
+				role: user.role
 			}
 		};
 		callback(null, {

@@ -24,12 +24,13 @@ const Auction = () => {
   const search = searchParams.get("search");
   const loadAuctions = async () => {
     try {
+      console.log("search", search);
       const param = search ? `?limit=10&search=${search}` : "?limit=10";
       const response = await auctionApiRequest.getAuctions(param);
+      console.log("response", response.payload);
       setAuctions(response.payload.data);
       setLastKey(response.payload.lastKey);
       setLoading(false);
-      console.log(response);
     } catch (error) {
       console.error(error);
     }
@@ -37,7 +38,7 @@ const Auction = () => {
 
   useEffect(() => {
     loadAuctions();
-  }, []);
+  }, [search]);
   const safeAuctions = auctions || [];
   return loading ? (
     <Loader />

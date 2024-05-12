@@ -9,6 +9,8 @@ import { GetImgUrl } from '~/handler/s3/get-url';
 import { customError } from '~/utils/createHandler';
 import { CreateProductInput } from '~/utils/types/product-type';
 
+import { getCategoryByName } from './category';
+
 const dynamoDB = new DynamoDB.DocumentClient();
 export const createProduct = async (data: CreateProductInput) => {
 	const product: Product = {
@@ -35,10 +37,10 @@ export const getProductById = async (productId: string) => {
 	}
 	return Item as Product;
 };
-const getProductByCategoryId = async (categoryId: string) => {
+export const getProductsByCategoryId = async (categoryId: string) => {
 	const param: DynamoDB.DocumentClient.QueryInput = {
 		TableName: 'Product',
-		IndexName: 'categoryIndex',
+		IndexName: 'CategoryIndex',
 		KeyConditionExpression: 'categoryId = :categoryId',
 		ExpressionAttributeValues: { ':categoryId': categoryId }
 	};

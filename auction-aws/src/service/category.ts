@@ -114,3 +114,17 @@ export const getCategoriesByListId = async (products: Product[]) => {
 		throw customError((error as Error).message, StatusCodes.INTERNAL_SERVER_ERROR);
 	}
 };
+export const getCategoryByName = async (name: string) => {
+	const param: DynamoDB.DocumentClient.ScanInput = {
+		TableName: 'Category',
+		FilterExpression: 'categoryName = :categoryName',
+		ExpressionAttributeValues: {
+			':categoryName': name
+		}
+	};
+	const res = await dynamoDB.scan(param).promise();
+	if (res.Items && res.Items.length > 0) {
+		return res.Items[0] as Category;
+	}
+	throw customError('Category not found', StatusCodes.BAD_REQUEST);
+};

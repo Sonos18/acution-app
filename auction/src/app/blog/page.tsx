@@ -18,7 +18,7 @@ export default function Blog() {
   const search = searchParams.get("search");
   const loadBlogs = async () => {
     try {
-      const params = search ? `?limit=3&search=${search}` : "?limit=3";
+      const params = search ? `?limit=10&search=${search}` : "?limit=10";
       const response = await blogApiRequest.getBlogs(params);
       console.log("Response", response);
       setBlogs(response.payload.data);
@@ -51,7 +51,7 @@ export default function Blog() {
   );
 }
 const addItem = {
-  link: "/auction/add",
+  link: "/blog/add",
   title: "what do you want to share?",
   cateItems: [
     {

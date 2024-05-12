@@ -7,21 +7,31 @@ import {
   FaSquareTwitter,
   FaInstagram,
 } from "react-icons/fa6";
-import { CiCirclePlus } from "react-icons/ci";
+import Image from "next/image";
+import { useAppContext } from "../app-provider";
+import Link from "next/link";
+import { SheetEditProfile } from "@/components/custom/profile/sheet-edit-profile";
 
 const Profile = () => {
+  const { user } = useAppContext();
   const [isChecked, setChecked] = useState(false);
-
   return (
     <div className="flex-grow">
       <div className="mx-auto w-5/6 ease-soft-in-out xl:ml-68.5 h-full max-h-screen bg-gray-50 transition-all duration-200">
         <div className="w-full px-6 mx-auto bg-gray-100">
           <div className="bg-zinc-500 relative flex items-center p-0 mt-6 overflow-hidden bg-center bg-cover min-h-75 rounded-2xl">
-            <img
-              src="https://demos.creative-tim.com/soft-ui-dashboard-tailwind/assets/img/bruce-mars.jpg"
-              alt="profile_image"
-              className="w-full h-80 object-cover shadow-soft-sm rounded-xl"
-            />
+            <div className="w-full h-80">
+              <Image
+                src={
+                  user?.avatar ??
+                  "https://demos.creative-tim.com/soft-ui-dashboard-tailwind/assets/img/team-4.jpg"
+                }
+                alt="profile_image"
+                layout="fill"
+                objectFit="cover"
+                className="object-cover shadow-soft-sm rounded-xl"
+              />
+            </div>
             {isChecked && (
               <span className="absolute inset-y-0 w-full h-full bg-center bg-cover bg-gradient-to-tl from-purple-700 to-pink-500 opacity-60"></span>
             )}
@@ -30,18 +40,27 @@ const Profile = () => {
             <div className="flex flex-wrap -mx-3">
               <div className="flex-none w-auto max-w-full px-3">
                 <div className="text-base ease-soft-in-out h-18.5 w-18.5 relative inline-flex items-center justify-center rounded-xl text-white transition-all duration-200">
-                  <img
-                    src="https://demos.creative-tim.com/soft-ui-dashboard-tailwind/assets/img/bruce-mars.jpg"
-                    alt="profile_image"
-                    className="w-16 h-16 shadow-soft-sm rounded-xl"
-                  />
+                  <div className="w-16 h-16">
+                    <Image
+                      src={
+                        user?.avatar ??
+                        "https://demos.creative-tim.com/soft-ui-dashboard-tailwind/assets/img/team-4.jpg"
+                      }
+                      layout="fill"
+                      objectFit="cover"
+                      alt="profile_image"
+                      className="shadow-soft-sm rounded-xl"
+                    />
+                  </div>
                 </div>
               </div>
               <div className="flex-none w-auto max-w-full px-3 my-auto">
                 <div className="h-full">
-                  <h5 className="mb-1">Alec Thompson</h5>
+                  <h5 className="mb-1">
+                    {user?.firstName} {user?.lastName}
+                  </h5>
                   <p className="mb-0 font-semibold leading-normal text-sm">
-                    CEO / Co-Founder
+                    Users
                   </p>
                 </div>
               </div>
@@ -102,7 +121,7 @@ const Profile = () => {
                       </div>
                     </li>
                     <li className="z-30 flex-auto text-center">
-                      <a
+                      <Link
                         className="z-30 block w-full px-0 py-1 mb-0 transition-all border-0 rounded-lg ease-soft-in-out bg-inherit text-slate-700"
                         nav-link
                         href="javascript:;"
@@ -147,10 +166,10 @@ const Profile = () => {
                           </g>
                         </svg>
                         <span className="ml-1">Messages</span>
-                      </a>
+                      </Link>
                     </li>
                     <li className="z-30 flex-auto text-center">
-                      <a
+                      <Link
                         className="z-30 block w-full px-0 py-1 mb-0 transition-colors border-0 rounded-lg ease-soft-in-out bg-inherit text-slate-700"
                         nav-link
                         href="javascript:;"
@@ -200,7 +219,7 @@ const Profile = () => {
                           </g>
                         </svg>
                         <span className="ml-1">Settings</span>
-                      </a>
+                      </Link>
                     </li>
                   </ul>
                 </div>
@@ -213,7 +232,7 @@ const Profile = () => {
             <div className="w-full max-w-full px-3 xl:w-4/12">
               <div className="relative flex flex-col h-full min-w-0 break-words bg-white border-b-2 shadow-soft-xl rounded-2xl bg-clip-border">
                 <div className="p-4 pb-0 mb-0 bg-white border-b-0 rounded-t-2xl">
-                  <h6 className="mb-0">Platform Settings</h6>
+                  <h6 className="mb-0">Settings</h6>
                 </div>
                 <div className="flex-auto p-4">
                   <h6 className="font-bold leading-tight uppercase text-xs text-slate-500">
@@ -265,86 +284,16 @@ const Profile = () => {
                       </div>
                     </li>
                   </ul>
-                  <h6 className="mt-6 font-bold leading-tight uppercase text-xs text-slate-500">
-                    Application
-                  </h6>
-                  <ul className="flex flex-col pl-0 mb-0 rounded-lg">
-                    <li className="relative block px-0 py-2 bg-white border-0 rounded-t-lg text-inherit">
-                      <div className="min-h-6 mb-0.5 block pl-0">
-                        <input
-                          id="launches projects"
-                          className="mt-0.54 rounded-10 duration-250 ease-soft-in-out after:rounded-circle after:shadow-soft-2xl after:duration-250 checked:after:translate-x-5.25 h-5 relative float-left ml-auto w-10 cursor-pointer appearance-none border border-solid border-gray-200 bg-slate-800/10 bg-none bg-contain bg-left bg-no-repeat align-top transition-all after:absolute after:top-px after:h-4 after:w-4 after:translate-x-px after:bg-white after:content-[''] checked:border-slate-800/95 checked:bg-slate-800/95 checked:bg-none checked:bg-right"
-                          type="checkbox"
-                        />
-                        <label
-                          htmlFor="launches projects"
-                          className="w-4/5 mb-0 ml-4 overflow-hidden font-normal cursor-pointer select-none text-sm text-ellipsis whitespace-nowrap text-slate-500"
-                        >
-                          New launches and projects
-                        </label>
-                      </div>
-                    </li>
-                    <li className="relative block px-0 py-2 bg-white border-0 text-inherit">
-                      <div className="min-h-6 mb-0.5 block pl-0">
-                        <input
-                          id="product updates"
-                          className="mt-0.54 rounded-10 duration-250 ease-soft-in-out after:rounded-circle after:shadow-soft-2xl after:duration-250 checked:after:translate-x-5.25 h-5 relative float-left ml-auto w-10 cursor-pointer appearance-none border border-solid border-gray-200 bg-slate-800/10 bg-none bg-contain bg-left bg-no-repeat align-top transition-all after:absolute after:top-px after:h-4 after:w-4 after:translate-x-px after:bg-white after:content-[''] checked:border-slate-800/95 checked:bg-slate-800/95 checked:bg-none checked:bg-right"
-                          type="checkbox"
-                          defaultChecked
-                        />
-                        <label
-                          htmlFor="product updates"
-                          className="w-4/5 mb-0 ml-4 overflow-hidden font-normal cursor-pointer select-none text-sm text-ellipsis whitespace-nowrap text-slate-500"
-                        >
-                          Monthly product updates
-                        </label>
-                      </div>
-                    </li>
-                    <li className="relative block px-0 py-2 pb-0 bg-white border-0 rounded-b-lg text-inherit">
-                      <div className="min-h-6 mb-0.5 block pl-0">
-                        <input
-                          id="subscribe"
-                          className="mt-0.54 rounded-10 duration-250 ease-soft-in-out after:rounded-circle after:shadow-soft-2xl after:duration-250 checked:after:translate-x-5.25 h-5 relative float-left ml-auto w-10 cursor-pointer appearance-none border border-solid border-gray-200 bg-slate-800/10 bg-none bg-contain bg-left bg-no-repeat align-top transition-all after:absolute after:top-px after:h-4 after:w-4 after:translate-x-px after:bg-white after:content-[''] checked:border-slate-800/95 checked:bg-slate-800/95 checked:bg-none checked:bg-right"
-                          type="checkbox"
-                        />
-                        <label
-                          htmlFor="subscribe"
-                          className="w-4/5 mb-0 ml-4 overflow-hidden font-normal cursor-pointer select-none text-sm text-ellipsis whitespace-nowrap text-slate-500"
-                        >
-                          Subscribe to newsletter
-                        </label>
-                      </div>
-                    </li>
-                  </ul>
                 </div>
               </div>
             </div>
             <div className="w-full max-w-full px-3 lg-max:mt-6 xl:w-4/12">
               <div className="relative flex flex-col h-full min-w-0 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border">
                 <div className="p-4 pb-0 mb-0 bg-white border-b-0 rounded-t-2xl">
-                  <div className="flex flex-wrap -mx-3">
-                    <div className="flex items-center w-full max-w-full px-3 shrink-0 md:w-8/12 md:flex-none">
-                      <h6 className="mb-0">Profile Information</h6>
-                    </div>
-                    <div className="w-full max-w-full px-3 text-right shrink-0 md:w-4/12 md:flex-none">
-                      <a
-                        href="javascript:;"
-                        data-target="tooltip_trigger"
-                        data-placement="top"
-                      >
-                        <i className="leading-normal fas fa-user-edit text-sm text-slate-400" />
-                      </a>
-                      <div
-                        data-target="tooltip"
-                        className="hidden px-2 py-1 text-center text-white bg-black rounded-lg text-sm"
-                        role="tooltip"
-                      >
-                        Edit Profile
-                        <div
-                          className="invisible absolute h-2 w-2 bg-inherit before:visible before:absolute before:h-2 before:w-2 before:rotate-45 before:bg-inherit before:content-['']"
-                          data-popper-arrow
-                        />
-                      </div>
+                  <div className="flex justify-between items-center w-full max-w-full px-3">
+                    <h6 className="mb-0">Profile Information</h6>
+                    <div className="text-blue-500 hover:cursor-pointer">
+                      <SheetEditProfile />
                     </div>
                   </div>
                 </div>
@@ -359,19 +308,19 @@ const Profile = () => {
                   <ul className="flex flex-col pl-0 mb-0 rounded-lg">
                     <li className="relative block px-4 py-2 pt-0 pl-0 leading-normal bg-white border-0 rounded-t-lg text-sm text-inherit">
                       <strong className="text-slate-700">Full Name:</strong>{" "}
-                      &nbsp; Alec M. Thompson
+                      &nbsp; {user?.firstName} {user?.lastName}
                     </li>
                     <li className="relative block px-4 py-2 pl-0 leading-normal bg-white border-0 border-t-0 text-sm text-inherit">
                       <strong className="text-slate-700">Mobile:</strong> &nbsp;
-                      (44) 123 1234 123
+                      {user?.phone ?? "Not update"}
                     </li>
                     <li className="relative block px-4 py-2 pl-0 leading-normal bg-white border-0 border-t-0 text-sm text-inherit">
                       <strong className="text-slate-700">Email:</strong> &nbsp;
-                      alecthompson@mail.com
+                      {user?.email}
                     </li>
                     <li className="relative block px-4 py-2 pl-0 leading-normal bg-white border-0 border-t-0 text-sm text-inherit">
                       <strong className="text-slate-700">Location:</strong>{" "}
-                      &nbsp; USA
+                      &nbsp; Vietnam
                     </li>
                     <li className="relative block px-4 py-2 pb-0 pl-0 bg-white border-0 border-t-0 rounded-b-lg text-inherit">
                       <strong className="leading-normal text-sm text-slate-700">
@@ -525,417 +474,10 @@ const Profile = () => {
                 </div>
               </div>
             </div>
-            <div className="flex-none w-full max-w-full px-3 mt-6">
-              <div className="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 shadow-soft-xl rounded-2xl bg-clip-border">
-                <div className="p-4 pb-0 mb-0 bg-white rounded-t-2xl">
-                  <h6 className="mb-1">Projects</h6>
-                  <p className="leading-normal text-sm">
-                    Architects design houses
-                  </p>
-                </div>
-                <div className="flex-auto p-4">
-                  <div className="flex flex-wrap -mx-3">
-                    <div className="w-full max-w-full px-3 mb-6 md:w-6/12 md:flex-none xl:mb-0 xl:w-3/12">
-                      <div className="relative flex flex-col min-w-0 break-words bg-transparent border-0 shadow-none rounded-2xl bg-clip-border">
-                        <div className="relative">
-                          <a className="block shadow-xl rounded-2xl">
-                            <img
-                              src="https://demos.creative-tim.com/soft-ui-dashboard-tailwind/assets/img/bruce-mars.jpg"
-                              alt="img-blur-shadow"
-                              className="max-w-full shadow-soft-2xl rounded-2xl"
-                            />
-                          </a>
-                        </div>
-                        <div className="flex-auto px-1 pt-6">
-                          <p className="relative z-10 mb-2 leading-normal text-transparent bg-gradient-to-tl from-gray-900 to-slate-800 text-sm bg-clip-text">
-                            Project #2
-                          </p>
-                          <a href="javascript:;">
-                            <h5>Modern</h5>
-                          </a>
-                          <p className="mb-6 leading-normal text-sm">
-                            As Uber works through a huge amount of internal
-                            management turmoil.
-                          </p>
-                          <div className="flex items-center justify-between">
-                            <button
-                              type="button"
-                              className="inline-block px-8 py-2 mb-0 font-bold text-center uppercase align-middle transition-all bg-transparent border border-solid rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in text-xs hover:scale-102 active:shadow-soft-xs tracking-tight-soft border-fuchsia-500 text-fuchsia-500 hover:border-fuchsia-500 hover:bg-transparent hover:text-fuchsia-500 hover:opacity-75 hover:shadow-none active:bg-fuchsia-500 active:text-white active:hover:bg-transparent active:hover:text-fuchsia-500"
-                            >
-                              View Project
-                            </button>
-                            <div className="mt-2">
-                              <a
-                                href="javascript:;"
-                                className="relative z-20 inline-flex items-center justify-center w-6 h-6 text-white transition-all duration-200 border-2 border-white border-solid ease-soft-in-out text-xs rounded-circle hover:z-30"
-                                data-target="tooltip_trigger"
-                                data-placement="bottom"
-                              >
-                                <img
-                                  className="https://demos.creative-tim.com/soft-ui-dashboard-tailwind/assets/img/bruce-mars.jpg"
-                                  alt="Image placeholder"
-                                  src="../assets/img/team-1.jpg"
-                                />
-                              </a>
-                              <div
-                                data-target="tooltip"
-                                className="hidden px-2 py-1 text-white bg-black rounded-lg text-sm"
-                                role="tooltip"
-                              >
-                                Elena Morison
-                                <div
-                                  className="invisible absolute h-2 w-2 bg-inherit before:visible before:absolute before:h-2 before:w-2 before:rotate-45 before:bg-inherit before:content-['']"
-                                  data-popper-arrow
-                                />
-                              </div>
-                              <a
-                                href="javascript:;"
-                                className="relative z-20 inline-flex items-center justify-center w-6 h-6 -ml-4 text-white transition-all duration-200 border-2 border-white border-solid ease-soft-in-out text-xs rounded-circle hover:z-30"
-                                data-target="tooltip_trigger"
-                                data-placement="bottom"
-                              >
-                                <img
-                                  className="w-full rounded-circle"
-                                  alt="Image placeholder"
-                                  src="../assets/img/team-2.jpg"
-                                />
-                              </a>
-                              <div
-                                data-target="tooltip"
-                                className="hidden px-2 py-1 text-white bg-black rounded-lg text-sm"
-                                role="tooltip"
-                              >
-                                Ryan Milly
-                                <div
-                                  className="invisible absolute h-2 w-2 bg-inherit before:visible before:absolute before:h-2 before:w-2 before:rotate-45 before:bg-inherit before:content-['']"
-                                  data-popper-arrow
-                                />
-                              </div>
-                              <a
-                                href="javascript:;"
-                                className="relative z-20 inline-flex items-center justify-center w-6 h-6 -ml-4 text-white transition-all duration-200 border-2 border-white border-solid ease-soft-in-out text-xs rounded-circle hover:z-30"
-                                data-target="tooltip_trigger"
-                                data-placement="bottom"
-                              >
-                                <img
-                                  className="w-full rounded-circle"
-                                  alt="Image placeholder"
-                                  src="../assets/img/team-3.jpg"
-                                />
-                              </a>
-                              <div
-                                data-target="tooltip"
-                                className="hidden px-2 py-1 text-white bg-black rounded-lg text-sm"
-                                role="tooltip"
-                              >
-                                Nick Daniel
-                                <div
-                                  className="invisible absolute h-2 w-2 bg-inherit before:visible before:absolute before:h-2 before:w-2 before:rotate-45 before:bg-inherit before:content-['']"
-                                  data-popper-arrow
-                                />
-                              </div>
-                              <a
-                                href="javascript:;"
-                                className="relative z-20 inline-flex items-center justify-center w-6 h-6 -ml-4 text-white transition-all duration-200 border-2 border-white border-solid ease-soft-in-out text-xs rounded-circle hover:z-30"
-                                data-target="tooltip_trigger"
-                                data-placement="bottom"
-                              >
-                                <img
-                                  className="w-full rounded-circle"
-                                  alt="Image placeholder"
-                                  src="../assets/img/team-4.jpg"
-                                />
-                              </a>
-                              <div
-                                data-target="tooltip"
-                                className="hidden px-2 py-1 text-white bg-black rounded-lg text-sm"
-                                role="tooltip"
-                              >
-                                Peterson
-                                <div
-                                  className="invisible absolute h-2 w-2 bg-inherit before:visible before:absolute before:h-2 before:w-2 before:rotate-45 before:bg-inherit before:content-['']"
-                                  data-popper-arrow
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="w-full max-w-full px-3 mb-6 md:w-6/12 md:flex-none xl:mb-0 xl:w-3/12">
-                      <div className="relative flex flex-col min-w-0 break-words bg-transparent border-0 shadow-none rounded-2xl bg-clip-border">
-                        <div className="relative">
-                          <a className="block shadow-xl rounded-2xl">
-                            <img
-                              src="https://demos.creative-tim.com/soft-ui-dashboard-tailwind/assets/img/bruce-mars.jpg"
-                              alt="img-blur-shadow"
-                              className="max-w-full shadow-soft-2xl rounded-xl"
-                            />
-                          </a>
-                        </div>
-                        <div className="flex-auto px-1 pt-6">
-                          <p className="relative z-10 mb-2 leading-normal text-transparent bg-gradient-to-tl from-gray-900 to-slate-800 text-sm bg-clip-text">
-                            Project #1
-                          </p>
-                          <a href="javascript:;">
-                            <h5>Scandinavian</h5>
-                          </a>
-                          <p className="mb-6 leading-normal text-sm">
-                            Music is something that every person has his or her
-                            own specific opinion about.
-                          </p>
-                          <div className="flex items-center justify-between">
-                            <button
-                              type="button"
-                              className="inline-block px-8 py-2 mb-0 font-bold text-center uppercase align-middle transition-all bg-transparent border border-solid rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in text-xs hover:scale-102 active:shadow-soft-xs tracking-tight-soft border-fuchsia-500 text-fuchsia-500 hover:border-fuchsia-500 hover:bg-transparent hover:text-fuchsia-500 hover:opacity-75 hover:shadow-none active:bg-fuchsia-500 active:text-white active:hover:bg-transparent active:hover:text-fuchsia-500"
-                            >
-                              View Project
-                            </button>
-                            <div className="mt-2">
-                              <a
-                                href="javascript:;"
-                                className="relative z-20 inline-flex items-center justify-center w-6 h-6 text-white transition-all duration-200 border-2 border-white border-solid ease-soft-in-out text-xs rounded-circle hover:z-30"
-                                data-target="tooltip_trigger"
-                                data-placement="bottom"
-                              >
-                                <img
-                                  className="w-full rounded-circle"
-                                  alt="Image placeholder"
-                                  src="../assets/img/team-3.jpg"
-                                />
-                              </a>
-                              <div
-                                data-target="tooltip"
-                                className="hidden px-2 py-1 text-white bg-black rounded-lg text-sm"
-                                role="tooltip"
-                              >
-                                Nick Daniel
-                                <div
-                                  className="invisible absolute h-2 w-2 bg-inherit before:visible before:absolute before:h-2 before:w-2 before:rotate-45 before:bg-inherit before:content-['']"
-                                  data-popper-arrow
-                                />
-                              </div>
-                              <a
-                                href="javascript:;"
-                                className="relative z-20 inline-flex items-center justify-center w-6 h-6 -ml-4 text-white transition-all duration-200 border-2 border-white border-solid ease-soft-in-out text-xs rounded-circle hover:z-30"
-                                data-target="tooltip_trigger"
-                                data-placement="bottom"
-                              >
-                                <img
-                                  className="w-full rounded-circle"
-                                  alt="Image placeholder"
-                                  src="../assets/img/team-4.jpg"
-                                />
-                              </a>
-                              <div
-                                data-target="tooltip"
-                                className="hidden px-2 py-1 text-white bg-black rounded-lg text-sm"
-                                role="tooltip"
-                              >
-                                Peterson
-                                <div
-                                  className="invisible absolute h-2 w-2 bg-inherit before:visible before:absolute before:h-2 before:w-2 before:rotate-45 before:bg-inherit before:content-['']"
-                                  data-popper-arrow
-                                />
-                              </div>
-                              <a
-                                href="javascript:;"
-                                className="relative z-20 inline-flex items-center justify-center w-6 h-6 -ml-4 text-white transition-all duration-200 border-2 border-white border-solid ease-soft-in-out text-xs rounded-circle hover:z-30"
-                                data-target="tooltip_trigger"
-                                data-placement="bottom"
-                              >
-                                <img
-                                  className="w-full rounded-circle"
-                                  alt="Image placeholder"
-                                  src="../assets/img/team-1.jpg"
-                                />
-                              </a>
-                              <div
-                                data-target="tooltip"
-                                className="hidden px-2 py-1 text-white bg-black rounded-lg text-sm"
-                                role="tooltip"
-                              >
-                                Elena Morison
-                                <div
-                                  className="invisible absolute h-2 w-2 bg-inherit before:visible before:absolute before:h-2 before:w-2 before:rotate-45 before:bg-inherit before:content-['']"
-                                  data-popper-arrow
-                                />
-                              </div>
-                              <a
-                                href="javascript:;"
-                                className="relative z-20 inline-flex items-center justify-center w-6 h-6 -ml-4 text-white transition-all duration-200 border-2 border-white border-solid ease-soft-in-out text-xs rounded-circle hover:z-30"
-                                data-target="tooltip_trigger"
-                                data-placement="bottom"
-                              >
-                                <img
-                                  className="w-full rounded-circle"
-                                  alt="Image placeholder"
-                                  src="../assets/img/team-2.jpg"
-                                />
-                              </a>
-                              <div
-                                data-target="tooltip"
-                                className="hidden px-2 py-1 text-white bg-black rounded-lg text-sm"
-                                role="tooltip"
-                              >
-                                Ryan Milly
-                                <div
-                                  className="invisible absolute h-2 w-2 bg-inherit before:visible before:absolute before:h-2 before:w-2 before:rotate-45 before:bg-inherit before:content-['']"
-                                  data-popper-arrow
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="w-full max-w-full px-3 mb-6 md:w-6/12 md:flex-none xl:mb-0 xl:w-3/12">
-                      <div className="relative flex flex-col min-w-0 break-words bg-transparent border-0 shadow-none rounded-2xl bg-clip-border">
-                        <div className="relative">
-                          <a className="block shadow-xl rounded-2xl">
-                            <img
-                              src="../assets/img/home-decor-3.jpg"
-                              alt="img-blur-shadow"
-                              className="max-w-full shadow-soft-2xl rounded-2xl"
-                            />
-                          </a>
-                        </div>
-                        <div className="flex-auto px-1 pt-6">
-                          <p className="relative z-10 mb-2 leading-normal text-transparent bg-gradient-to-tl from-gray-900 to-slate-800 text-sm bg-clip-text">
-                            Project #3
-                          </p>
-                          <a href="javascript:;">
-                            <h5>Minimalist</h5>
-                          </a>
-                          <p className="mb-6 leading-normal text-sm">
-                            Different people have different taste, and various
-                            types of music.
-                          </p>
-                          <div className="flex items-center justify-between">
-                            <button
-                              type="button"
-                              className="inline-block px-8 py-2 mb-0 font-bold text-center uppercase align-middle transition-all bg-transparent border border-solid rounded-lg shadow-none cursor-pointer leading-pro ease-soft-in text-xs hover:scale-102 active:shadow-soft-xs tracking-tight-soft border-fuchsia-500 text-fuchsia-500 hover:border-fuchsia-500 hover:bg-transparent hover:text-fuchsia-500 hover:opacity-75 hover:shadow-none active:bg-fuchsia-500 active:text-white active:hover:bg-transparent active:hover:text-fuchsia-500"
-                            >
-                              View Project
-                            </button>
-                            <div className="mt-2">
-                              <a
-                                href="javascript:;"
-                                className="relative z-20 inline-flex items-center justify-center w-6 h-6 text-white transition-all duration-200 border-2 border-white border-solid ease-soft-in-out text-xs rounded-circle hover:z-30"
-                                data-target="tooltip_trigger"
-                                data-placement="bottom"
-                              >
-                                <img
-                                  className="w-full rounded-circle"
-                                  alt="Image placeholder"
-                                  src="../assets/img/team-4.jpg"
-                                />
-                              </a>
-                              <div
-                                data-target="tooltip"
-                                className="hidden px-2 py-1 text-white bg-black rounded-lg text-sm"
-                                role="tooltip"
-                              >
-                                Peterson
-                                <div
-                                  className="invisible absolute h-2 w-2 bg-inherit before:visible before:absolute before:h-2 before:w-2 before:rotate-45 before:bg-inherit before:content-['']"
-                                  data-popper-arrow
-                                />
-                              </div>
-                              <a
-                                href="javascript:;"
-                                className="relative z-20 inline-flex items-center justify-center w-6 h-6 -ml-4 text-white transition-all duration-200 border-2 border-white border-solid ease-soft-in-out text-xs rounded-circle hover:z-30"
-                                data-target="tooltip_trigger"
-                                data-placement="bottom"
-                              >
-                                <img
-                                  className="w-full rounded-circle"
-                                  alt="Image placeholder"
-                                  src="../assets/img/team-3.jpg"
-                                />
-                              </a>
-                              <div
-                                data-target="tooltip"
-                                className="hidden px-2 py-1 text-white bg-black rounded-lg text-sm"
-                                role="tooltip"
-                              >
-                                Nick Daniel
-                                <div
-                                  className="invisible absolute h-2 w-2 bg-inherit before:visible before:absolute before:h-2 before:w-2 before:rotate-45 before:bg-inherit before:content-['']"
-                                  data-popper-arrow
-                                />
-                              </div>
-                              <a
-                                href="javascript:;"
-                                className="relative z-20 inline-flex items-center justify-center w-6 h-6 -ml-4 text-white transition-all duration-200 border-2 border-white border-solid ease-soft-in-out text-xs rounded-circle hover:z-30"
-                                data-target="tooltip_trigger"
-                                data-placement="bottom"
-                              >
-                                <img
-                                  className="w-full rounded-circle"
-                                  alt="Image placeholder"
-                                  src="../assets/img/team-2.jpg"
-                                />
-                              </a>
-                              <div
-                                data-target="tooltip"
-                                className="hidden px-2 py-1 text-white bg-black rounded-lg text-sm"
-                                role="tooltip"
-                              >
-                                Ryan Milly
-                                <div
-                                  className="invisible absolute h-2 w-2 bg-inherit before:visible before:absolute before:h-2 before:w-2 before:rotate-45 before:bg-inherit before:content-['']"
-                                  data-popper-arrow
-                                />
-                              </div>
-                              <a
-                                href="javascript:;"
-                                className="relative z-20 inline-flex items-center justify-center w-6 h-6 -ml-4 text-white transition-all duration-200 border-2 border-white border-solid ease-soft-in-out text-xs rounded-circle hover:z-30"
-                                data-target="tooltip_trigger"
-                                data-placement="bottom"
-                              >
-                                <img
-                                  className="w-full rounded-circle"
-                                  alt="Image placeholder"
-                                  src="../assets/img/team-1.jpg"
-                                />
-                              </a>
-                              <div
-                                data-target="tooltip"
-                                className="hidden px-2 py-1 text-white bg-black rounded-lg text-sm"
-                                role="tooltip"
-                              >
-                                Elena Morison
-                                <div
-                                  className="invisible absolute h-2 w-2 bg-inherit before:visible before:absolute before:h-2 before:w-2 before:rotate-45 before:bg-inherit before:content-['']"
-                                  data-popper-arrow
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="w-full max-w-full px-3 mb-6 md:w-6/12 md:flex-none xl:mb-0 xl:w-3/12">
-                      <div className="relative flex flex-col h-full min-w-0 break-words bg-transparent border border-solid shadow-none rounded-2xl border-slate-300 bg-clip-border">
-                        <div className="flex flex-col justify-center flex-auto p-6 text-center items-center">
-                          <a href="javascript:;">
-                            <CiCirclePlus
-                              className="mx-auto mb-4 text-slate-400"
-                              size={40}
-                            />
-                            <h5 className="text-slate-400">New project</h5>
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
+      <div className="h-40"></div>
     </div>
   );
 };

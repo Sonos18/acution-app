@@ -53,8 +53,8 @@ export interface DeleteOrGetOneAuctionInput {
 	auctionId: string;
 }
 export interface GetAuctionsInput {
+	search?: string;
 	limit?: number;
-	userId?: string;
 	auctionId?: string;
 	status?: string;
 }

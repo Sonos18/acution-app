@@ -11,7 +11,7 @@ import {
   useState,
 } from "react";
 
-type User = SignInResSchemaType["user"];
+export type User = SignInResSchemaType["user"];
 
 const AppContext = createContext<{
   user: User | null;
@@ -34,11 +34,13 @@ export default function AppProvider({
   const [user, setUserState] = useState<User | null>(() => {
     return null;
   });
-  const isAuthenticated = Boolean(user);
   const setUser = useCallback(
-    (user: User | null) => {
+    (user: User | null, callback?: (user: User | null) => void) => {
       setUserState(user);
       localStorage.setItem("user", JSON.stringify(user));
+      if (callback) {
+        callback(user);
+      }
     },
     [setUserState]
   );

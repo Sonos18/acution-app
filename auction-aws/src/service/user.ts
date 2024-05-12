@@ -7,7 +7,7 @@ import { User } from '~/db/user-schema';
 
 import { customError } from '~/utils/createHandler';
 import { SigninWithProviderInput } from '~/utils/types/auth-type';
-import { SiginOutput } from '~/utils/types/user-type';
+import { SiginOutput, UpdateUserInput } from '~/utils/types/user-type';
 
 const dynamoDB = new DynamoDB.DocumentClient();
 
@@ -92,5 +92,39 @@ export const signinWithProvider = async (data: SigninWithProviderInput, user: Us
 		firstName: user.firstName,
 		userId: user.userId,
 		email: user.email
+	};
+};
+export const updateUser = async (userId: string, updateData: UpdateUserInput) => {
+	const user = await getUserById(userId);
+	if (!user) {
+		throw customError('User not found', StatusCodes.UNAUTHORIZED);
+	}
+	const params = {
+		TableName: 'User',
+		Key: {
+			userId: userId
+		},
+		UpdateExpression:
+			'set firstName = :firstName, lastName = :lastName, email = :email, phone = :phone',
+		ExpressionAttributeValues: {
+			':firstName': updateData.firstName,
+			':lastName': updateData.lastName,
+			':email': updateData.email,
+			':phone': updateData.phone
+		},
+		ReturnValues: 'ALL_NEW'
+	};
+	const res = await dynamoDB.update(params).promise();
+	return res.Attributes as User;
+};
+export const treeSakingUser = (user: User) => {
+	return {
+		userId: user.userId,
+		firstName: user.firstName,
+		lastName: user.lastName,
+		email: user.email,
+		phone: user.phone,
+		avatar: user.avatar,
+		role: user.role
 	};
 };

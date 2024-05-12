@@ -1,5 +1,8 @@
 import http from "@/lib/http";
-import { UserResType } from "@/schemaValidations/user.schema";
+import {
+  UserResType,
+  UserUpdateSchemaType,
+} from "@/schemaValidations/user.schema";
 
 const userApiRequest = {
   get: (accessToken: string) =>
@@ -8,5 +11,6 @@ const userApiRequest = {
         Authorization: `Bearer ${accessToken}`,
       },
     }),
+  update: (body: UserUpdateSchemaType) => http.put<UserResType>("/user", body),
 };
 export default userApiRequest;

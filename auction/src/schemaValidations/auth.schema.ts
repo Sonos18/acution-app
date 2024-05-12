@@ -89,6 +89,8 @@ export const SignInResSchema = z
       firstName: z.string(),
       lastName: z.string(),
       avatar: z.string(),
+      phone: z.string().optional(),
+      role: z.string(),
     }),
   })
   .strict();

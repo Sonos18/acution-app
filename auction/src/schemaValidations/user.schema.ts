@@ -13,3 +13,10 @@ export const UserRes = z
   .strict();
 
 export type UserResType = z.infer<typeof UserRes>;
+export const UserUpdateSchema = z.object({
+  firstName: z.string(),
+  lastName: z.string(),
+  email: z.string(),
+  phone: z.string(),
+});
+export type UserUpdateSchemaType = z.infer<typeof UserUpdateSchema>;

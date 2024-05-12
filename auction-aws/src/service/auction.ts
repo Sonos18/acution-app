@@ -69,7 +69,11 @@ export const getAuctionsByUserId = async (userId: string, limit: number, key?: l
 		lastKey: result.LastEvaluatedKey as lastKeyAuctions
 	};
 };
-export const getAllAuctions = async (limit: number, key?: lastKeyAuctions) => {
+export const getAllAuctions = async (
+	limit: number,
+	key?: lastKeyAuctions,
+	productIds?: string[]
+) => {
 	const params: DynamoDB.DocumentClient.QueryInput = {
 		TableName: 'Auction',
 		IndexName: 'StatusIndex',
@@ -85,9 +89,18 @@ export const getAllAuctions = async (limit: number, key?: lastKeyAuctions) => {
 	if (key) {
 		params.ExclusiveStartKey = key;
 	}
-
+	if (productIds && productIds.length > 0) {
+		params.FilterExpression = 'productId IN (:productIds)';
+		params.ExpressionAttributeValues = {
+			...params.ExpressionAttributeValues,
+			':productIds': productIds
+		};
+	}
 	try {
 		const result = await dynamoDB.query(params).promise();
+		if (!result.Items || result.Items.length === 0) {
+			return;
+		}
 		return {
 			data: result.Items as Auction[],
 			lastKey: result.LastEvaluatedKey as lastKeyAuctions
@@ -96,10 +109,6 @@ export const getAllAuctions = async (limit: number, key?: lastKeyAuctions) => {
 		const err = error as Error;
 		console.error(err.message);
 	}
-	return {
-		data: [],
-		lastKey: undefined
-	};
 };
 export const getAuctionById = async (auctionId: string) => {
 	const params: DynamoDB.DocumentClient.GetItemInput = {
@@ -115,15 +124,21 @@ export const getAuctionById = async (auctionId: string) => {
 	return result.Item as Auction;
 };
 export const treeShakingAuctions = (
-	auctions: Awaited<ReturnType<typeof getAllAuctions>>,
+	auctions: NonNullable<Awaited<ReturnType<typeof getAllAuctions>>>,
 	poduct: Product[],
-	categories: Category[],
+	categories: Category[] | string,
 	users: User[]
 ): GetAuctionsOutput => {
 	const { data, lastKey } = auctions;
 	const result: AuctionOutput[] = data.map((auction) => {
 		const product = poduct.find((product) => product.productId === auction.productId);
-		const category = categories.find((category) => category.categoryId === product?.categoryId);
+		let nameCategory: string | undefined;
+		if (typeof categories === 'string') {
+			nameCategory = categories;
+		} else {
+			const category = categories.find((category) => category.categoryId === product?.categoryId);
+			nameCategory = category?.categoryName;
+		}
 		const user = users.find((user) => user.userId === auction.userId);
 		return {
 			auctionId: auction.auctionId,
@@ -137,7 +152,7 @@ export const treeShakingAuctions = (
 				productId: product?.productId ?? '',
 				productName: product?.productName ?? '',
 				description: product?.description ?? '',
-				category: category?.categoryName ?? '',
+				category: nameCategory ?? '',
 				origin: product?.origin ?? '',
 				images: product?.images ?? []
 			},
@@ -352,4 +367,18 @@ export const getAuctionsByStatus = async (status: string) => {
 	};
 	const result = await dynamoDB.query(params).promise();
 	return result.Items as Auction[];
+};
+export const getAUctionsByProductIds = async (productIds: string[]) => {
+	const params: DynamoDB.DocumentClient.BatchGetItemInput = {
+		RequestItems: {
+			Auction: {
+				Keys: productIds.map((productId) => ({ productId }))
+			}
+		}
+	};
+	const result = await dynamoDB.batchGet(params).promise();
+	if (!result.Responses) {
+		return [];
+	}
+	return result.Responses.Auction as Auction[];
 };

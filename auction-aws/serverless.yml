@@ -114,6 +114,14 @@ functions:
           method: get
           authorizer:
             name: PrivateRouter
+  UpdateUser:
+    handler: src/handler/user/update.handler
+    events:
+      - httpApi:
+          path: /user
+          method: put
+          authorizer:
+            name: PrivateRouter
   CreateBlog:
     handler: src/handler/blog/create.handler
     events:
