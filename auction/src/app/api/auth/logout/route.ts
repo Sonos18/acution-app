@@ -16,6 +16,7 @@ export async function POST(request: Request) {
   try {
     cookieStore.delete("accessToken");
     cookieStore.delete("refreshToken");
+    cookieStore.delete("role");
     return Response.json({
       status: 200,
       message: "Logged out successfully",

@@ -84,14 +84,19 @@ export const signinWithProvider = async (data: SigninWithProviderInput, user: Us
 			avatar: item.avatar,
 			firstName: item.firstName,
 			userId: item.userId,
-			email: item.email
+			email: item.email,
+			role: item.role,
+			lastName: ''
 		};
 	}
 	return {
 		avatar: user.avatar,
 		firstName: user.firstName,
 		userId: user.userId,
-		email: user.email
+		email: user.email,
+		role: user.role,
+		lastName: user.lastName,
+		phone: user.phone
 	};
 };
 export const updateUser = async (userId: string, updateData: UpdateUserInput) => {

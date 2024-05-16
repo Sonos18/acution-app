@@ -40,9 +40,12 @@ const SigninForm = () => {
       const result = await authApiRequest.signIn(data);
       const { accessToken, refreshToken, user } = result.payload;
       setUser(user);
+      console.log(user.role);
+
       await authApiRequest.auth({
         accessToken: accessToken,
         refreshToken: refreshToken,
+        role: user.role,
       });
       toast({
         description: "Sign in successfully",
@@ -50,6 +53,10 @@ const SigninForm = () => {
         className: "bg-green-500",
         duration: 3000,
       });
+      if (user.role === "admin") {
+        router.push("/users");
+        return;
+      }
       router.push("/");
     } catch (error) {
       toast({

@@ -45,6 +45,7 @@ const Signin = () => {
         await authApiRequest.auth({
           accessToken: payload.accessToken,
           refreshToken: payload.refreshToken,
+          role: payload.user.role,
         });
         toast({
           description: `Sign in with ${provider} successfully`,
@@ -52,6 +53,12 @@ const Signin = () => {
           className: "bg-green-500",
           duration: 3000,
         });
+        console.log(payload.user.role);
+
+        if (payload.user.role === "admin") {
+          router.push("/users");
+          return;
+        }
         router.push("/");
       }
     } catch (error) {

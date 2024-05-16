@@ -1,8 +1,8 @@
-import { Banner } from "./components/banner";
-import { LayoutGridAuction } from "./components/layout-grid-auction";
+import { Banner } from "../components/banner";
+import { LayoutGridAuction } from "../components/layout-grid-auction";
 import { TbMessageShare } from "react-icons/tb";
 import { HoverEffect } from "@/components/ui/card-hover-effect";
-import { Rate } from "./components/rate";
+import { Rate } from "../components/rate";
 
 export default function Home() {
   return (

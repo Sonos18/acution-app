@@ -8,7 +8,7 @@ import {
   FaInstagram,
 } from "react-icons/fa6";
 import Image from "next/image";
-import { useAppContext } from "../app-provider";
+import { useAppContext } from "../../app-provider";
 import Link from "next/link";
 import { SheetEditProfile } from "@/components/custom/profile/sheet-edit-profile";
 

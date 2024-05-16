@@ -23,7 +23,9 @@ export const handler: HandlerFn = async (event, context, callback) => {
 				firstName: res.firstName,
 				email: res.email,
 				avatar: res.avatar,
-				lastName: ''
+				lastName: res.lastName,
+				role: res.role,
+				phone: res.phone
 			}
 		};
 		callback(null, {

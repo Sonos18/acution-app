@@ -10,7 +10,7 @@ const authApiRequest = {
   signIn: (body: SignInSchemaType) =>
     http.post<SignInResSchemaType>("/user/signin", body),
   signUp: (body: SignUpSchemaType) => http.post<any>("/user/signup", body),
-  auth: (body: { accessToken: string; refreshToken: string }) =>
+  auth: (body: { accessToken: string; refreshToken: string; role: string }) =>
     http.post("/api/auth", body, {
       baseUrl: "",
     }),
