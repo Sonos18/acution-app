@@ -133,3 +133,18 @@ export const treeSakingUser = (user: User) => {
 		role: user.role
 	};
 };
+export const getAllUser = async () => {
+	const params = {
+		TableName: 'User',
+		limit: 10
+	};
+	try {
+		const result = await dynamoDB.scan(params).promise();
+		return result.Items as User[];
+	} catch (error) {
+		throw customError((error as Error).message, StatusCodes.INTERNAL_SERVER_ERROR);
+	}
+};
+export const treeSakingUsers = (users: User[]) => {
+	return users.map((user) => treeSakingUser(user));
+};

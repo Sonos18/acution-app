@@ -29,7 +29,6 @@ provider:
       Action:
         - dynamodb:*
       Resource: 'arn:aws:dynamodb:*:*:*'
-
     - Effect: 'Allow'
       Action:
         - 's3:GetObject'
@@ -114,6 +113,14 @@ functions:
           method: get
           authorizer:
             name: PrivateRouter
+  GetAllUser:
+    handler: src/handler/user/get-all.handler
+    events:
+      - httpApi:
+          path: /user/all
+          method: get
+          authorizer:
+            name: AdminRouter
   UpdateUser:
     handler: src/handler/user/update.handler
     events:
