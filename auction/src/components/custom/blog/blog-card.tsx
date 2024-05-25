@@ -10,7 +10,6 @@ import {
   Favorite,
   FavoriteBorder,
 } from "@mui/icons-material";
-import { Alert } from "@mui/material";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -27,7 +26,8 @@ const BlogCard = ({ blog }: { blog: BlogResType }) => {
   const [isSaved, setIsSaved] = useState<boolean>(false);
   const { toast } = useToast();
   const router = useRouter();
-
+  console.log(blog.image);
+  
   const handleLike = async () => {
     try {
       setLoading(true);
@@ -197,7 +197,7 @@ const BlogCard = ({ blog }: { blog: BlogResType }) => {
             description="Are you sure you want to delete this post"
             handleLogout={handleDelete}
           >
-            <Delete sx={{ color: "white", cursor: "pointer" }} />
+            <Delete sx={{ color: "black", cursor: "pointer" }} />
           </AlertDialogConfirm>
         )}
       </div>

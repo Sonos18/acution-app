@@ -125,9 +125,10 @@ const SignupForm = () => {
           <span>{errors.confirmPassword.message}</span>
         )}
       </LabelInputContainer>
-      <div className="text-right mt-2 mb-2">
+      <div className="text-right mt-2 mb-2 opacity-80">
+      Do you already have an account? 
         <Link href="/signin" className="text-blue-300 hover:text-blue-500">
-          Bạn đã có tài khoản?
+          Sign in
         </Link>
       </div>
       <button

@@ -1,7 +1,7 @@
 "use client";
 import auctionApiRequest from "@/apiRequests/auction";
 import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import {
   AuctionsResponseType,
   LastKeyType,
@@ -15,7 +15,16 @@ import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import { useSearchParams } from "next/navigation";
-const Auction = () => {
+
+export default function Auction() {
+  return(
+    <Suspense fallback={<Loader />}>
+      <AuctionContent /> 
+    </Suspense>
+  )
+}
+
+function AuctionContent () {
   const [lastKey, setLastKey] = useState<LastKeyType | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [auctions, setAuctions] = useState<AuctionsResponseType["data"]>([]);
@@ -27,8 +36,8 @@ const Auction = () => {
       console.log("search", search);
       const param = search ? `?limit=10&search=${search}` : "?limit=10";
       const response = await auctionApiRequest.getAuctions(param);
-      console.log("response", response.payload);
-      setAuctions(response.payload.data);
+      const sortedAuctions = response.payload.data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      setAuctions(sortedAuctions );
       setLastKey(response.payload.lastKey);
       setLoading(false);
     } catch (error) {
@@ -81,7 +90,6 @@ const Auction = () => {
     </div>
   );
 };
-export default Auction;
 const addItem = {
   link: "/auction/add",
   title: "what do you want to auction your product?",

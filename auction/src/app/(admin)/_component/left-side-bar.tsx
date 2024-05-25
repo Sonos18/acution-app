@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleIcon from '@mui/icons-material/People';
-import BarChartIcon from '@mui/icons-material/BarChart';
+import CategoryIcon from '@mui/icons-material/Category';
 import logo from "../../../../public/logo.jpg";
 
 const LeftSideBar = () => {
@@ -43,9 +43,9 @@ export const navLinks=[
         icon: <DashboardIcon />,
         },
         {
-        label: "Chart",
-        url: "/chart",
-        icon: <BarChartIcon />,
+        label: "Category",
+        url: "/category",
+        icon: <CategoryIcon />,
         },
         {
         label: "Users",

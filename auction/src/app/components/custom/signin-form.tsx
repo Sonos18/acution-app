@@ -92,9 +92,10 @@ const SigninForm = () => {
           />
           {errors.password && <p>{errors.password.message}</p>}
         </LabelInputContainer>
-        <div className="text-right mt-2 mb-2">
+        <div className="text-right mt-2 mb-2 opacity-80">
+        Do not have an account? 
           <Link href="/signup" className="text-blue-300 hover:text-blue-500">
-            Bạn chưa có tài khoản?
+          Sign up
           </Link>
         </div>
         <button

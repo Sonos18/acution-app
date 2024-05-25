@@ -11,6 +11,7 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { useRouter } from "next/navigation";
 export function AuctionCard({ auction }: { auction: AuctionType }) {
   // const { user } = useAppContext();
+  
   const router = useRouter();
   return (
     <CardContainer className="inter-var w-full">
@@ -33,8 +34,8 @@ export function AuctionCard({ auction }: { auction: AuctionType }) {
                   <p className="text-small-semibold ">
                     {auction.user.firstName} {auction.user.lastName}
                   </p>
-                  <p className="text-subtle-medium">
-                    {auction.product.productName}
+                  <p className="text-lg">
+                  {new Date(auction.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} {new Date(auction.createdAt).toLocaleDateString('en-GB')}
                   </p>
                 </div>
               </div>
@@ -51,9 +52,9 @@ export function AuctionCard({ auction }: { auction: AuctionType }) {
         <CardItem
           as="p"
           translateZ="60"
-          className="text-neutral-500 text-sm max-w-sm mt-2 dark:text-neutral-300"
+          className="text-neutral-500 text-sm max-w-sm mt-2 dark:text-neutral-300 hidden"
         >
-          {auction.product.description}
+          {auction.product.productName}
         </CardItem>
         <CardItem translateZ="100" className="w-full mt-4">
           <Image

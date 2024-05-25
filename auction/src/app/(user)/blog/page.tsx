@@ -3,14 +3,22 @@ import blogApiRequest from "@/apiRequests/blog";
 import BlogCard from "@/components/custom/blog/blog-card";
 import Loader from "@/components/loading";
 import { BlogsReponseType, LastKeyType } from "@/schemaValidations/blog.schema";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import ButtonAdd from "./_component/button-add";
 import VideoCameraBackIcon from "@mui/icons-material/VideoCameraBack";
 import CollectionsIcon from "@mui/icons-material/Collections";
 import MoodIcon from "@mui/icons-material/Mood";
 import { useSearchParams } from "next/navigation";
 
+
 export default function Blog() {
+  return(
+    <Suspense fallback={<Loader />}>
+      <BlogContent /> 
+    </Suspense>
+  )
+}
+function BlogContent() {
   const [lastKey, setLastKey] = useState<LastKeyType | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [blogs, setBlogs] = useState<BlogsReponseType["data"]>([]);
@@ -20,8 +28,8 @@ export default function Blog() {
     try {
       const params = search ? `?limit=10&search=${search}` : "?limit=10";
       const response = await blogApiRequest.getBlogs(params);
-      console.log("Response", response);
-      setBlogs(response.payload.data);
+      const sortedBlogs = response.payload.data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      setBlogs(sortedBlogs);
       setLastKey(response.payload.lastKey);
       setLoading(false);
     } catch (error) {

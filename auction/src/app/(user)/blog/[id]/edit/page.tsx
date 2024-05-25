@@ -23,7 +23,6 @@ export default function EditBlog() {
   }, []);
   return (
     <>
-      <h1>Edit</h1>
       <FormBlog blog={blog} />
     </>
   );
