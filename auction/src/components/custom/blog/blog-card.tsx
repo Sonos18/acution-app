@@ -66,6 +66,8 @@ const BlogCard = ({ blog }: { blog: BlogResType }) => {
     try {
       setLoading(true);
       const res = await blogApiRequest.deleteBlog(blog.blogId);
+      console.log(res);
+      
       if (res.status !== 200) throw new Error(String(res.payload));
       toast({
         description: "Deleted a blog",

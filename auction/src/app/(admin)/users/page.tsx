@@ -14,20 +14,20 @@ import UserRow from "../_component/user-row-item";
 import userApiRequest from "@/apiRequests/user";
 
 const UsersPage = () => {
-  // const [users, setUsers] = useState<UserResType[] | []>([]);
-  // const loadUsers = async () => {
-  //   try {
-  //     const res = await userApiRequest.getAll();
-  //     console.log(res);
+  const [users, setUsers] = useState<UserResType[] | []>([]);
+  const loadUsers = async () => {
+    try {
+      const res = await userApiRequest.getAll();
+      console.log(res.payload);
 
-  //     // setUsers(res.payload);
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // };
-  // useEffect(() => {
-  //   loadUsers();
-  // }, []);
+      setUsers(res.payload);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  useEffect(() => {
+    loadUsers();
+  }, []);
   return (
     <div>
       <h1>Users</h1>
@@ -36,6 +36,7 @@ const UsersPage = () => {
           <TableCaption>Alist users</TableCaption>
           <TableHeader>
             <TableRow>
+              <TableHead> Avatar</TableHead>
               <TableHead> First Name</TableHead>
               <TableHead> Last Name</TableHead>
               <TableHead> Email</TableHead>
@@ -53,35 +54,3 @@ const UsersPage = () => {
   );
 };
 export default UsersPage;
-export type UserTamp= typeof users;
-const users = [
-  {
-    userId:"1",
-    firstName: "John",
-    lastName: "Doe",
-    email: "John@gmail.com",
-    role: "admin",
-
-  },
-  {
-    userId:"2",
-    firstName: "Jane",
-    lastName: "Doe",
-    email: "Jane@gmail.com",
-    role: "user",
-  },
-  {
-    userId:"3",
-    firstName: "James",
-    lastName: "Dusst",
-    email: "James@gmail.com",
-    role: "user",
-  },
-  {
-    userId:"4",
-    firstName: "Jenny",
-    lastName: "Doe",
-    email: "Jenny@gmail.com",
-    role: "user",
-  },
-]
