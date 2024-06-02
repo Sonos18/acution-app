@@ -31,7 +31,10 @@ import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
-export function SheetEditProfile() {
+interface SheetEditProfileProps {
+  title?: string;
+}
+export function SheetEditProfile({ title }: SheetEditProfileProps) {
   const { user, setUser } = useAppContext();
   const [loading, setLoading] = useState<boolean>(false);
   const form = useForm<UserUpdateSchemaType>({
@@ -83,7 +86,7 @@ export function SheetEditProfile() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="outline">Update</Button>
+        <Button variant="outline">{title??"Update"}</Button>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>

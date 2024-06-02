@@ -33,15 +33,17 @@ function AuctionContent () {
   const search = searchParams.get("search");
   const loadAuctions = async () => {
     try {
-      console.log("search", search);
       const param = search ? `?limit=10&search=${search}` : "?limit=10";
       const response = await auctionApiRequest.getAuctions(param);
+      console.log(response.payload);
+      
       const sortedAuctions = response.payload.data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
       setAuctions(sortedAuctions );
       setLastKey(response.payload.lastKey);
       setLoading(false);
     } catch (error) {
       console.error(error);
+      setLoading(false);
     }
   };
 

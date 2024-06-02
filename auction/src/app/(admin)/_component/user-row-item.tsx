@@ -19,6 +19,7 @@ const UserRow=({user}:Props)=>{
             <TableCell>{user.role}</TableCell>
             <TableCell>
                     <Button
+                    containerClassName="w-20 h-10 "
                         className="bg-white dark:bg-slate-900 text-black dark:text-white border-neutral-200 dark:border-slate-800"
                     >
                         Edit

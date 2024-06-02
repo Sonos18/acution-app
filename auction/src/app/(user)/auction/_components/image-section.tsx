@@ -1,6 +1,5 @@
 import Image from "next/image";
 import React, { useState } from "react";
-import ProductPageActions from "./product-page-action";
 import { AuctionType } from "@/schemaValidations/auction.schema";
 
 interface Props {

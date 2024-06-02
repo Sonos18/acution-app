@@ -8,6 +8,7 @@ import { toast } from "../ui/use-toast";
 import { usePathname, useRouter } from "next/navigation";
 import { handleErrorApi } from "@/lib/utils";
 
+
 export const Logout = () => {
   const { setUser } = useAppContext();
   const router = useRouter();
@@ -40,7 +41,7 @@ export const Logout = () => {
         description="Are you sure you want to log out?"
         handleLogout={handleLogout}
       >
-        <Button className="bg-gray-600">Logout</Button>
+        <Button className="bg-gray-600 ">Logout</Button>
       </AlertDialogConfirm>
     </div>
   );

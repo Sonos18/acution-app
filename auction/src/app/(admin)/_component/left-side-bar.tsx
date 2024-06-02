@@ -7,6 +7,8 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleIcon from '@mui/icons-material/People';
 import CategoryIcon from '@mui/icons-material/Category';
 import logo from "../../../../public/logo.jpg";
+import { SheetEditProfile } from "@/components/custom/profile/sheet-edit-profile";
+import { Logout } from "@/components/custom/logout";
 
 const LeftSideBar = () => {
   const pathname = usePathname();
@@ -28,8 +30,9 @@ const LeftSideBar = () => {
         ))}
       </div>
 
-      <div className="flex gap-4 text-body-medium items-center">
-        <p>Edit Profile</p>
+      <div className="grid gap-4 text-body-medium items-center">
+        <SheetEditProfile title="Edit Profile"/>
+        <Logout />
       </div>
     </div>
   );

@@ -3,7 +3,6 @@ import { AWSError, DynamoDB } from 'aws-sdk';
 import { PromiseResult } from 'aws-sdk/lib/request';
 import { ObjectSchema, object, string } from 'yup';
 
-import { Blog } from '~/db/blog-schema';
 
 import { HandlerFn, customError, customErrorOutput } from '~/utils/createHandler';
 import { DeleteBlogInput } from '~/utils/types/blog-type';
@@ -35,7 +34,7 @@ export const deleteBlog = async (userId: string, blogId: string) => {
 		},
 		UpdateExpression: 'SET deleted = :deleted',
 		ExpressionAttributeValues: {
-			':deleted': 'false'
+			':deleted': 'true'
 		},
 		ReturnValues: 'ALL_NEW'
 	};

@@ -21,6 +21,7 @@ export const handler: HandlerFn = async (event, context, callback) => {
 const getAuction = async (id: string) => {
 	const auction = await getAuctionById(id);
 	const user = await getUserById(auction.userId);
+	if (!user) throw customError('User not found', 404);
 	const product = await getProductById(auction.productId);
 	const category = await getCategoryById(product.categoryId);
 	return {
