@@ -52,11 +52,25 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import auctionApiRequest from "@/apiRequests/auction";
+import categoryApiRequest from "@/apiRequests/category";
+import { CategoryType } from "@/app/(admin)/category/page";
 export default function FormAuction() {
   const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [file, setFile] = useState<File[] | null>(null);
   const router = useRouter();
+  const [categories,setCategories]=useState<CategoryType[]|[]>([]);
+  const loadCategories=async()=>{
+    try {
+      const res=await categoryApiRequest.getAll();
+      setCategories(res.payload);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  useEffect(()=>{
+    loadCategories();
+  },[]);
   const form = useForm<AuctionInputType>({
     resolver: zodResolver(AuctionInput),
     defaultValues: {
@@ -311,12 +325,12 @@ export default function FormAuction() {
                           <SelectContent>
                             <SelectGroup>
                               <SelectLabel>Categories</SelectLabel>
-                              {categories.map((category) => (
+                              {Array.isArray(categories) && categories.length > 0 && categories.map((category) => (
                                 <SelectItem
-                                  key={category.id}
-                                  value={category.id}
+                                  key={category.categoryId}
+                                  value={category.categoryId}
                                 >
-                                  {category.name}
+                                  {category.categoryName}
                                 </SelectItem>
                               ))}
                             </SelectGroup>
@@ -448,13 +462,3 @@ export default function FormAuction() {
     </div>
   );
 }
-const categories = [
-  {
-    id: "1",
-    name: "C1",
-  },
-  {
-    id: "2",
-    name: "C2",
-  },
-];

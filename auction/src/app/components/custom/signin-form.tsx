@@ -80,7 +80,7 @@ const SigninForm = () => {
             type="text"
             {...register("email")}
           />
-          {errors.email && <p>{errors.email.message}</p>}
+          {errors.email && <p className="text-red-400">{errors.email.message}</p>}
         </LabelInputContainer>
         <LabelInputContainer className="mb-4">
           <Label htmlFor="password">Password</Label>
@@ -90,7 +90,7 @@ const SigninForm = () => {
             placeholder="••••••••"
             type="password"
           />
-          {errors.password && <p>{errors.password.message}</p>}
+          {errors.password && <p className="text-red-400">{errors.password.message}</p>}
         </LabelInputContainer>
         <div className="text-right mt-2 mb-2 opacity-80">
         Do not have an account? 

@@ -29,8 +29,8 @@ export default function BlogPost({ params }: { params: { id: string } }) {
         <div className="flex flex-col w-3/4 mx-auto">
           <div className="w-full xl:max-w-[2100px] mx-auto">
             <div className="flex flex-col md:flex-row flex-wrap md:flex-nowrap items-center md:items-start mt-8 relative">
-              {/* <ImageSection auction={auction} />
-              <DetailsSection auction={auction} /> */}
+              <ImageSection auction={auction} />
+              <DetailsSection auction={auction} />
             </div>
             <div className="border-2 my-8">{/* <Benefits /> */}</div>
             {/* <SimilarProducts products={similarProductsList} /> */}

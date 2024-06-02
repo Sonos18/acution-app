@@ -80,7 +80,7 @@ const SignupForm = () => {
             placeholder="Durden"
             type="text"
           />
-          {errors.lastName && <span>{errors.lastName.message}</span>}
+          {errors.lastName && <span className="text-red-600 font-bold">{errors.lastName.message}</span>}
         </LabelInputContainer>
       </div>
       <LabelInputContainer className="mb-4">
@@ -91,7 +91,7 @@ const SignupForm = () => {
           placeholder="projectmayhem@fc.com"
           type="text"
         />
-        {errors.email && <span>{errors.email.message}</span>}
+        {errors.email && <span className="text-red-600 font-bold">{errors.email.message}</span>}
       </LabelInputContainer>
       <LabelInputContainer className="mb-4">
         <Label htmlFor="phone">Phone number</Label>
@@ -101,7 +101,7 @@ const SignupForm = () => {
           placeholder="+84"
           type="text"
         />
-        {errors.phone && <span>{errors.phone.message}</span>}
+        {errors.phone && <span className="text-red-600 font-bold">{errors.phone.message}</span>}
       </LabelInputContainer>
       <LabelInputContainer className="mb-4">
         <Label htmlFor="password">Password</Label>
@@ -111,7 +111,7 @@ const SignupForm = () => {
           placeholder="••••••••"
           type="password"
         />
-        {errors.password && <span>{errors.password.message}</span>}
+        {errors.password && <span className="text-red-600 font-bold">{errors.password.message}</span>}
       </LabelInputContainer>
       <LabelInputContainer className="mb-8">
         <Label htmlFor="confirmpassword">Confirm password</Label>
@@ -122,7 +122,7 @@ const SignupForm = () => {
           type="password"
         />
         {errors.confirmPassword && (
-          <span>{errors.confirmPassword.message}</span>
+          <span className="text-red-600 font-bold">{errors.confirmPassword.message}</span>
         )}
       </LabelInputContainer>
       <div className="text-right mt-2 mb-2 opacity-80">

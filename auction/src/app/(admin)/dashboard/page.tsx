@@ -1,3 +1,4 @@
+"use client";
 import {
   Card,
   CardContent,
@@ -7,8 +8,23 @@ import {
 } from "@/components/ui/card";
 import { PaymentChart } from "../_component/chart/payment-chart";
 import { UserChart } from "../_component/chart/users-chart";
+import { useEffect, useState } from "react";
+import chartApiRequest from "@/apiRequests/chart";
 
 const Dashboard = () => {
+  // const [data, setData] = useState("");
+  const loadData = async () => {
+    try{
+      const res=await chartApiRequest.get();
+      console.log(res.payload);
+      
+    }catch(error){
+      console.error(error);
+    }
+  }
+  useEffect(()=>{
+    loadData();
+  },[])
   return (
     <div>
       <h1>Dashboard</h1>
@@ -71,3 +87,15 @@ const data = [
     total: 12,
   },
 ];
+export interface ChartType{
+  payments:number;
+  total:number;
+  products:number;
+  category:number;
+  users:number;
+  active:number;
+  chartData:{
+    date:string;
+    total:number;
+  }[]
+}
