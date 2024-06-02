@@ -3,6 +3,7 @@ import { TableCell, TableRow } from "@/components/ui/table";
 import { toast } from "@/components/ui/use-toast";
 import { AuctionClosingType } from "@/schemaValidations/auction.schema";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface Props {
@@ -10,6 +11,7 @@ interface Props {
 }
 export const ItemConfirm = ({ auction }: Props) => {
   const [loading, setLoading] = useState<boolean>(false);
+  const router=useRouter();
   const confirmAllAuction = async (id: string) => {
     try {
       setLoading(true);
@@ -20,6 +22,7 @@ export const ItemConfirm = ({ auction }: Props) => {
         duration: 3000,
         className: "bg-green-500 text-white",
       });
+      router.push("/auction")
     } catch (e) {
       const error = e as Error;
       toast({

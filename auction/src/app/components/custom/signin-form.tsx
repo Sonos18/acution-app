@@ -54,7 +54,7 @@ const SigninForm = () => {
         duration: 3000,
       });
       if (user.role === "admin") {
-        router.push("/users");
+        router.push("/dashboard");
         return;
       }
       router.push("/");
