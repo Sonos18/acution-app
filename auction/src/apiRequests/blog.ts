@@ -3,7 +3,7 @@ import { BlogResType, BlogsReponseType } from "@/schemaValidations/blog.schema";
 import { GetSignedUrlResType } from "@/schemaValidations/file.schema";
 
 const blogApiRequest = {
-  getBlogs: (param: string) => http.get<BlogsReponseType>(`/blog${param}`,{cache:"no-cache"}),
+  getBlogs: (param: string) => http.get<BlogsReponseType>(`/blog${param}`),
   createBlog: (body: any) => http.post("/blog", body),
   getSignedUrl: (body: { types: string[] }) =>
     http.post<GetSignedUrlResType>("/file", body),

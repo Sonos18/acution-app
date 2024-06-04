@@ -62,7 +62,7 @@ export default function CategoryPage(){
           </TableHeader>
           <TableBody>
             {category.length > 0 &&
-              category.map((cat,idx) => <CategoryRow key={idx} category={cat} />)}
+              category.map((cat,idx) => <CategoryRow loadCategory={loadCategory}key={idx} category={cat} />)}
           </TableBody>
         </Table>
         <div className="flex items-center mt-4">

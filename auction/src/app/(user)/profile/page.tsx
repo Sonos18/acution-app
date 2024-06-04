@@ -9,7 +9,6 @@ import {
 } from "react-icons/fa6";
 import Image from "next/image";
 import { useAppContext } from "../../app-provider";
-import Link from "next/link";
 import { SheetEditProfile } from "@/components/custom/profile/sheet-edit-profile";
 
 const Profile = () => {
@@ -119,7 +118,7 @@ const Profile = () => {
                           htmlFor="mention"
                           className="w-4/5 mb-0 ml-4 overflow-hidden font-normal cursor-pointer select-none text-sm text-ellipsis whitespace-nowrap text-slate-500"
                         >
-                          Email me when someone mentions me
+                          Hover my background
                         </label>
                       </div>
                     </li>

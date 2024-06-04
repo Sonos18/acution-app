@@ -19,7 +19,12 @@ import { AlertDialogConfirm } from "../alert-dialog-confirm";
 import blogApiRequest from "@/apiRequests/blog";
 import ButtonDelete from "@/app/(user)/blog/_component/button-delete";
 
-const BlogCard = ({ blog }: { blog: BlogResType }) => {
+
+interface BlogCardProps {
+  blog: BlogResType;
+  loadBLogs: () => void;
+}
+const BlogCard = ({ blog,loadBLogs }: BlogCardProps) => {
   const { user } = useAppContext();
   const [likes, setLikes] = useState<number>(blog.likes);
   const [isLiked, setIsLiked] = useState<boolean>(blog.isLiked);
@@ -167,11 +172,11 @@ const BlogCard = ({ blog }: { blog: BlogResType }) => {
           <BookmarkBorder
             sx={{ color: "white", cursor: "pointer" }}
             onClick={() => handleSave()}
-          />
+          /> 
         )}
 
         {user?.userId === blog.user.userId && (
-          <ButtonDelete id={blog.blogId} />
+          <ButtonDelete loadBlogs={loadBLogs} id={blog.blogId} />
         )}
       </div>
     </div>

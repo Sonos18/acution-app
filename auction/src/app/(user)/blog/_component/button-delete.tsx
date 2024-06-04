@@ -9,8 +9,9 @@ import { useState } from "react";
 
 interface BlogProps{
     id: string;
+    loadBlogs:()=>void;
 }
-export default function ButtonDelete({id}: BlogProps) {
+export default function ButtonDelete({id,loadBlogs}: BlogProps) {
     const [loading, setLoading] = useState<Boolean>(false);
     const router=useRouter();
     const handleDelete = async () => {
@@ -23,6 +24,7 @@ export default function ButtonDelete({id}: BlogProps) {
             title: "Success",
             className: "bg-green-500 text-white",
           });
+          loadBlogs();
           router.refresh();
         } catch (error) {
           const e = error as Error;

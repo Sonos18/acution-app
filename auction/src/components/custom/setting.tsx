@@ -12,6 +12,7 @@ import Image from "next/image";
 import { AlertDialogConfirm } from "./alert-dialog-confirm";
 import { Logout } from "./logout";
 import PublishedWithChangesIcon from "@mui/icons-material/PublishedWithChanges";
+import PaidIcon from '@mui/icons-material/Paid';
 import PersonIcon from "@mui/icons-material/Person";
 import { useRouter } from "next/navigation";
 export const Setting = ({ avatar }: { avatar: string }) => {
@@ -37,8 +38,9 @@ export const Setting = ({ avatar }: { avatar: string }) => {
                   className="text-base"
                   onClick={() => router.push(item.link)}
                 >
+                  {item.icon}
                   <span>{item.name}</span>
-                  <DropdownMenuShortcut>{item.icon}</DropdownMenuShortcut>
+                  <DropdownMenuShortcut>{item.shortcut}</DropdownMenuShortcut>
                 </DropdownMenuItem>
               ))}
             </DropdownMenuGroup>
@@ -56,16 +58,19 @@ const dropdownItem = [
   {
     name: "Profile",
     link: "/profile",
-    icon: <PersonIcon />,
+    icon: <PersonIcon className="mr-2 h-4 w-4"/>,
+    shortcut:"⇧⌘P",
   },
   {
     name: "Confirm my auctions",
     link: "/auction/confirm",
-    icon: <PublishedWithChangesIcon className="ml-3" />,
+    icon: <PublishedWithChangesIcon className="text-emerald-400 mr-2 h-4 w-4" />,
+    shortcut:"⇧⌘A",
   },
   {
     name: "Payment",
     link: "/payment",
-    icon: <PublishedWithChangesIcon className="ml-3" />,
+    icon: <PaidIcon className="text-amber-400 mr-2 h-4 w-4" />,
+    shortcut:"⌘K",
   },
 ];

@@ -48,7 +48,7 @@ function BlogContent() {
       <ButtonAdd item={addItem} />
       <div className="flex flex-col gap-10 mb-6">
         {safeBlogs.length > 0 ? (
-          safeBlogs.map((blog) => <BlogCard blog={blog} key={blog.blogId} />)
+          safeBlogs.map((blog) => <BlogCard loadBLogs={loadBlogs} blog={blog} key={blog.blogId} />)
         ) : (
           <p className="text-center text-xl opacity-70">
             There are no matching blog posts

@@ -8,21 +8,22 @@ import { useState } from "react";
 import { toast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 interface Props{
-    category: CategoryType
+    category: CategoryType,
+    loadCategory:()=>void
 }
-export function CategoryRow({category}:Props){
+export function CategoryRow({category,loadCategory}:Props){
   const [loading,setLoading]=useState<boolean>(false);
   const router = useRouter();
   const handleDelete=async()=>{
     try {
       setLoading(true);
-      const res=await categoryApiRequest.delete(category.categoryId);
-      router.refresh();
+      await categoryApiRequest.delete(category.categoryId);
       toast({
         title:"Success",
         description:"Category deleted",
         className:"bg-green-500 text-white"
       })
+      loadCategory();
     } catch (error) {
       toast({
         title:"Error",

@@ -40,7 +40,7 @@ const UsersPage = () => {
               <TableHead> First Name</TableHead>
               <TableHead> Last Name</TableHead>
               <TableHead> Email</TableHead>
-              <TableHead> Role</TableHead>
+              <TableHead> Phone</TableHead>
               <TableHead> Action</TableHead>
             </TableRow>
           </TableHeader>  
