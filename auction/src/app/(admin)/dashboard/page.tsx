@@ -12,12 +12,11 @@ import { useEffect, useState } from "react";
 import chartApiRequest from "@/apiRequests/chart";
 
 const Dashboard = () => {
-  // const [data, setData] = useState("");
+  const [data, setData] = useState<ChartType>({} as ChartType);
   const loadData = async () => {
     try{
       const res=await chartApiRequest.get();
-      console.log(res.payload);
-      
+      setData(res.payload);
     }catch(error){
       console.error(error);
     }
@@ -35,8 +34,8 @@ const Dashboard = () => {
           <DashboardCard title="Users" subtitle="12 actives" body="14" />
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-12">
-          <PaymentChart data={data} />
-          <UserChart data={data} />
+          <PaymentChart data={data.chartData} />
+          <UserChart data={data.chartData} />
         </div>
       </div>
     </div>
@@ -62,31 +61,6 @@ function DashboardCard({ title, subtitle, body }: DashboardCardProps) {
     </Card>
   );
 }
-const data = [
-  {
-    date: "14/05",
-    total: 65,
-  },
-  {
-    date: "15/05",
-    total: 34,
-  },
-  {
-    date: "16/05",
-    total: 12,
-  }, {
-    date: "17/05",
-    total: 65,
-  },
-  {
-    date: "18/05",
-    total: 34,
-  },
-  {
-    date: "19/05",
-    total: 12,
-  },
-];
 export interface ChartType{
   payments:number;
   total:number;

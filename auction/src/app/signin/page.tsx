@@ -26,7 +26,7 @@ const Signin = () => {
 
   const handleSignInWithProvider = async (provider: string) => {
     try {
-      await signIn(provider);
+      await signIn(provider,{callbackUrl: '/'});
       const session = await getSession();
       if (!session) {
         return;

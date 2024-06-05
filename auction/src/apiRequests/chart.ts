@@ -1,8 +1,9 @@
+import { ChartType } from "@/app/(admin)/dashboard/page";
 import http from "@/lib/http";
 
 
 const chartApiRequest = {
-  get: () =>http.get("/chart"),
+  get: () =>http.get<ChartType>("/chart"),
   
 };
 
