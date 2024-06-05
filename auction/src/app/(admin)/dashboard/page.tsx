@@ -32,7 +32,7 @@ const Dashboard = () => {
       <div className="w-10/12 mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-12">
           <DashboardCard title="Revenue" subtitle={`${data.payments} Payments`}  body={`$${data.total}`} />
-          <DashboardCard title="Products" subtitle={`${data.category} Categories`} body={`${data.products}`} />
+          <DashboardCard title="Products" subtitle={`${data.categories} Categories`} body={`${data.products}`} />
           <DashboardCard title="Users" subtitle="5 actives" body="5" />
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-12">
@@ -67,7 +67,7 @@ export interface ChartType{
   payments:number;
   total:number;
   products:number;
-  category:number;
+  categories:number;
   users:number;
   active:number;
   chartData:{
