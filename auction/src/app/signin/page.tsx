@@ -26,7 +26,7 @@ const Signin = () => {
 
   const handleSignInWithProvider = async (provider: string) => {
     try {
-      await signIn(provider,{redirect: false});
+      await signIn(provider);
       const session = await getSession();
       if (!session) {
         return;
