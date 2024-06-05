@@ -29,8 +29,8 @@ const Dashboard = () => {
       <h1>Dashboard</h1>
       <div className="w-10/12 mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-12">
-          <DashboardCard title="Revenue" subtitle="6 Payments" body="$546" />
-          <DashboardCard title="Products" subtitle="4 Categories" body="12" />
+          <DashboardCard title="Revenue" subtitle={`${data.payments} Payments`}  body={`$${data.total}`} />
+          <DashboardCard title="Products" subtitle={`${data.category} Categories`} body={`${data.products}`} />
           <DashboardCard title="Users" subtitle="12 actives" body="14" />
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-12">
