@@ -17,6 +17,8 @@ const Dashboard = () => {
     try{
       const res=await chartApiRequest.get();
       setData(res.payload);
+      console.log(res.payload);
+      
     }catch(error){
       console.error(error);
     }
@@ -31,7 +33,7 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-12">
           <DashboardCard title="Revenue" subtitle={`${data.payments} Payments`}  body={`$${data.total}`} />
           <DashboardCard title="Products" subtitle={`${data.category} Categories`} body={`${data.products}`} />
-          <DashboardCard title="Users" subtitle="12 actives" body="14" />
+          <DashboardCard title="Users" subtitle="5 actives" body="5" />
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-12">
           <PaymentChart data={data.chartData} />
