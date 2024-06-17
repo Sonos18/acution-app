@@ -16,11 +16,13 @@ import {
   SignInSchemaType,
 } from "@/schemaValidations/auth.schema";
 import { toast } from "@/components/ui/use-toast";
-import { useAppContext } from "@/app/app-provider";
+import { useDispatch } from 'react-redux';
+import { setUser } from '@/store/userSlice';
+
 
 const SigninForm = () => {
+  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = React.useState(false);
-  const { setUser } = useAppContext();
   const {
     register,
     handleSubmit,
@@ -39,9 +41,7 @@ const SigninForm = () => {
       setIsLoading(true);
       const result = await authApiRequest.signIn(data);
       const { accessToken, refreshToken, user } = result.payload;
-      setUser(user);
-      console.log(user.role);
-
+      dispatch(setUser(user));
       await authApiRequest.auth({
         accessToken: accessToken,
         refreshToken: refreshToken,

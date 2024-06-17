@@ -15,7 +15,10 @@ import PublishedWithChangesIcon from "@mui/icons-material/PublishedWithChanges";
 import PaidIcon from '@mui/icons-material/Paid';
 import PersonIcon from "@mui/icons-material/Person";
 import { useRouter } from "next/navigation";
-export const Setting = ({ avatar }: { avatar: string }) => {
+import type { RootState } from '@/store/store';
+import { useSelector } from 'react-redux'
+export const Setting = () => {
+  const user = useSelector((state: RootState) => state.currentUser.user);
   const router = useRouter();
   return (
     <div>
@@ -23,7 +26,7 @@ export const Setting = ({ avatar }: { avatar: string }) => {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Image
-              src={avatar}
+              src={user?.avatar || "/avatar.jpg"}
               alt="profile photo"
               width={50}
               height={50}

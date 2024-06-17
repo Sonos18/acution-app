@@ -7,14 +7,12 @@ import { NavItem } from "@/utils/type";
 import { useRouter } from "next/navigation";
 
 import { Setting } from "@/components/custom/setting";
-import { useAppContext } from "../app-provider";
 import Link from "next/link";
 import logo from "../../../public/logo.jpg";
 import Image from "next/image";
 import { Search } from "@/components/custom/search";
 
 export function Nav() {
-  const { user } = useAppContext();
   const [items, setItems] = useState(navItems);
   const router = useRouter();
   const handleItemClick = (
@@ -31,7 +29,6 @@ export function Nav() {
     setItems(updatedNavItems);
     router.push(ref);
   };
-  if (!user) return <></>;
   return (
     <>
       <div className="grid grid-cols-10 gap-4 items-center bg-white mb-4">
@@ -52,7 +49,7 @@ export function Nav() {
           </div>
         </div>
         <Search />
-        {user ? <Setting avatar={user.avatar} /> : <></>}
+        <Setting />
       </div>
       <FloatingNav navItems={items} handleItemClick={handleItemClick} />
     </>

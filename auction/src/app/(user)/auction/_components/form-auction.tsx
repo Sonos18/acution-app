@@ -93,24 +93,22 @@ export default function FormAuction() {
       setLoading(true);
       const fileTypes = file.map((f) => f.type);
       const res = await blogApiRequest.getSignedUrl({ types: fileTypes });
-      console.log("res", res);
       const { urls, keys } = res.payload;
-      console.log("urls", urls);
-      console.log("keys", keys);
+      let imageUrls = [];
+      const bucket = process.env.NEXT_PUBLIC_AWS_BUCKET;
       for (let i = 0; i < keys.length; i++) {
         await fetch(urls[i], {
           method: "PUT",
           body: file[i],
         });
+        imageUrls.push(bucket + keys[i]);
       }
       const newData = {
         ...data,
-        images: keys,
+        images: imageUrls,
         startTime: data.startTime.toISOString(),
         endTime: data.endTime.toISOString(),
       };
-      console.log("newData", newData);
-
       const auction = await auctionApiRequest.createAuction(newData);
       toast({
         title: "Success",

@@ -9,10 +9,10 @@ import { getSession, signIn } from "next-auth/react";
 import SigninForm from "../components/custom/signin-form";
 import BottomGradient from "../components/custom/bottom-gradient";
 import authApiRequest from "@/apiRequests/auth";
-import { useAppContext } from "../app-provider";
 import { toast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
-
+import { setUser } from "@/store/userSlice";
+import { useDispatch } from 'react-redux';
 export interface SignInWithProvider {
   provider?: string;
   email?: string;
@@ -21,9 +21,8 @@ export interface SignInWithProvider {
   picture?: string;
 }
 const Signin = () => {
+  const dispatch = useDispatch();
   const router = useRouter();
-  const { setUser } = useAppContext();
-
   const handleSignInWithProvider = async (provider: string) => {
     try {
       await signIn(provider,{callbackUrl: '/'});
@@ -41,7 +40,7 @@ const Signin = () => {
           picture: user.picture,
         };
         const { payload } = await authApiRequest.signInWithProvider(dataInput);
-        setUser(payload.user);
+        dispatch(setUser(payload.user));
         await authApiRequest.auth({
           accessToken: payload.accessToken,
           refreshToken: payload.refreshToken,

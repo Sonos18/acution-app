@@ -94,9 +94,9 @@ export const FormBlog = ({ blog }: { blog?: BlogResType }) => {
     if (!keyImage) {
       return;
     }
-    const updatedData = { ...data, keyImage: [keyImage] };
-    console.log("data", updatedData);
-
+    const bucket = process.env.NEXT_PUBLIC_AWS_BUCKET;
+    const imageUrl= bucket + keyImage;
+    const updatedData = { ...data, keyImage: [imageUrl] };
     await blogApiRequest.createBlog(updatedData);
   };
   const handleUpdateBlog = async (data: BlogInputType) => {
