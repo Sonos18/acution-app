@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { ModeToggle } from "./components/toggle-mode";
 import { Toaster } from "@/components/ui/toaster";
 import { StoreProvider } from "@/store/StoreProvider";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const fontSans = FontSans({
   subsets: ["latin"],
