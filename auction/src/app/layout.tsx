@@ -30,6 +30,7 @@ export default function RootLayout({
             fontSans.variable
           )}
         >
+          <SpeedInsights/>
           <StoreProvider>
           {children}
           <Toaster />
