@@ -3,41 +3,42 @@ import { AlertDialogConfirm } from "@/components/custom/alert-dialog-confirm";
 import { toast } from "@/components/ui/use-toast";
 import { Delete } from "@mui/icons-material";
 import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { deleteBlog } from "@/store/blogSlice";
 
 
 interface BlogProps{
     id: string;
-    loadBlogs:()=>void;
 }
-export default function ButtonDelete({id,loadBlogs}: BlogProps) {
-    const [loading, setLoading] = useState<Boolean>(false);
-    const router=useRouter();
-    const handleDelete = async () => {
-        try {
-          setLoading(true);
-          const res = await blogApiRequest.deleteBlog(id);
-          if (res.status !== 200) throw new Error(String(res.payload));
-          toast({
-            description: "Deleted a blog",
-            title: "Success",
-            className: "bg-green-500 text-white",
-          });
-          loadBlogs();
-          router.refresh();
-        } catch (error) {
-          const e = error as Error;
-          toast({
-            description: e.message,
-            title: "Error",
-            className: "bg-red-500 text-white",
-          });
-          setLoading(false);
-        } finally {
-          setLoading(false);
-        }
-      };
+export default function ButtonDelete({id}: BlogProps) {
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState<Boolean>(false);
+  const handleDelete = async () => {
+    try {
+      setLoading(true);
+      const res = await blogApiRequest.deleteBlog(id);
+      if (res.status !== 200) throw new Error(String(res.payload));
+      console.log("id",id);
+      
+      dispatch(deleteBlog(id));
+      toast({
+        description: "Deleted a blog",
+        title: "Success",
+        className: "bg-green-500 text-white",
+      });
+    } catch (error) {
+      const e = error as Error;
+      toast({
+        description: e.message,
+        title: "Error",
+        className: "bg-red-500 text-white",
+      });
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div>
       <AlertDialogConfirm

@@ -22,7 +22,6 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <StoreProvider>
       <html lang="en" suppressHydrationWarning>
         <body
           className={cn(
@@ -30,10 +29,12 @@ export default function RootLayout({
             fontSans.variable
           )}
         >
+          <StoreProvider>
+          {children}
           <Toaster />
           <ModeToggle />
+          </StoreProvider>
         </body>
       </html>
-    </StoreProvider>
   );
 }

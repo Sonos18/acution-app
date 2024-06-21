@@ -11,6 +11,8 @@ import Link from "next/link";
 import logo from "../../../public/logo.jpg";
 import Image from "next/image";
 import { Search } from "@/components/custom/search";
+import Notification from "./notification";
+import Message from "./message";
 
 export function Nav() {
   const [items, setItems] = useState(navItems);
@@ -43,13 +45,17 @@ export function Nav() {
             />
           </Link>
         </div>
-        <div className="col-span-4 mx-auto ">
+        <div className="col-span-3 mx-auto ">
           <div className="relative flex">
             <Navbar items={items} className="" />
           </div>
         </div>
         <Search />
-        <Setting />
+        <div className="col-span-2 flex justify-center">
+          <Notification />
+          <Message />
+          <Setting />
+          </div>
       </div>
       <FloatingNav navItems={items} handleItemClick={handleItemClick} />
     </>

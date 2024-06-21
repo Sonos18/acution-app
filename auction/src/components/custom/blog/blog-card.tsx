@@ -1,5 +1,4 @@
 import likeApiRequest from "@/apiRequests/like";
-import { useAppContext } from "@/app/app-provider";
 import { useToast } from "@/components/ui/use-toast";
 import { BlogResType, BlogsReponseType } from "@/schemaValidations/blog.schema";
 import {
@@ -18,21 +17,19 @@ import { useState } from "react";
 import { AlertDialogConfirm } from "../alert-dialog-confirm";
 import blogApiRequest from "@/apiRequests/blog";
 import ButtonDelete from "@/app/(user)/blog/_component/button-delete";
-
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store/store";
 
 interface BlogCardProps {
   blog: BlogResType;
-  loadBLogs: () => void;
 }
-const BlogCard = ({ blog,loadBLogs }: BlogCardProps) => {
-  const { user } = useAppContext();
+const BlogCard = ({ blog }: BlogCardProps) => {
+  const user=useSelector((state:RootState)=>state.currentUser.user);
   const [likes, setLikes] = useState<number>(blog.likes);
   const [isLiked, setIsLiked] = useState<boolean>(blog.isLiked);
   const [loading, setLoading] = useState<boolean>(false);
   const [isSaved, setIsSaved] = useState<boolean>(false);
   const { toast } = useToast();
-  const router = useRouter();
-  console.log(blog.image);
   
   const handleLike = async () => {
     try {
@@ -176,7 +173,7 @@ const BlogCard = ({ blog,loadBLogs }: BlogCardProps) => {
         )}
 
         {user?.userId === blog.user.userId && (
-          <ButtonDelete loadBlogs={loadBLogs} id={blog.blogId} />
+          <ButtonDelete id={blog.blogId} />
         )}
       </div>
     </div>

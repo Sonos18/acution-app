@@ -13,11 +13,18 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ItemConfirm } from "./item-confirm";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store/store";
 
-interface Props {
-  auctions: AuctionClosingType[];
-}
-const TableConfirm = ({ auctions }: Props) => {
+
+const TableConfirm = () => {
+  const auctions=useSelector((state:RootState)=>state.auctionClosing.auctions);
+  if (auctions.length < 1)
+    return(
+      <p className="text-center">
+      You don&apos;t have any auction need confirm
+      </p>
+  )
   return (
     <div>
       <Table>

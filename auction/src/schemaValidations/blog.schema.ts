@@ -77,3 +77,17 @@ export interface UpdateBlogInput {
   image?: string;
   keyImage: string[];
 }
+const BlogCreated = z
+  .object({
+    blogId: z.string(),
+    title: z.string(),
+    content: z.string(),
+    hashtags: z.array(z.string()),
+    image: z.string(),
+    userId: z.string(), 
+    createdAt: z.string(),
+    updatedAt: z.string(),
+    deleted: z.string(),
+  })
+  .strict();
+export type BlogCreatedType = z.infer<typeof BlogCreated>;

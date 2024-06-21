@@ -1,6 +1,5 @@
 "use client";
 import blogApiRequest from "@/apiRequests/blog";
-import ImageUpload from "@/components/custom/ImageUpload";
 import MultiText from "@/components/custom/MultiText";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,23 +18,26 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import {
   BlogInput,
   BlogInputType,
   BlogResType,
-  UpdateBlogInput,
 } from "@/schemaValidations/blog.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { use, useEffect, useRef, useState } from "react";
+import {  useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import {addBlog, updateBlog} from "@/store/blogSlice";
+import type { RootState } from "@/store/store";
 
 export const FormBlog = ({ blog }: { blog?: BlogResType }) => {
+  const dispath=useDispatch();
+  const currentUser=useSelector((state:RootState)=>state.currentUser.user);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [errorFile, setErrorFile] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
@@ -82,8 +84,6 @@ export const FormBlog = ({ blog }: { blog?: BlogResType }) => {
         method: "PUT",
         body: file,
       });
-      console.log("Uploaded image");
-
       return preSignedUrl.payload.keys[0];
     } catch (error) {
       console.error("Error uploading image", error);
@@ -97,10 +97,22 @@ export const FormBlog = ({ blog }: { blog?: BlogResType }) => {
     const bucket = process.env.NEXT_PUBLIC_AWS_BUCKET;
     const imageUrl= bucket + keyImage;
     const updatedData = { ...data, keyImage: [imageUrl] };
-    await blogApiRequest.createBlog(updatedData);
+    const res=await blogApiRequest.createBlog(updatedData);
+    if (currentUser=== null)return;
+    const newBLog={
+      ...res.payload,
+      user:{
+        userId:currentUser.userId,
+        firstName:currentUser.firstName,
+        lastName:currentUser.lastName,
+        avatar:currentUser.avatar
+      },
+      isLiked:false,
+      like:0
+    }
+    dispath(addBlog(newBLog));
   };
   const handleUpdateBlog = async (data: BlogInputType) => {
-    console.log("data", data);
     let updatedData = { ...data, keyImage: [data.keyImage] };
     if (file) {
       const keyImage = await handleImageUpload(file);
@@ -110,6 +122,13 @@ export const FormBlog = ({ blog }: { blog?: BlogResType }) => {
       updatedData.keyImage = [keyImage];
     }
     await blogApiRequest.updateBlog(blog?.blogId ?? "", updatedData);
+    const newBlog = { ...blog, 
+      title: updatedData.title,
+      content: updatedData.content,
+      image: updatedData.keyImage[0],
+      hashtags: updatedData.hashtags,
+     };
+    dispath(updateBlog(newBlog));
   };
   const onSubmit = async (data: BlogInputType) => {
     try {
@@ -125,7 +144,6 @@ export const FormBlog = ({ blog }: { blog?: BlogResType }) => {
         className: "bg-green-500 text-white",
       });
       router.push("/blog");
-      router.refresh();
     } catch (error) {
       setLoading(false);
       const e = error as Error;

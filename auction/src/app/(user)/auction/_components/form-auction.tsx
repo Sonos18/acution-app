@@ -436,7 +436,7 @@ export default function FormAuction() {
                   className={`bg-red-400 ${loading ? "opacity-70" : ""}`}
                   variant="destructive"
                   onClick={() => {
-                    console.log("cancel");
+                    router.back();
                   }}
                 >
                   Cancel

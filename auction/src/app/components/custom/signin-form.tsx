@@ -18,11 +18,12 @@ import {
 import { toast } from "@/components/ui/use-toast";
 import { useDispatch } from 'react-redux';
 import { setUser } from '@/store/userSlice';
-
-
+import { useSelector } from 'react-redux';
+import type { RootState } from '@/store/store';
 const SigninForm = () => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = React.useState(false);
+  const userrr=useSelector((state:RootState)=>state.currentUser)
   const {
     register,
     handleSubmit,
@@ -47,6 +48,8 @@ const SigninForm = () => {
         refreshToken: refreshToken,
         role: user.role,
       });
+      console.log("user",userrr);
+      
       toast({
         description: "Sign in successfully",
         title: "success",

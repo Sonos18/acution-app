@@ -19,19 +19,22 @@ export const blogSlice = createSlice({
             state.lastKey = lastKey
         },
         updateBlog: (state,action) => {
-            const {id,data} = action.payload;
+            const data = action.payload;
             state.blog = state.blog?.map((blog) => {
-                if(blog.blogId === id){
+                if(blog.blogId === data.blogId){
                     return data;
                 }
                 return blog;
             })
         },
         deleteBlog: (state,action) => {
-            const {id}= action.payload;
+            const id= action.payload;
             state.blog = state.blog?.filter((blog) => blog.blogId !== id);
-        }
+        },
+        addBlog: (state,action) => {
+            state.blog = [action.payload,...state.blog];
+        },
     },
 });
-export const { setBlogs, updateBlog, deleteBlog } = blogSlice.actions;
+export const { setBlogs, updateBlog, deleteBlog, addBlog } = blogSlice.actions;
 export default blogSlice.reducer;

@@ -8,36 +8,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { toast } from "@/components/ui/use-toast";
-import { PaymentType } from "@/schemaValidations/payment.schema";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { ItemPayment } from "../auction/_components/item-payment";
-import paymentApiRequest from "@/apiRequests/payment";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store/store";
 
 const PaymentPage = () => {
-  const [payments, setPayments] = useState<PaymentType[] | []>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const loadPayment = async () => {
-    try {
-      setLoading(true);
-      const res = await paymentApiRequest.getPayments();
-      console.log(res.payload);
-
-      setPayments(res.payload);
-    } catch (error) {
-      const e = error as Error;
-      toast({
-        title: "Error",
-        description: e.message,
-        className: "bg-red-500 text-white",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-  useEffect(() => {
-    loadPayment();
-  }, []);
-  if (loading) return <Loader />;
+  const payments=useSelector((state:RootState)=>state.payments.payments);
   return (
     <>
       {payments.length < 1 ? (
