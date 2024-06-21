@@ -45,6 +45,7 @@ export const FormBlog = ({ blog }: { blog?: BlogResType }) => {
   const [loading, setLoading] = useState(false);
   const { toast }: { toast: any } = useToast();
   const router = useRouter();
+  const bucket = process.env.NEXT_PUBLIC_AWS_BUCKET;
   const form = useForm<BlogInputType>({
     resolver: zodResolver(BlogInput),
     defaultValues: {
@@ -94,7 +95,6 @@ export const FormBlog = ({ blog }: { blog?: BlogResType }) => {
     if (!keyImage) {
       return;
     }
-    const bucket = process.env.NEXT_PUBLIC_AWS_BUCKET;
     const imageUrl= bucket + keyImage;
     const updatedData = { ...data, keyImage: [imageUrl] };
     const res=await blogApiRequest.createBlog(updatedData);
