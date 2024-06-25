@@ -10,11 +10,17 @@ import { getProductsByListId } from '~/service/product';
 export const handler: HandlerFn = async (event, context, callback) => {
 	try {
 		const user = decodedTokenFromHeader(event);
+		console.log('user', user);
+
 		const auctions = await getAllClosingAuctions(user.id);
+		console.log('auctions', auctions);
+
 		if (!auctions) {
 			return callback(null, { statusCode: 200, body: JSON.stringify([]) });
 		}
 		const products = await getProductsByListId(auctions);
+		console.log('products', products);
+
 		const res = treeShakingAuctionsClosing(auctions, products);
 		console.log('res', res);
 		callback(null, { statusCode: 200, body: JSON.stringify(res) });

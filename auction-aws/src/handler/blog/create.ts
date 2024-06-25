@@ -29,7 +29,7 @@ export const handler: HandlerFn = async (event, context, callback) => {
 			}
 		}
 		const blog = await createBlog(blogData, decoded.id, hashtags);
-		callback(null, { body: JSON.stringify(blog) });
+		callback(null, { statusCode: 201, body: JSON.stringify(blog) });
 	} catch (error) {
 		const e = error as Error;
 		customErrorOutput(e, callback);
@@ -48,14 +48,12 @@ export const createBlog = async (
 	userId: string,
 	hashtags?: string[]
 ) => {
-	const urlImage = await GetImgUrl(blogData.keyImage);
-	console.log('urlImage', urlImage);
 	const blog: Blog = {
 		blogId: v4(),
 		title: blogData.title,
 		content: blogData.content,
 		userId,
-		image: urlImage[0],
+		image: blogData.keyImage[0],
 		createdAt: new Date().toDateString(),
 		updatedAt: new Date().toDateString(),
 		hashtags,

@@ -76,3 +76,54 @@ export const getPaymentByPaymentId = async (paymentId: string) => {
 	}
 	return result.Item as Payment;
 };
+export const getPaymentsForSevenDay = async () => {
+	const sevenDaysAgo = new Date();
+	sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+	console.log('sevenDaysAgo', sevenDaysAgo.toISOString());
+
+	const params = {
+		TableName: 'Payment',
+		IndexName: 'DateIndex',
+		KeyConditionExpression: '#status = :status AND #createdAt BETWEEN :sevenDaysAgo AND :now',
+		ExpressionAttributeNames: {
+			'#createdAt': 'createdAt',
+			'#status': 'status'
+		},
+		ExpressionAttributeValues: {
+			':sevenDaysAgo': sevenDaysAgo.toISOString(),
+			':now': new Date().toISOString(),
+			':status': 'success'
+		}
+	};
+	try {
+		console.log('done');
+
+		const result = await dynamoDB.query(params).promise();
+
+		console.log('result', result);
+		return result.Items as Payment[];
+	} catch (error) {
+		console.log('error', error);
+
+		throw customError((error as Error).message, StatusCodes.INTERNAL_SERVER_ERROR);
+	}
+};
+export const getPaymentsByStatusSuccess = async () => { 
+	const params = {
+		TableName: 'Payment',
+		IndexName: 'StatusIndex',
+		KeyConditionExpression: '#status = :status',
+		ExpressionAttributeNames: {
+			'#status': 'status'
+		},
+		ExpressionAttributeValues: {
+			':status': 'success'
+		}
+	};
+	try {
+		const result = await dynamoDB.query(params).promise();
+		return result.Items as Payment[];
+	} catch (error) {
+		throw customError((error as Error).message, StatusCodes.INTERNAL_SERVER_ERROR);
+	}
+}

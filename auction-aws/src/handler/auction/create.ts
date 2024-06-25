@@ -20,7 +20,6 @@ export const handler: HandlerFn = async (event, context, callback) => {
 	try {
 		const { id } = decodedTokenFromHeader(event);
 		const auctionData = extractBodyDataFromRequest({ event, schema: createAuctionSchema });
-		console.log('auctionData', auctionData);
 		const product = await addProductToAuction(auctionData);
 		await createAuction(auctionData, id, product.productId);
 		callback(null, { statusCode: 201, body: JSON.stringify('Created auction') });
@@ -31,11 +30,10 @@ export const handler: HandlerFn = async (event, context, callback) => {
 };
 
 export const addProductToAuction = async (data: CreateAuctionInput) => {
-	const images = await GetImgUrl(data.images);
 	const productData: CreateProductInput = {
 		categoryId: data.categoryId,
 		description: data.description,
-		images: images,
+		images: data.images,
 		origin: data.origin,
 		productName: data.productName
 	};

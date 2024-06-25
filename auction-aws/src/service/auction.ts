@@ -50,13 +50,9 @@ export const getAuctionsByUserId = async (userId: string, limit: number, key?: l
 	const params: DynamoDB.DocumentClient.QueryInput = {
 		TableName: 'Auction',
 		IndexName: 'UserIndex',
-		KeyConditionExpression: 'userId = :userId AND #st = :status',
-		ExpressionAttributeNames: {
-			'#st': 'status'
-		},
+		KeyConditionExpression: 'userId = :userId',
 		ExpressionAttributeValues: {
-			':userId': userId,
-			':status': 'open'
+			':userId': userId
 		},
 		Limit: limit
 	};
@@ -64,6 +60,9 @@ export const getAuctionsByUserId = async (userId: string, limit: number, key?: l
 		params.ExclusiveStartKey = key;
 	}
 	const result = await dynamoDB.query(params).promise();
+	if (!result.Items || result.Items.length === 0) {
+		return;
+	}
 	return {
 		data: result.Items as Auction[],
 		lastKey: result.LastEvaluatedKey as lastKeyAuctions
@@ -338,8 +337,9 @@ export const confirmStatusAuction = async (auctionId: string, userId: string) =>
 export const getAllClosingAuctions = async (userId: string) => {
 	const params: DynamoDB.DocumentClient.QueryInput = {
 		TableName: 'Auction',
-		IndexName: 'UserIndex',
-		KeyConditionExpression: 'userId = :userId AND #st = :status',
+		IndexName: 'StatusIndex',
+		KeyConditionExpression: '#st = :status',
+		FilterExpression: 'userId = :userId',
 		ExpressionAttributeNames: {
 			'#st': 'status'
 		},
@@ -348,10 +348,14 @@ export const getAllClosingAuctions = async (userId: string) => {
 			':status': 'closing'
 		}
 	};
-	const result = await dynamoDB.query(params).promise();
-	if (!result.Items) {
-		return null;
-	} else return result.Items as Auction[];
+	try {
+		const result = await dynamoDB.query(params).promise();
+		if (!result.Items) {
+			return null;
+		} else return result.Items as Auction[];
+	} catch (error) {
+		console.log('error', (error as Error).message);
+	}
 };
 export const getAuctionsByStatus = async (status: string) => {
 	const params: DynamoDB.DocumentClient.QueryInput = {
@@ -373,6 +377,42 @@ export const getAUctionsByProductIds = async (productIds: string[]) => {
 		RequestItems: {
 			Auction: {
 				Keys: productIds.map((productId) => ({ productId }))
+			}
+		}
+	};
+	const result = await dynamoDB.batchGet(params).promise();
+	if (!result.Responses) {
+		return [];
+	}
+	return result.Responses.Auction as Auction[];
+};
+export const getAuctionsToNotify = async () => {
+	const today = new Date().toISOString().split('T')[0];
+	const params: DynamoDB.DocumentClient.QueryInput = {
+		TableName: 'Auction',
+		IndexName: 'StatusIndex',
+		KeyConditionExpression: '#st = :status',
+		FilterExpression: 'endTime between :start and :end',
+		ExpressionAttributeNames: {
+			'#st': 'status'
+		},
+		ExpressionAttributeValues: {
+			':status': 'open',
+			':start': today + 'T00:00:00Z',
+			':end': today + 'T23:59:59Z'
+		}
+	};
+	const result = await dynamoDB.query(params).promise();
+	if (!result.Items) {
+		return;
+	}
+	return result.Items as Auction[];
+};
+export const getAuctionsByIds = async (auctionIds: string[]) => {
+	const params: DynamoDB.DocumentClient.BatchGetItemInput = {
+		RequestItems: {
+			Auction: {
+				Keys: auctionIds.map((auctionId) => ({ auctionId }))
 			}
 		}
 	};

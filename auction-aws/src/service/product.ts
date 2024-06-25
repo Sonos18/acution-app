@@ -79,3 +79,15 @@ export const getProductsByListId = async (auctions: Auction[]) => {
 		throw customError((error as Error).message, 500);
 	}
 };
+export const countProduct = async () => {
+	const param: DynamoDB.DocumentClient.ScanInput = {
+		TableName: 'Product',
+		Select: 'COUNT'
+	};
+	try {
+		const result = await dynamoDB.scan(param).promise();
+		return result.Count ?? 0;
+	} catch (error) {
+		throw customError((error as Error).message, 500);
+	}
+};

@@ -10,8 +10,14 @@ import { treeSakingUser, updateUser } from '~/service/user';
 export const handler: HandlerFn = async (event, context, callback) => {
 	try {
 		const userData = extractBodyDataFromRequest({ event, schema: UpdateUserSchema });
-		const user = decodedTokenFromHeader(event);
-		const userUpdated = await updateUser(user.id, userData);
+		let userId: string;
+		if (userData.userId) {
+			userId = userData.userId;
+		} else {
+			const user = decodedTokenFromHeader(event);
+			userId = user.id;
+		}
+		const userUpdated = await updateUser(userId, userData);
 		const res = treeSakingUser(userUpdated);
 		callback(null, { statusCode: 200, body: JSON.stringify(res) });
 	} catch (e) {
@@ -23,5 +29,6 @@ export const UpdateUserSchema: ObjectSchema<UpdateUserInput> = object({
 	firstName: string().required(),
 	lastName: string().required(),
 	email: string().email().required(),
-	phone: string().required()
+	phone: string().required(),
+	userId: string().optional()
 });

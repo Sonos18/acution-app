@@ -19,29 +19,25 @@ export const handler: HandlerFn = async (event, context, callback) => {
 		const { id } = decodedTokenFromHeader(event);
 		const params = extractPathParamsFromRequest({ event, schema: deleteOrUpdateBlogSchema });
 		await checkBlogOwner(id, params.id);
-		await deleteBlog(id, params.id);
+		await deleteBlog(params.id);
 		callback(null, { body: 'Deleted Success' });
 	} catch (error) {
 		const e = error as Error;
+		console.log(e.message);
+
 		customErrorOutput(e, callback);
 	}
 };
 
-export const deleteBlog = async (userId: string, blogId: string) => {
-	let params: DynamoDB.DocumentClient.UpdateItemInput = {
+export const deleteBlog = async (blogId: string) => {
+	let params: DynamoDB.DocumentClient.DeleteItemInput = {
 		TableName: 'Blog',
 		Key: {
 			blogId: blogId
-		},
-		UpdateExpression: 'SET deleted = :deleted',
-		ExpressionAttributeValues: {
-			':deleted': 'false'
-		},
-		ReturnValues: 'ALL_NEW'
+		}
 	};
-	let result: PromiseResult<DynamoDB.DocumentClient.UpdateItemOutput, AWSError> | undefined;
 	try {
-		result = await dynamoDB.update(params).promise();
+		await dynamoDB.delete(params).promise();
 	} catch (error) {
 		const e = error as Error;
 		throw customError(e.message, 500);

@@ -120,7 +120,7 @@ functions:
           path: /user/all
           method: get
           authorizer:
-            name: AdminRouter
+            name: PrivateRouter
   UpdateUser:
     handler: src/handler/user/update.handler
     events:
@@ -277,6 +277,22 @@ functions:
           method: post
           authorizer:
             name: PrivateRouter
+  GetAllCategory:
+    handler: src/handler/category/get-all.handler
+    events:
+      - httpApi:
+          path: /category
+          method: get
+          authorizer:
+            name: PrivateRouter
+  DeleteCategory:
+    handler: src/handler/category/delete.handler
+    events:
+      - httpApi:
+          path: /category/{id}
+          method: delete
+          authorizer:
+            name: PrivateRouter
   GetPaymentForUser:
     handler: src/handler/payment/get-all.handler
     events:
@@ -299,6 +315,35 @@ functions:
       - httpApi:
           path: /payment/payment-webhooks
           method: post
+  Chart:
+    handler: src/handler/chart/get.handler
+    events:
+      - httpApi:
+          path: /chart
+          method: get
+          authorizer:
+            name: PrivateRouter
+  AuctionHistory:
+    handler: src/handler/auction/history.handler
+    events:
+      - httpApi:
+          path: /auction/history/{id}
+          method: get
+          authorizer:
+            name: PrivateRouter
+  # Chat:
+  #   handler: src/handler/chat/get.handler
+  #   events:
+  #     - websocket:
+  #         route: $connect
+  #     - websocket:
+  #         route: $disconnect
+  #     - websocket:
+  #         route: getMessages
+  #     - websocket:
+  #         route: sendMessage
+  #     - websocket:
+  #         route: getClients
 resources:
   - ${file(resources/dynamodb-resources.yml)}
   # test:

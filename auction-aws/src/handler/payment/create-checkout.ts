@@ -27,8 +27,8 @@ export const handler: HandlerFn = async (event, context, callback) => {
 				}
 			],
 			mode: 'payment',
-			success_url: `http://localhost:3000/payment/success?payment_id=${data.paymentId}`,
-			cancel_url: `http://localhost:3000/payment`
+			success_url: `https://acution-app.vercel.app/payment/success?payment_id=${data.paymentId}`,
+			cancel_url: `https://acution-app.vercel.app/payment`
 		});
 		callback(null, {
 			statusCode: 200,

@@ -35,4 +35,5 @@ export interface UpdateUserInput {
 	lastName: string;
 	email: string;
 	phone: string;
+	userId?: string;
 }

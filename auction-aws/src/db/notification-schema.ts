@@ -2,13 +2,19 @@ import { attribute, hashKey, rangeKey, table } from '@aws/dynamodb-data-mapper-a
 
 import { dateMarshall, dateUnmarshall } from './date-dynamo';
 
-@table('Category')
-export class Category {
+@table('Notification')
+export class Notification {
 	@hashKey()
-	categoryId!: string;
+	notificationId!: string;
 
 	@attribute()
-	categoryName!: string;
+	userId!: string;
+
+	@attribute()
+	auctionId!: string;
+
+	@attribute()
+	message!: string;
 
 	@attribute({ marshall: dateMarshall, unmarshall: dateUnmarshall })
 	createdAt?: string;

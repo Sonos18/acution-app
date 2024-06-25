@@ -8,12 +8,12 @@ import { Product } from '~/db/product-schema';
 import { customError } from '~/utils/createHandler';
 
 const dynamoDB = new DynamoDB.DocumentClient();
+
 export const createCategory = async (nameCategory: string) => {
 	const category: Category = {
 		categoryName: nameCategory,
 		categoryId: v4(),
-		createdAt: new Date().toDateString(),
-		updatedAt: new Date().toDateString()
+		createdAt: new Date().toDateString()
 	};
 	const param: DynamoDB.DocumentClient.PutItemInput = {
 		TableName: 'Category',
@@ -37,6 +37,8 @@ export const checkExist = async (categoryName: string) => {
 		}
 	};
 	const result = await dynamoDB.query(param).promise();
+	console.log('result', result.Items);
+
 	if (result.Items && result.Items.length > 0) {
 		customError('Category is exist', StatusCodes.BAD_REQUEST);
 	}
@@ -57,7 +59,7 @@ export const deleteCategory = async (categoryId: string) => {
 	}
 };
 
-const getAllCategory = async () => {
+export const getAllCategory = async () => {
 	const param: DynamoDB.DocumentClient.ScanInput = {
 		TableName: 'Category'
 	};
@@ -127,4 +129,17 @@ export const getCategoryByName = async (name: string) => {
 		return res.Items[0] as Category;
 	}
 	throw customError('Category not found', StatusCodes.BAD_REQUEST);
+};
+export const countCategory = async () => {
+	const params: DynamoDB.DocumentClient.ScanInput = {
+		TableName: 'Category',
+		Select: 'COUNT'
+	};
+	try {
+		const result = await dynamoDB.scan(params).promise();
+		console.log('result', result);
+		return result.Count ?? 0;
+	} catch (error) {
+		throw customError((error as Error).message, StatusCodes.INTERNAL_SERVER_ERROR);
+	}
 };
