@@ -4,7 +4,8 @@ import authApiRequest from "@/apiRequests/auth";
 const baseURL = envConfig.NEXT_PUBLIC_URL;
 export const UseRefreshToken = async (
   accessToken: string,
-  refreshToken: string
+  refreshToken: string,
+  role: string
 ) => {
   try {
     const decodedToken = jwt.decode(accessToken);
@@ -20,8 +21,8 @@ export const UseRefreshToken = async (
         },
       });
       const data = await res.json();
-      const accessToken = data.accessToken;
-      await authApiRequest.auth({ accessToken, refreshToken });
+      const accessToken = data.accessToken as string;
+      await authApiRequest.auth({ accessToken, refreshToken, role });
       return accessToken as string;
     }
   } catch (error) {

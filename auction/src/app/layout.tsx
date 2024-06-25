@@ -5,7 +5,8 @@ import { cn } from "@/lib/utils";
 
 import { ModeToggle } from "./components/toggle-mode";
 import { Toaster } from "@/components/ui/toaster";
-import AppProvider from "./app-provider";
+import { StoreProvider } from "@/store/StoreProvider";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -22,17 +23,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body
-        className={cn(
-          "min-h-screen bg-slate-100 font-sans antialiased",
-          fontSans.variable
-        )}
-      >
-        <AppProvider>{children}</AppProvider>
-        <Toaster />
-        <ModeToggle />
-      </body>
-    </html>
+      <html lang="en" suppressHydrationWarning>
+        <body
+          className={cn(
+            "min-h-screen bg-slate-100 font-sans antialiased",
+            fontSans.variable
+          )}
+        >
+          <SpeedInsights/>
+          <StoreProvider>
+          {children}
+          <Toaster />
+          <ModeToggle />
+          </StoreProvider>
+        </body>
+      </html>
   );
 }

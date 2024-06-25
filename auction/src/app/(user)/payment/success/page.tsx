@@ -2,9 +2,19 @@
 import { Boxes } from "@/components/ui/background-boxes";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-
+import { useDispatch } from "react-redux";
+import { deletePayments } from "@/store/paymentSlice";
+import { useEffect } from "react";
 const SuccessPage = () => {
+  //get id from parametters
   const router = useRouter();
+  const dispath = useDispatch();
+  const paymnetSuccess = () => {
+    dispath(deletePayments("id"));
+  }
+  useEffect(() => {
+    paymnetSuccess();
+  }, []);
   return (
     <div className="h-96 relative w-full overflow-hidden bg-slate-900 flex flex-col items-center justify-center rounded-lg">
       <div className="absolute inset-0 w-full h-full bg-slate-900 z-20 [mask-image:radial-gradient(transparent,white)] pointer-events-none" />

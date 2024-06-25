@@ -18,9 +18,9 @@ const UsersPage = () => {
   const loadUsers = async () => {
     try {
       const res = await userApiRequest.getAll();
-      console.log(res);
+      console.log(res.payload);
 
-      // setUsers(res.payload);
+      setUsers(res.payload);
     } catch (e) {
       console.log(e);
     }
@@ -31,18 +31,19 @@ const UsersPage = () => {
   return (
     <div>
       <h1>Users</h1>
-      <div>
+      <div className="w-10/12 mx-auto">
         <Table>
           <TableCaption>Alist users</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead> Avatar</TableHead>
-              <TableHead> Username</TableHead>
+              <TableHead> First Name</TableHead>
+              <TableHead> Last Name</TableHead>
               <TableHead> Email</TableHead>
-              <TableHead> Role</TableHead>
+              <TableHead> Phone</TableHead>
               <TableHead> Action</TableHead>
             </TableRow>
-          </TableHeader>
+          </TableHeader>  
           <TableBody>
             {users.length > 0 &&
               users.map((user) => <UserRow key={user.userId} user={user} />)}

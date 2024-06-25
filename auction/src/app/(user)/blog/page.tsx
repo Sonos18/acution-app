@@ -3,26 +3,35 @@ import blogApiRequest from "@/apiRequests/blog";
 import BlogCard from "@/components/custom/blog/blog-card";
 import Loader from "@/components/loading";
 import { BlogsReponseType, LastKeyType } from "@/schemaValidations/blog.schema";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import ButtonAdd from "./_component/button-add";
 import VideoCameraBackIcon from "@mui/icons-material/VideoCameraBack";
 import CollectionsIcon from "@mui/icons-material/Collections";
 import MoodIcon from "@mui/icons-material/Mood";
 import { useSearchParams } from "next/navigation";
-
+import { useDispatch, useSelector } from "react-redux";
+import { setBlogs } from "@/store/blogSlice";
+import type { RootState } from "@/store/store";
 export default function Blog() {
-  const [lastKey, setLastKey] = useState<LastKeyType | undefined>(undefined);
+  return(
+    <Suspense fallback={<Loader />}>
+      <BlogContent /> 
+    </Suspense>
+  )
+}
+function BlogContent() {
+  const dispath=useDispatch();
   const [loading, setLoading] = useState(true);
-  const [blogs, setBlogs] = useState<BlogsReponseType["data"]>([]);
+  // const [blogs, setBlogs] = useState<BlogsReponseType["data"]>([]);
+  const blogs=useSelector((state:RootState)=>state.blog.blog)
   const searchParams = useSearchParams();
   const search = searchParams.get("search");
   const loadBlogs = async () => {
     try {
       const params = search ? `?limit=10&search=${search}` : "?limit=10";
       const response = await blogApiRequest.getBlogs(params);
-      console.log("Response", response);
-      setBlogs(response.payload.data);
-      setLastKey(response.payload.lastKey);
+      const sortedBlogs = response.payload.data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      dispath(setBlogs({data:sortedBlogs,lastKey:response.payload.lastKey}));
       setLoading(false);
     } catch (error) {
       const e = error as Error;
@@ -31,16 +40,15 @@ export default function Blog() {
   };
   useEffect(() => {
     loadBlogs();
-  }, []);
-  const safeBlogs = blogs || [];
+  }, [dispath]);
   return loading ? (
     <Loader />
   ) : (
     <div>
       <ButtonAdd item={addItem} />
       <div className="flex flex-col gap-10 mb-6">
-        {safeBlogs.length > 0 ? (
-          safeBlogs.map((blog) => <BlogCard blog={blog} key={blog.blogId} />)
+        {blogs.length > 0 ? (
+          blogs.map((blog) => <BlogCard blog={blog} key={blog.blogId} />)
         ) : (
           <p className="text-center text-xl opacity-70">
             There are no matching blog posts

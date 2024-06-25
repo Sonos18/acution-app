@@ -16,11 +16,14 @@ import {
   SignInSchemaType,
 } from "@/schemaValidations/auth.schema";
 import { toast } from "@/components/ui/use-toast";
-import { useAppContext } from "@/app/app-provider";
-
+import { useDispatch } from 'react-redux';
+import { setUser } from '@/store/userSlice';
+import { useSelector } from 'react-redux';
+import type { RootState } from '@/store/store';
 const SigninForm = () => {
+  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = React.useState(false);
-  const { setUser } = useAppContext();
+  const userrr=useSelector((state:RootState)=>state.currentUser)
   const {
     register,
     handleSubmit,
@@ -39,14 +42,14 @@ const SigninForm = () => {
       setIsLoading(true);
       const result = await authApiRequest.signIn(data);
       const { accessToken, refreshToken, user } = result.payload;
-      setUser(user);
-      console.log(user.role);
-
+      dispatch(setUser(user));
       await authApiRequest.auth({
         accessToken: accessToken,
         refreshToken: refreshToken,
         role: user.role,
       });
+      console.log("user",userrr);
+      
       toast({
         description: "Sign in successfully",
         title: "success",
@@ -54,7 +57,7 @@ const SigninForm = () => {
         duration: 3000,
       });
       if (user.role === "admin") {
-        router.push("/users");
+        router.push("/dashboard");
         return;
       }
       router.push("/");
@@ -80,7 +83,7 @@ const SigninForm = () => {
             type="text"
             {...register("email")}
           />
-          {errors.email && <p>{errors.email.message}</p>}
+          {errors.email && <p className="text-red-400">{errors.email.message}</p>}
         </LabelInputContainer>
         <LabelInputContainer className="mb-4">
           <Label htmlFor="password">Password</Label>
@@ -90,11 +93,12 @@ const SigninForm = () => {
             placeholder="••••••••"
             type="password"
           />
-          {errors.password && <p>{errors.password.message}</p>}
+          {errors.password && <p className="text-red-400">{errors.password.message}</p>}
         </LabelInputContainer>
-        <div className="text-right mt-2 mb-2">
+        <div className="text-right mt-2 mb-2 opacity-80">
+        Do not have an account? 
           <Link href="/signup" className="text-blue-300 hover:text-blue-500">
-            Bạn chưa có tài khoản?
+          Sign up
           </Link>
         </div>
         <button

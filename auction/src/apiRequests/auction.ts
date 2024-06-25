@@ -17,6 +17,7 @@ const auctionApiRequest = {
   getMyAuctionsCofirm: () =>
     http.get<AuctionClosingType[] | []>("/auction/closing"),
   confirmAuction: (id: string) => http.get(`/auction/confirm/?id=${id}`),
+  getHistoryAuctions: (id:string) =>http.get<AuctionsResponseType>(`/auction/history/?id=${id}`),
 };
 
 export default auctionApiRequest;

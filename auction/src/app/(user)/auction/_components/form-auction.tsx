@@ -52,11 +52,25 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import auctionApiRequest from "@/apiRequests/auction";
+import categoryApiRequest from "@/apiRequests/category";
+import { CategoryType } from "@/app/(admin)/category/page";
 export default function FormAuction() {
   const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [file, setFile] = useState<File[] | null>(null);
   const router = useRouter();
+  const [categories,setCategories]=useState<CategoryType[]|[]>([]);
+  const loadCategories=async()=>{
+    try {
+      const res=await categoryApiRequest.getAll();
+      setCategories(res.payload);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  useEffect(()=>{
+    loadCategories();
+  },[]);
   const form = useForm<AuctionInputType>({
     resolver: zodResolver(AuctionInput),
     defaultValues: {
@@ -79,24 +93,22 @@ export default function FormAuction() {
       setLoading(true);
       const fileTypes = file.map((f) => f.type);
       const res = await blogApiRequest.getSignedUrl({ types: fileTypes });
-      console.log("res", res);
       const { urls, keys } = res.payload;
-      console.log("urls", urls);
-      console.log("keys", keys);
+      let imageUrls = [];
+      const bucket = process.env.NEXT_PUBLIC_AWS_BUCKET;
       for (let i = 0; i < keys.length; i++) {
         await fetch(urls[i], {
           method: "PUT",
           body: file[i],
         });
+        imageUrls.push(bucket + keys[i]);
       }
       const newData = {
         ...data,
-        images: keys,
+        images: imageUrls,
         startTime: data.startTime.toISOString(),
         endTime: data.endTime.toISOString(),
       };
-      console.log("newData", newData);
-
       const auction = await auctionApiRequest.createAuction(newData);
       toast({
         title: "Success",
@@ -311,12 +323,12 @@ export default function FormAuction() {
                           <SelectContent>
                             <SelectGroup>
                               <SelectLabel>Categories</SelectLabel>
-                              {categories.map((category) => (
+                              {Array.isArray(categories) && categories.length > 0 && categories.map((category) => (
                                 <SelectItem
-                                  key={category.id}
-                                  value={category.id}
+                                  key={category.categoryId}
+                                  value={category.categoryId}
                                 >
-                                  {category.name}
+                                  {category.categoryName}
                                 </SelectItem>
                               ))}
                             </SelectGroup>
@@ -424,7 +436,7 @@ export default function FormAuction() {
                   className={`bg-red-400 ${loading ? "opacity-70" : ""}`}
                   variant="destructive"
                   onClick={() => {
-                    console.log("cancel");
+                    router.back();
                   }}
                 >
                   Cancel
@@ -448,13 +460,3 @@ export default function FormAuction() {
     </div>
   );
 }
-const categories = [
-  {
-    id: "1",
-    name: "C1",
-  },
-  {
-    id: "2",
-    name: "C2",
-  },
-];

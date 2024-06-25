@@ -1,17 +1,16 @@
 "use client";
-import { useState } from "react";
 import { AlertDialogConfirm } from "./alert-dialog-confirm";
 import { Button } from "../ui/button";
-import { useAppContext } from "@/app/app-provider";
 import authApiRequest from "@/apiRequests/auth";
 import { toast } from "../ui/use-toast";
-import { usePathname, useRouter } from "next/navigation";
+import {  useRouter } from "next/navigation";
 import { handleErrorApi } from "@/lib/utils";
+import { useDispatch } from 'react-redux';
+import { removeUser } from '@/store/userSlice';
 
 export const Logout = () => {
-  const { setUser } = useAppContext();
+  const dispatch = useDispatch();
   const router = useRouter();
-  const pathname = usePathname();
   const handleLogout = async () => {
     try {
       const res = await authApiRequest.logoutFromNextServer();
@@ -29,7 +28,7 @@ export const Logout = () => {
         title: "success",
         description: "Logged out successfully",
       });
-      setUser(null);
+      dispatch(removeUser());
       router.refresh();
     }
   };
@@ -40,7 +39,7 @@ export const Logout = () => {
         description="Are you sure you want to log out?"
         handleLogout={handleLogout}
       >
-        <Button className="bg-gray-600">Logout</Button>
+        <Button className="bg-gray-600 ">Logout</Button>
       </AlertDialogConfirm>
     </div>
   );

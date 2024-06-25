@@ -1,5 +1,4 @@
 import likeApiRequest from "@/apiRequests/like";
-import { useAppContext } from "@/app/app-provider";
 import { useToast } from "@/components/ui/use-toast";
 import { BlogResType, BlogsReponseType } from "@/schemaValidations/blog.schema";
 import {
@@ -10,7 +9,6 @@ import {
   Favorite,
   FavoriteBorder,
 } from "@mui/icons-material";
-import { Alert } from "@mui/material";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -18,16 +16,21 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { AlertDialogConfirm } from "../alert-dialog-confirm";
 import blogApiRequest from "@/apiRequests/blog";
+import ButtonDelete from "@/app/(user)/blog/_component/button-delete";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store/store";
 
-const BlogCard = ({ blog }: { blog: BlogResType }) => {
-  const { user } = useAppContext();
+interface BlogCardProps {
+  blog: BlogResType;
+}
+const BlogCard = ({ blog }: BlogCardProps) => {
+  const user=useSelector((state:RootState)=>state.currentUser.user);
   const [likes, setLikes] = useState<number>(blog.likes);
   const [isLiked, setIsLiked] = useState<boolean>(blog.isLiked);
   const [loading, setLoading] = useState<boolean>(false);
   const [isSaved, setIsSaved] = useState<boolean>(false);
   const { toast } = useToast();
-  const router = useRouter();
-
+  
   const handleLike = async () => {
     try {
       setLoading(true);
@@ -62,29 +65,7 @@ const BlogCard = ({ blog }: { blog: BlogResType }) => {
     }
   };
 
-  const handleDelete = async () => {
-    try {
-      setLoading(true);
-      const res = await blogApiRequest.deleteBlog(blog.blogId);
-      if (res.status !== 200) throw new Error(String(res.payload));
-      toast({
-        description: "Deleted a blog",
-        title: "Success",
-        className: "bg-green-500 text-white",
-      });
-      router.refresh();
-    } catch (error) {
-      const e = error as Error;
-      toast({
-        description: e.message,
-        title: "Error",
-        className: "bg-red-500 text-white",
-      });
-      setLoading(false);
-    } finally {
-      setLoading(false);
-    }
-  };
+  
   const handleSave = async () => {
     try {
       setLoading(true);
@@ -163,7 +144,7 @@ const BlogCard = ({ blog }: { blog: BlogResType }) => {
       <div className="flex justify-between">
         <div className="flex gap-2 items-center">
           {loading ? (
-            <Loader2 className="mx-auto h-4 w-4 animate-spin" />
+            <Loader2 className="mx-auto h-4 w-4 animate-spin text-blue-500" />
           ) : !isLiked ? (
             <FavoriteBorder
               sx={{ color: "black", cursor: "pointer" }}
@@ -188,17 +169,11 @@ const BlogCard = ({ blog }: { blog: BlogResType }) => {
           <BookmarkBorder
             sx={{ color: "white", cursor: "pointer" }}
             onClick={() => handleSave()}
-          />
+          /> 
         )}
 
         {user?.userId === blog.user.userId && (
-          <AlertDialogConfirm
-            title="Warning"
-            description="Are you sure you want to delete this post"
-            handleLogout={handleDelete}
-          >
-            <Delete sx={{ color: "white", cursor: "pointer" }} />
-          </AlertDialogConfirm>
+          <ButtonDelete id={blog.blogId} />
         )}
       </div>
     </div>

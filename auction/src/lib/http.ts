@@ -54,8 +54,9 @@ const request = async <Response>(
 ) => {
   let accessToken = localStorage.getItem("accessToken");
   const refreshToken = localStorage.getItem("refreshToken");
-  if (accessToken && refreshToken) {
-    const token = await UseRefreshToken(accessToken, refreshToken);
+  const role = localStorage.getItem("role");
+  if (accessToken && refreshToken && role) {
+    const token = await UseRefreshToken(accessToken, refreshToken, role);
     if (token) {
       accessToken = token;
       localStorage.setItem("accessToken", token);

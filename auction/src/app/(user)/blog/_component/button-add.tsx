@@ -5,23 +5,22 @@ import Image from "next/image";
 
 import Link from "next/link";
 import { addItemType } from "../page";
+import type { RootState } from '@/store/store';
+import { useSelector } from 'react-redux'
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 interface Props {
   item: addItemType;
 }
 const ButtonAdd = ({ item }: Props) => {
-  const { user } = useAppContext();
+  const user = useSelector((state: RootState) => state.currentUser.user);
   if (!user) return <></>;
   return (
     <div className="w-full max-w-xl mx-auto bg-white mb-4 rounded-lg p-4">
       <div className=" flex justify-center">
-        <Image
-          src={user?.avatar}
-          alt="profile photo"
-          width={50}
-          height={50}
-          className="rounded-full cursor-pointer"
-        />
-
+        <Avatar className="mr-2 h-12 w-12">
+          <AvatarImage src={user?.avatar} alt="profile photo" />
+        </Avatar>
+        
         <div className="w-full rounded-3xl bg-slate-100 my-auto p-2 hover:bg-slate-200 cursor-pointer">
           <Link href={item.link}>
             {user?.firstName} {user?.lastName}, {item.title}

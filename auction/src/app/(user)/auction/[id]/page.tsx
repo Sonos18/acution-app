@@ -11,7 +11,9 @@ export default function BlogPost({ params }: { params: { id: string } }) {
   const [auction, setAuction] = useState<AuctionType>();
   const laodAuction = async () => {
     try {
+      console.log("id",params.id);
       const res = await auctionApiRequest.getAuction(params.id);
+      console.log(res.payload);
       setAuction(res.payload);
     } catch (error) {
       console.log(error);

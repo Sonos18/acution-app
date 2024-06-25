@@ -9,6 +9,7 @@ import { AuctionType } from "@/schemaValidations/auction.schema";
 import Link from "next/link";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { useRouter } from "next/navigation";
+import { differenceInDays, formatDistanceToNow } from "date-fns";
 export function AuctionCard({ auction }: { auction: AuctionType }) {
   // const { user } = useAppContext();
   const router = useRouter();
@@ -33,9 +34,13 @@ export function AuctionCard({ auction }: { auction: AuctionType }) {
                   <p className="text-small-semibold ">
                     {auction.user.firstName} {auction.user.lastName}
                   </p>
-                  <p className="text-subtle-medium">
-                    {auction.product.productName}
-                  </p>
+                  <span className="text-sm font-normal text-gray-400">
+                    {
+                      differenceInDays(new Date(), new Date(auction.createdAt)) > 5
+                        ? new Date(auction.createdAt).toLocaleDateString('en-GB')
+                        : formatDistanceToNow(new Date(auction.createdAt), { addSuffix: true })
+                    }
+                  </span>
                 </div>
               </div>
             </Link>
@@ -49,12 +54,12 @@ export function AuctionCard({ auction }: { auction: AuctionType }) {
           </div>
         </CardItem>
         <CardItem
-          as="p"
-          translateZ="60"
-          className="text-neutral-500 text-sm max-w-sm mt-2 dark:text-neutral-300"
-        >
-          {auction.product.description}
-        </CardItem>
+            as="p"
+            translateZ="60"
+            className="text-neutral-700 text-lg max-w-sm mt-2 dark:text-neutral-300 "
+            >
+            {auction.product.productName} 
+          </CardItem>
         <CardItem translateZ="100" className="w-full mt-4">
           <Image
             src={auction.product.images[0]}

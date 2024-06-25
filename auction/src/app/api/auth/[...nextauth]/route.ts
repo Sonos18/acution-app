@@ -31,6 +31,7 @@ const authOption: NextAuthOptions = {
       clientSecret: GIT_CLIENT_SECRET,
     }),
   ],
+  secret:process.env.NEXTAUTH_SECRET,
   callbacks: {
     async signIn({ account, profile }) {
       if (!profile || !account) {

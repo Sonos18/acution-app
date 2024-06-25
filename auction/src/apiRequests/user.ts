@@ -12,6 +12,6 @@ const userApiRequest = {
       },
     }),
   update: (body: UserUpdateSchemaType) => http.put<UserResType>("/user", body),
-  getAll: () => http.get("/user/all"),
+  getAll: () => http.get<UserResType[]>("/user/all"),
 };
 export default userApiRequest;
