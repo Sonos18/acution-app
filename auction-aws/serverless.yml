@@ -1,3 +1,5 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: son0x
 service: auction-aws
 
 provider:
@@ -51,7 +53,7 @@ provider:
 
 plugins:
   # - serverless-plugin-typescript
-  - serverless-esbuild
+  # - serverless-esbuild
   - serverless-dotenv-plugin
 
 package:
@@ -329,6 +331,28 @@ functions:
       - httpApi:
           path: /auction/history/{id}
           method: get
+          authorizer:
+            name: PrivateRouter
+  WarningAuction:
+    handler: src/handler/notification/warning.handler
+    events:
+      - eventBridge:
+          name: event-bridge-warning-auction
+          schedule: cron(0 22 * * ? *)
+  GetNotificationByUser:
+    handler: src/handler/notification/get-by-user.handler
+    events:
+      - httpApi:
+          path: /notification
+          method: get
+          authorizer:
+            name: PrivateRouter
+  ReadNotification:
+    handler: src/handler/notification/read.handler
+    events:
+      - httpApi:
+          path: /notification/{id}
+          method: put
           authorizer:
             name: PrivateRouter
   # Chat:

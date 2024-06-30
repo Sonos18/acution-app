@@ -10,11 +10,21 @@ import {
 import { toast } from "@/components/ui/use-toast";
 import { useEffect } from "react";
 import { ItemPayment } from "../auction/_components/item-payment";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "@/store/store";
-
+import paymentApiRequest from "@/apiRequests/payment";
+import { setPayments } from "@/store/paymentSlice";
 const PaymentPage = () => {
+  const dispath = useDispatch();
   const payments=useSelector((state:RootState)=>state.payments.payments);
+  const loadPayments = async() => {
+    const res = await paymentApiRequest.getPayments();
+    const amount = res.payload.length;
+    dispath(setPayments({payments:res.payload,amount:amount,total:res.payload.reduce((acc,curr) => acc+curr.total,0)}))
+  }
+  useEffect(() => {
+    loadPayments();
+  }, []);
   return (
     <>
       {payments.length < 1 ? (

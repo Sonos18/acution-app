@@ -25,11 +25,12 @@ export const Search = () => {
   return (
     <>
       <div className="col-span-2 ">
-        <div className="bg-slate-50 flex justify-center items-center rounded-md border-2 relative">
-          <Combobox pages={pages} setPage={setPage} page={page} />
+        <div className="bg-slate-50 flex items-center rounded-md border-2">
+          {/* <Combobox pages={pages} setPage={setPage} page={page} /> */}
+          <span className="text-slate-400 mx-2">Blog</span>
           <Input
-            className="h-8"
-            placeholder="Enter key work"
+            className="h-8 w-full"
+            placeholder="Enter hashtag"
             type="text"
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
@@ -37,7 +38,7 @@ export const Search = () => {
           <IoSearchSharp
             onClick={hadleSearch}
             size={24}
-            className="absolute right-1 hover:cursor-pointer"
+            className="right-1 hover:cursor-pointer mx-1"
             color="#475569"
           />
         </div>

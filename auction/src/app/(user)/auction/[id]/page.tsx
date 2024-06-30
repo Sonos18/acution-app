@@ -6,14 +6,12 @@ import auctionApiRequest from "@/apiRequests/auction";
 import { AuctionType } from "@/schemaValidations/auction.schema";
 import Loader from "@/components/loading";
 import DetailsSection from "../_components/details-section";
-
 export default function BlogPost({ params }: { params: { id: string } }) {
   const [auction, setAuction] = useState<AuctionType>();
   const laodAuction = async () => {
     try {
       console.log("id",params.id);
       const res = await auctionApiRequest.getAuction(params.id);
-      console.log(res.payload);
       setAuction(res.payload);
     } catch (error) {
       console.log(error);
@@ -26,7 +24,7 @@ export default function BlogPost({ params }: { params: { id: string } }) {
   return (
     auction && (
       <div>
-        <div className="flex flex-col w-3/4 mx-auto">
+        <div className="flex flex-col w-5/6 mx-auto">
           <div className="w-full xl:max-w-[2100px] mx-auto">
             <div className="flex flex-col md:flex-row flex-wrap md:flex-nowrap items-center md:items-start mt-8 relative">
               <ImageSection auction={auction} />

@@ -14,49 +14,13 @@ import PaidIcon from '@mui/icons-material/Paid';
 import PersonIcon from "@mui/icons-material/Person";
 import { useRouter } from "next/navigation";
 import type { RootState } from '@/store/store';
-import { useDispatch, useSelector } from 'react-redux'
-import { useEffect, useState } from "react";
-import { setAuctionsClosing } from "@/store/auctionClosingSlice";
-import auctionApiRequest from "@/apiRequests/auction";
-import paymentApiRequest from "@/apiRequests/payment";
-import { setPayments } from "@/store/paymentSlice";
+import {  useSelector } from 'react-redux'
 import HistoryIcon from '@mui/icons-material/History';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export const Setting = () => {
-  const [totalAuctions, setTotalAuctions] = useState(0);
-  const [totalPayments, setTotalPayments] = useState<number>(0);
-  const [totalHistory, setTotalHistory] = useState<number>(0);
-  const dispath=useDispatch()
   const user = useSelector((state: RootState) => state.currentUser.user);
   const router = useRouter();
-  const loadConfirm = async() => {
-    const res = await auctionApiRequest.getMyAuctionsCofirm();
-    const amount = res.payload.length;
-    const total = res.payload.reduce((acc,curr) => acc+curr.endPrice,0);
-    dispath(setAuctionsClosing({auctions:res.payload,amount,total}));
-    setTotalAuctions(amount);
-  };
-  const loadPayments = async() => {
-    const res = await paymentApiRequest.getPayments();
-    const amount = res.payload.length;
-    dispath(setPayments({payments:res.payload,amount:amount,total:res.payload.reduce((acc,curr) => acc+curr.total,0)}))
-    setTotalPayments(amount);
-  }
-  const loadHistory = async() => {
-    const res=await auctionApiRequest.getHistoryAuctions(user?.userId as string);
-    setTotalHistory(res.payload.data.length);
-    console.log(res.payload); 
-  }
-  useEffect(() => {
-    try {
-      loadConfirm();
-      loadPayments();
-      loadHistory();
-    } catch (error) {
-      console.log((error as Error).message);
-    }
-  }, []);
   const dropdownItem = [
     {
       name: "Profile",
@@ -68,30 +32,19 @@ export const Setting = () => {
       name: "Auction Confirm",
       link: "/auction/confirm",
       icon: <PublishedWithChangesIcon className="text-emerald-400 mr-2 h-4 w-4" />,
-      shortcut: totalAuctions > 0?
-        <div className="w-5 h-5 ml-1 rounded-full bg-red-400 flex items-center justify-center text-white">
-          <p>{totalAuctions}</p>
-        </div>
-        :<></>    
+      shortcut: "⇧⌘A", 
     },
     {
       name: "Payment",
       link: "/payment",
       icon: <PaidIcon className="text-amber-400 mr-2 h-4 w-4" />,
-      shortcut: totalPayments > 0?
-        <div className="w-5 h-5 ml-1 rounded-full bg-red-400 flex items-center justify-center text-white">
-          <p>{totalPayments}</p>
-        </div>
-        :<></>
+      shortcut: "⇧⌘W"
     },
     {
       name: "Auction History",
-      link: "/history",
+      link: "/auction/history",
       icon: <HistoryIcon className="text-cyan-700 mr-2 h-4 w-4" />,
-      shortcut: totalHistory > 0?
-      <div className="w-5 h-5 ml-1 rounded-full bg-red-400 flex items-center justify-center text-white">
-        <p>{totalHistory}</p>
-      </div>:<></>
+      shortcut: "⇧⌘H"
     },
   ];
   return (

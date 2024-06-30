@@ -16,6 +16,9 @@ export class Notification {
 	@attribute()
 	message!: string;
 
+	@attribute()
+	isRead?: boolean;
+
 	@attribute({ marshall: dateMarshall, unmarshall: dateUnmarshall })
 	createdAt?: string;
 }

@@ -6,6 +6,7 @@ import { extractPathParamsFromRequest } from '~/utils/validate-request/validate-
 import { buyAuction } from '~/service/auction';
 
 import { bidSchema, schema } from './bid';
+import { createNotification } from '~/service/notification';
 
 export const handler: HandlerFn = async (event, context, callback) => {
 	try {
@@ -13,6 +14,7 @@ export const handler: HandlerFn = async (event, context, callback) => {
 		const { price } = extractBodyDataFromRequest({ event, schema: bidSchema });
 		const user = decodedTokenFromHeader(event);
 		await buyAuction(id, user.id, price);
+		await createNotification(user.id, id ,'You have bought a product successfully');
 		callback(null, {
 			body: JSON.stringify({ message: 'Product bought successfully' }),
 			statusCode: 200

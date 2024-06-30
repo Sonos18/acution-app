@@ -10,8 +10,11 @@ import { getNotificationsByUserId } from '~/service/notification';
 export const handler: HandlerFn = async (event, context, callback) => {
 	try {
 		const user = decodedTokenFromHeader(event);
+		console.log('user', user);
 		const { notifications, products, auctions } = await getNotificationsByUserId(user.id);
+		console.log('notifications', notifications);
 		const res = treeShakingNotifications(notifications, products, auctions);
+		console.log('res', res);
 		callback(null, { statusCode: 200, body: JSON.stringify(res) });
 	} catch (error) {
 		customErrorOutput(error as Error, callback);

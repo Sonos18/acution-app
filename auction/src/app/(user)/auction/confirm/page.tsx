@@ -1,11 +1,23 @@
 "use client";
 import auctionApiRequest from "@/apiRequests/auction";
-import { AuctionClosingType } from "@/schemaValidations/auction.schema";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import TableConfirm from "../_components/table-confirm";
 import ConfirmBox from "../_components/confirm-box";
-
+import { useDispatch } from "react-redux";
+import {setAuctionsClosing} from '@/store/auctionClosingSlice';
 const AuctionConfirmList = () => {
+  const dispath = useDispatch();
+  const loadConfirm = async() => {
+    const res = await auctionApiRequest.getMyAuctionsCofirm();
+    if (Array.isArray(res.payload)) {
+      const amount = res.payload.length;
+      const total = res.payload.reduce((acc,curr) => acc+curr.endPrice,0);
+      dispath(setAuctionsClosing({auctions:res.payload,amount,total}));
+    }
+  };
+  useEffect(() => {
+    loadConfirm();
+  }, []);
   return (
     <div className="w-6/7 xl:max-w-[2100px] mx-auto pb-6">
       <div className=" flex justify-center flex-col md:flex-row items-start relative ">

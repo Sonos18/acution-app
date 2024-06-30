@@ -25,17 +25,18 @@ export const createWarning = async (auctions: Auction[]) => {
 		if (result.Items) {
 			const items = result.Items as Bid[];
 			const listUser = Array.from(new Set(items.map((item) => item.userId)));
-			await createNotifications(auction, listUser);
+			const message = 'The auction is about to end. Current price is ' + auction.currentPrice;
+			await createNotifications(auction.auctionId, listUser, message);
 		}
 	});
-};
-export const createNotifications = async (auction: Auction, listUser: string[]) => {
+}
+export const createNotifications = async (auctionId: string, listUser: string[],message:string) => {
 	listUser.forEach(async (user) => {
 		const notification = {
 			userId: user,
-			auctionId: auction.auctionId,
+			auctionId: auctionId,
 			createdAt: new Date().toISOString(),
-			message: 'The auction is about to end. Current price is ' + auction.currentPrice
+			message: message
 		};
 		const params: DynamoDB.DocumentClient.PutItemInput = {
 			TableName: 'Notification',
@@ -43,6 +44,19 @@ export const createNotifications = async (auction: Auction, listUser: string[]) 
 		};
 		await dynamoDB.put(params).promise();
 	});
+};
+export const createNotification= async (userId: string, auctionId: string, message: string) => {
+	const notification = {
+		userId,
+		auctionId,
+		createdAt: new Date().toISOString(),
+		message
+	};
+	const params: DynamoDB.DocumentClient.PutItemInput = {
+		TableName: 'Notification',
+		Item: notification
+	};
+	await dynamoDB.put(params).promise();
 };
 export const getNotificationsByUserId = async (userId: string) => {
 	const params = {
@@ -59,4 +73,20 @@ export const getNotificationsByUserId = async (userId: string) => {
 	const products = await getProductsByListId(auctions);
 
 	return { notifications, auctions, products };
+};
+export const readNotification = async (notificationId: string) => {
+	const params = {
+		TableName: 'Notification',
+		Key: {
+			notificationId
+		},
+		UpdateExpression: 'set isRead = :isRead',
+		ExpressionAttributeValues: {
+			':isRead': true
+		},
+		ReturnValues: 'ALL_NEW'
+	};
+	const result = await dynamoDB.update(params).promise();
+	console.log('result', result.Attributes	);
+	
 };

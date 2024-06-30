@@ -64,6 +64,9 @@ export default function FormAuction() {
     try {
       const res=await categoryApiRequest.getAll();
       setCategories(res.payload);
+      if(inputRef.current) {
+        inputRef.current.focus();
+      }
     } catch (error) {
       console.log(error);
     }
