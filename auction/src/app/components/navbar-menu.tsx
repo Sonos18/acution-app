@@ -13,12 +13,56 @@ import Image from "next/image";
 import { Search } from "@/components/custom/search";
 import Notification from "./notification";
 import Message from "./message";
-import { CategoryType } from "../(admin)/category/page";
-import categoryApiRequest from "@/apiRequests/category";
 
 export function Nav() {
-  const [items, setItems] = useState(navItems);
   const router = useRouter();
+  const navItems: NavItem[] = [
+    {
+      name: "Home",
+      link: "/",
+      active: true,
+    },
+    {
+      name: "Blog",
+      link: "/blog",
+      active: false,
+    },
+    {
+      name: "Auction",
+      link: "/auction",
+      active: false,
+      items: (
+        <ul className="text-sm grid grid-cols-5 gap-2 p-2">
+          {[
+            "Watch",
+            "Jewelry",
+            "Car",
+            "Pottery",
+            "Musical instrument",
+            "Bag",
+            "Painting",
+            "Clothes",
+            "Wine"
+          ].map((item, index) => (
+            <li key={index} className="hover:text-blue-500 cursor-pointer">
+              <Link href={{ pathname: '/auction', query: { category: item } }} as={`/auction?category=${item}`}>{item}</Link>
+            </li>
+          ))}
+        </ul>
+      ),
+    },
+    {
+      name: "About",
+      link: "/about",
+      active: false,
+    },
+    {
+      name: "Contract",
+      link: "/contract",
+      active: false,
+    },
+  ];
+  const [items, setItems] = useState(navItems);
   const handleItemClick = (
     event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
     index: Number,
@@ -29,10 +73,10 @@ export function Nav() {
       ...item,
       active: i === index,
     }));
-    console.log(updatedNavItems);
     setItems(updatedNavItems);
     router.push(ref);
   };
+  
   return (
     <>
       <div className="grid grid-cols-10 gap-4 items-center bg-white mb-4">
@@ -90,49 +134,4 @@ function Navbar({
     </div>
   );
 }
-const navItems: NavItem[] = [
-  {
-    name: "Home",
-    link: "/",
-    active: true,
-  },
-  {
-    name: "Blog",
-    link: "/blog",
-    active: false,
-  },
-  {
-    name: "Auction",
-    link: "/auction",
-    active: false,
-    items: (
-      <ul className="text-sm grid grid-cols-5 gap-2 p-2">
-        {[
-          "Watch",
-          "Jewelry",
-          "Car",
-          "Pottery",
-          "Musical instrument",
-          "Bag",
-          "Painting",
-          "Clothes",
-          "Wine"
-        ].map((item, index) => (
-          <li key={index} className="hover:text-blue-500">
-            <Link href={`/auction?category=${item}`}>{item}</Link>
-          </li>
-        ))}
-      </ul>
-    ),
-  },
-  {
-    name: "About",
-    link: "/about",
-    active: false,
-  },
-  {
-    name: "Contract",
-    link: "/contract",
-    active: false,
-  },
-];
+

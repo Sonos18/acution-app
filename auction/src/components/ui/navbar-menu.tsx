@@ -34,11 +34,11 @@ export const MenuItem = ({
   };
   return (
     <div
-      onClick={navigate}
       onMouseEnter={() => setActive(item)}
       className="relative "
     >
       <motion.p
+        onClick={navigate}
         transition={{ duration: 0.3 }}
         className="cursor-pointer text-black hover:opacity-[0.9] dark:text-white"
       >

@@ -33,7 +33,7 @@ function AuctionContent () {
   const search = searchParams.get("search");
   const loadAuctions = async () => {
     try {
-      const param = search ? `?limit=10&search=${search}` : "?limit=10";
+      const param = search ? `?limit=20&search=${search}` : "?limit=20";
       const response = await auctionApiRequest.getAuctions(param);
       console.log(response.payload);
       
