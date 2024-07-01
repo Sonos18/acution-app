@@ -138,8 +138,8 @@ const BlogCard = ({ blog }: BlogCardProps) => {
       <div className="text-base-semibold text-indigo-500 max-sm:text-small-normal cursor-pointer">
         {blog.hashtags &&
           blog.hashtags.length > 0 &&
-          blog.hashtags.map((tag) => 
-          <Link href={`/blog/?hashtag=${tag}`}>#{tag}</Link> )}
+          blog.hashtags.map((tag,idx) => 
+          <Link key={idx}href={`/blog/?hashtag=${tag}`}>#{tag}</Link> )}
       </div>
 
       <div className="flex justify-between">
