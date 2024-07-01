@@ -6,7 +6,7 @@ export const paginateBase = (limit?: number, key?: string) => {
 	const limitNum = limit ?? 20;
 	let lastKey: lastKeyBlogs | undefined;
 	if (key) {
-		lastKey = { blogId: key };
+		lastKey = { blogId: key ,deleted: "false"};
 	}
 	return {
 		lastKey: lastKey,
@@ -24,3 +24,14 @@ export const paginateAuction = (limit?: number, auctionId?: string, status?: str
 		lastKey: lastKey
 	};
 };
+export const paginate=(limit?:number,page?:number)=>{
+	const limitNum = limit ?? 20;
+	const pageNum = page ?? 1;
+	const start=(pageNum-1)*limitNum;
+	const end=pageNum*limitNum;
+	return {
+		start,
+		end,
+		limit:limitNum
+	}
+}

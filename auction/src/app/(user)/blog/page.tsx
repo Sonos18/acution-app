@@ -25,7 +25,7 @@ function BlogContent() {
   // const [blogs, setBlogs] = useState<BlogsReponseType["data"]>([]);
   const blogs=useSelector((state:RootState)=>state.blog.blog)
   const searchParams = useSearchParams();
-  const search = searchParams.get("search");
+  const search = searchParams.get("hashtag");
   const loadBlogs = async () => {
     try {
       const params = search ? `?limit=10&search=${search}` : "?limit=10";

@@ -4,7 +4,6 @@ import { cn } from "@/lib/utils";
 import { Suspense, useEffect, useState } from "react";
 import {
   AuctionsResponseType,
-  LastKeyType,
 } from "@/schemaValidations/auction.schema";
 import Loader from "@/components/loading";
 import { AnimatePresence, motion } from "framer-motion";
@@ -15,6 +14,7 @@ import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import { useSearchParams } from "next/navigation";
+import { PaginationNav } from "@/app/components/pagination";
 
 export default function Auction() {
   return(
@@ -25,21 +25,20 @@ export default function Auction() {
 }
 
 function AuctionContent () {
-  const [lastKey, setLastKey] = useState<LastKeyType | undefined>(undefined);
+  const [totalPage, setTotalPage] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [auctions, setAuctions] = useState<AuctionsResponseType["data"]>([]);
   let [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const searchParams = useSearchParams();
-  const search = searchParams.get("search");
   const loadAuctions = async () => {
     try {
-      const param = search ? `?limit=20&search=${search}` : "?limit=20";
+      const current = new URLSearchParams(Array.from(searchParams.entries()));
+      current.set("limit", "12");
+      const param = current.toString() ? `?${current.toString()}` : "";    
       const response = await auctionApiRequest.getAuctions(param);
-      console.log(response.payload);
-      
       const sortedAuctions = response.payload.data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
       setAuctions(sortedAuctions );
-      setLastKey(response.payload.lastKey);
+      setTotalPage(response.payload.total);
       setLoading(false);
     } catch (error) {
       console.error(error);
@@ -49,7 +48,7 @@ function AuctionContent () {
 
   useEffect(() => {
     loadAuctions();
-  }, [search]);
+  }, [searchParams]);
   const safeAuctions = auctions || [];
   return loading ? (
     <Loader />
@@ -89,6 +88,7 @@ function AuctionContent () {
           </div>
         ))}
       </div>
+      <PaginationNav totalPage={totalPage} />
     </div>
   );
 };

@@ -56,7 +56,11 @@ export const createNotification= async (userId: string, auctionId: string, messa
 		TableName: 'Notification',
 		Item: notification
 	};
-	await dynamoDB.put(params).promise();
+	try{
+		await dynamoDB.put(params).promise();
+	}catch(e){
+		console.log('error',(e as Error).message)
+	}
 };
 export const getNotificationsByUserId = async (userId: string) => {
 	const params = {

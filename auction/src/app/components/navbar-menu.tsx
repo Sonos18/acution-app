@@ -45,7 +45,7 @@ export function Nav() {
             "Wine"
           ].map((item, index) => (
             <li key={index} className="hover:text-blue-500 cursor-pointer">
-              <Link href={{ pathname: '/auction', query: { category: item } }} as={`/auction?category=${item}`}>{item}</Link>
+              <Link href={{ pathname: '/auction', query: { category: item } }} as={`/auction?nameCategory=${item}`}>{item}</Link>
             </li>
           ))}
         </ul>

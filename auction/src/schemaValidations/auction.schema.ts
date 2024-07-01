@@ -80,7 +80,7 @@ export type AuctionType = z.infer<typeof Auction>;
 export const AuctionsResponse = z
   .object({
     data: z.array(Auction),
-    lastKey: lastKey.optional(),
+    total: z.number(),
   })
   .strict();
 export type AuctionsResponseType = z.infer<typeof AuctionsResponse>;

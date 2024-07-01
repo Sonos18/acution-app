@@ -34,7 +34,7 @@ export interface AuctionOutput {
 }
 export interface GetAuctionsOutput {
 	data: AuctionOutput[];
-	lastKey?: lastKeyAuctions;
+	total:number;
 }
 export interface CreateAuctionInput {
 	startPrice: number;
@@ -53,10 +53,11 @@ export interface DeleteOrGetOneAuctionInput {
 	auctionId: string;
 }
 export interface GetAuctionsInput {
-	search?: string;
+	nameCategory?: string;
 	limit?: number;
 	auctionId?: string;
 	status?: string;
+	page?:number;
 }
 export interface UpdateAuctionStatusInput {
 	auctionId: string;

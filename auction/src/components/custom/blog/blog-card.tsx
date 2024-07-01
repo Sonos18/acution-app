@@ -135,11 +135,12 @@ const BlogCard = ({ blog }: BlogCardProps) => {
           className="rounded-lg w-full"
         />
       </Link>
-      <p className="text-base-semibold text-indigo-500 max-sm:text-small-normal cursor-pointer">
+      <div className="text-base-semibold text-indigo-500 max-sm:text-small-normal cursor-pointer">
         {blog.hashtags &&
           blog.hashtags.length > 0 &&
-          blog.hashtags.map((tag) => `#${tag} `)}
-      </p>
+          blog.hashtags.map((tag) => 
+          <Link href={`/blog/?hashtag=${tag}`}>#{tag}</Link> )}
+      </div>
 
       <div className="flex justify-between">
         <div className="flex gap-2 items-center">

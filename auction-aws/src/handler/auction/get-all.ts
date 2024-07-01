@@ -3,11 +3,11 @@ import { ObjectSchema, number, object, string } from 'yup';
 import { Auction } from '~/db/auction-schema';
 
 import { HandlerFn, customErrorOutput } from '~/utils/createHandler';
-import { paginateAuction } from '~/utils/paginate';
+import { paginate, paginateAuction } from '~/utils/paginate';
 import { GetAuctionsInput, GetAuctionsOutput, lastKeyAuctions } from '~/utils/types/auction-type';
 import { extractPathParamsFromRequest } from '~/utils/validate-request/validate-params';
 
-import { getAllAuctions, getAuctionsByUserId, treeShakingAuctions } from '~/service/auction';
+import { getAllAuctions, getAuctions, getAuctionsByUserId, treeShakingAuctions } from '~/service/auction';
 import { getCategoriesByListId, getCategoryById, getCategoryByName } from '~/service/category';
 import { getProductsByCategoryId, getProductsByListId } from '~/service/product';
 import { getUserByListId } from '~/service/user';
@@ -15,11 +15,11 @@ import { getUserByListId } from '~/service/user';
 export const handler: HandlerFn = async (event, context, callback) => {
 	try {
 		const params = extractPathParamsFromRequest({ event, schema: getBlogsSchema });
-		const { limit, lastKey } = paginateAuction(params.limit);
-		const data = await getAuctions(limit, params.search, lastKey);
+		const { start,end,limit } = paginate(params.limit, params.page);
+		const data = await getAll(start,end,params.nameCategory);
 		if (data) {
 			const { users, auctions, products, category } = data;
-			const result = treeShakingAuctions(auctions, products, category, users);
+			const result = treeShakingAuctions(auctions, products, category, users,limit);
 			callback(null, { statusCode: 200, body: JSON.stringify(result) });
 		} else {
 			callback(null, { statusCode: 200, body: JSON.stringify('No auction') });
@@ -29,30 +29,28 @@ export const handler: HandlerFn = async (event, context, callback) => {
 		customErrorOutput(error, callback);
 	}
 };
-const getAuctions = async (limit: number, nameCategory?: string, key?: lastKeyAuctions) => {
+const getAll = async (start:number,end:number,nameCategory?:string) => {
 	if (nameCategory) {
 		const category = await getCategoryByName(nameCategory);
-		console.log('category', category);
 		const products = await getProductsByCategoryId(category.categoryId);
-		console.log('products', products);
 		const productIds = [...new Set(products.map((p) => p.productId))];
-		console.log('productIds', productIds);
-		const auctions = await getAllAuctions(limit, key, productIds);
-		console.log('auctions', auctions);
+		const auctions = await getAuctions(start, end);
+		//Get auctions have productId in productIds
+		const updatedAuctions = auctions.filter((auction) => productIds.includes(auction.productId));
 		if (!auctions) return;
-		const users = await getUserByListId(auctions.data);
+		const users = await getUserByListId(updatedAuctions);
 		return {
-			auctions,
+			auctions:updatedAuctions,
 			products,
 			category: category.categoryName,
 			users
 		};
 	} else {
-		const auctions = await getAllAuctions(limit, key);
+		const auctions = await getAuctions(start, end);
 		if (!auctions) return;
-		const products = await getProductsByListId(auctions.data);
+		const products = await getProductsByListId(auctions);
 		const category = await getCategoriesByListId(products);
-		const users = await getUserByListId(auctions.data);
+		const users = await getUserByListId(auctions);
 		return {
 			auctions,
 			products,
@@ -62,8 +60,9 @@ const getAuctions = async (limit: number, nameCategory?: string, key?: lastKeyAu
 	}
 };
 const getBlogsSchema: ObjectSchema<GetAuctionsInput> = object({
-	search: string().optional(),
+	nameCategory: string().optional(),
 	limit: number().optional(),
+	page: number().optional(),
 	auctionId: string().optional(),
 	status: string().optional()
 });

@@ -1,27 +1,17 @@
 "use client";
-import { Combobox } from "@/app/components/combobox";
 import { useState } from "react";
 import { IoSearchSharp } from "react-icons/io5";
 import { Input } from "../ui/input";
-import { useSearchParams, usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export const Search = () => {
-  const searchParams = useSearchParams();
   const [searchValue, setSearchValue] = useState<string>("");
-  const [page, setPage] = useState<string>("");
-  const pathname = usePathname();
   const router = useRouter();
   const hadleSearch = async () => {
-    if (!page || !searchValue) return;
-    const params = new URLSearchParams(searchParams);
-    params.set("search", searchValue);
-    if (pathname.includes(page)) {
-      router.replace(`${pathname}?${params.toString()}`);
-    } else {
-      router.push(`${page}?${params.toString()}`);
-    }
+    if (!searchValue) return router.push("/blog");
+    const url=`/blog?hashtag=${searchValue}`;
+    router.push(url);
   };
-
   return (
     <>
       <div className="col-span-2 ">
